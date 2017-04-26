@@ -1,9 +1,9 @@
 require('app-module-path').addPath(__dirname) //dont prefix require with ./
 
-var express = require('express')
-var app = express()
-var http = require('http').Server(app)
-var io = require('socket.io')(5000, {
+const express = require('express')
+const app = express()
+const http = require('http').Server(app)
+const io = require('socket.io')(5050, {
   path: '/socket'
 })
 
@@ -13,21 +13,21 @@ if (app.get('env') === 'development') {
   var config = require('config/config')
 }
 
-var mongoose = require('mongoose')
+const mongoose = require('mongoose')
 mongoose.connect(config.mongodb)
 
-var db = mongoose.connection
+const db = mongoose.connection
 
-db.on('error', function(err) {
+db.on('error', (err) => {
   console.log('connection error: ', err)
 })
 
-db.on('open', function() {
+db.on('open', () => {
   console.log('connected to database')
 })
 
-var sockets = require('sockets/socket')(io)
+const sockets = require('sockets/socket')(io)
 
-var server = http.listen(8080, function() {
-  console.log('listening on', server.address().port)
+const server = http.listen(8080, function() {
+  console.log('listening on', this.address().port)
 });
