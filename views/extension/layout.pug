@@ -1,0 +1,17 @@
+html
+  head
+    title Passtime
+    link(href='/bower_components/bootstrap/dist/css/bootstrap.min.css', rel='stylesheet')
+    link(href='/css/local/extension.css', rel='stylesheet')
+    meta(name='viewport', content='width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0')
+    block css
+  body
+    block content
+    script(src='/bower_components/jquery/dist/jquery.min.js')
+    script(src='/bower_components/moment/min/moment.min.js')
+    script(src='/bower_components/bootstrap/dist/js/bootstrap.min.js')
+    script(src='/bower_components/socket.io-client/dist/socket.io.js')
+    script(src='/js/lib/extension/three.min.js')
+    script(src='/js/local/extension/extension.js')
+
+    block javascript

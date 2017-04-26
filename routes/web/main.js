@@ -15,6 +15,10 @@ module.exports = function() {
     res.render('auth/signup.pug')
   })
 
+  router.get('/extension', function(req, res, next) {
+    res.render('extension/index.pug')
+  })
+
   router.get('/forgot', function(req, res) {
     res.render('auth/forgot.pug', {
       user: req.user,
