@@ -29,7 +29,6 @@ gulp.task('watch', function(){
   gulp.watch('views/handlebars/**/*.handlebars', ['precompile'])
   gulp.watch('source/js/auth/*.js',['auth-scripts'])
   gulp.watch('source/js/landing/*.js', ['landing-scripts'])
-  gulp.watch('source/js/extension/*.js', ['extension-scripts'])
   gulp.watch('source/js/mobile/*.js', ['mobile-scripts'])
 })
 
@@ -41,7 +40,7 @@ gulp.task('socket-url-replace', function(){
 })
 
 gulp.task('strip-minify', function(){
-  gulp.src(['public/js/local/auth/*.js','public/js/local/landing/*.js','public/js/local/extension/*.js','public/js/local/mobile/*.js'],{base: "./"})
+  gulp.src(['public/js/local/auth/*.js','public/js/local/landing/*.js','public/js/local/mobile/*.js'],{base: "./"})
     .pipe(stripDebug())
     .pipe(uglify())
     .pipe(gulp.dest("./"))
@@ -68,32 +67,6 @@ gulp.task('landing-scripts', function(){
     .pipe(concat('landing.js'))
     .pipe(gulp.dest('public/js/local/landing/'))
 })
-
-gulp.task('extension-scripts', function(){
-  gulp.src('source/js/extension/*.js')
-    .pipe(concat('extension.js'))
-    .pipe(gulp.dest('public/js/local/extension/'))
-})
-
-gulp.task('manifest-scripts', function(){
-  gulp.src('source/js/extension/*.js')
-    .pipe(gulp.dest('extension/source/js/local/'))
-})
-gulp.task('manifest-imgs', function(){
-  gulp.src('public/img/extension/*')
-    .pipe(gulp.dest('extension/source/img'))
-})
-gulp.task('manifest-models', function(){
-  gulp.src('public/models/*')
-    .pipe(gulp.dest('extension/source/models'))
-})
-
- 
-gulp.task('manifest-views', function buildHTML() {
-  return gulp.src('views/extension/*')
-  .pipe(pug())
-  .pipe(gulp.dest('extension/source/views'))
-});
 
 gulp.task('mobile-scripts', function(){
   gulp.src('source/js/mobile/*.js')
