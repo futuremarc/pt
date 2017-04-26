@@ -1,0 +1,1 @@
+this.Templates=this.Templates||{},this.Templates.extension=this.Templates.extension||{},this.Templates.extension.createCard=Handlebars.template({compiler:[7,">= 4.0.0"],main:function(e,t,s,a,i){return""},useData:!0});

@@ -31,17 +31,5 @@ var postSchema = new Schema({
 
 })
 
-tagSchema.methods.saveInScene = function(sceneId, cb) {
 
-  var self = this
-
-  return Scene.findByIdAndUpdate(sceneId, {
-    $push: {
-      tags: self._id
-    }
-  }, cb)
-
-}
-
-
-module.exports = tagSchema
+module.exports = postSchema
