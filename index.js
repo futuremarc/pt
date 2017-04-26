@@ -7,6 +7,7 @@ var path = require('path')
 var favicon = require('serve-favicon')
 var bodyParser = require('body-parser')
 var fs = require('fs')
+var passport = require('passport')
 var io = require('socket.io')(5050, {
   path: '/socket'
 })
@@ -20,10 +21,10 @@ if (app.get('env') === 'development') {
 app.set('views', path.join(__dirname, 'views'))
 app.set('view engine', 'pug')
 
-app.use(bodyParser.json());
+app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({
   extended: true
-}));
+}))
 
 app.use(express.static(path.join(__dirname, 'public')))
 app.use('/bower_components', express.static(path.join(__dirname, 'bower_components')))
@@ -43,9 +44,12 @@ db.on('open', () => {
 })
 
 var authRoutes = require('routes/auth/routes')(passport)
-var apiAuthRoutes = require('routes/api/auth')(passport);
-app.use('/', authRoutes);
-app.use('/api', apiAuthRoutes);
+var apiAuthRoutes = require('routes/api/auth')(passport)
+var webMainRoutes = require('routes/web/main')();
+
+app.use('/', webMainRoutes);
+app.use('/', authRoutes)
+app.use('/api', apiAuthRoutes)
 
 var landingSockets = require('sockets/landing/sockets')(io)
 var mobileSockets = require('sockets/mobile/sockets')(io)
