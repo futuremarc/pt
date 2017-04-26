@@ -1,0 +1,10 @@
+
+#avatarContainer {
+	box-sizing: border-box;
+	height: 75px;
+    left: 0;
+    margin: 0;
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+}

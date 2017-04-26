@@ -11,6 +11,7 @@ var uglify = require('gulp-uglify')
 var declare = require('gulp-declare')
 var handlebars = require('gulp-handlebars')
 var autoprefix = require('gulp-autoprefixer')
+var pug = require('gulp-pug');
 
 var express = require('express');
 var app = express();
@@ -73,6 +74,26 @@ gulp.task('extension-scripts', function(){
     .pipe(concat('extension.js'))
     .pipe(gulp.dest('public/js/local/extension/'))
 })
+
+gulp.task('manifest-scripts', function(){
+  gulp.src('source/js/extension/*.js')
+    .pipe(gulp.dest('extension/source/js/local/'))
+})
+gulp.task('manifest-imgs', function(){
+  gulp.src('public/img/extension/*')
+    .pipe(gulp.dest('extension/source/img'))
+})
+gulp.task('manifest-models', function(){
+  gulp.src('public/models/*')
+    .pipe(gulp.dest('extension/source/models'))
+})
+
+ 
+gulp.task('manifest-views', function buildHTML() {
+  return gulp.src('views/extension/*')
+  .pipe(pug())
+  .pipe(gulp.dest('extension/source/views'))
+});
 
 gulp.task('mobile-scripts', function(){
   gulp.src('source/js/mobile/*.js')

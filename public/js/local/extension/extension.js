@@ -60,7 +60,7 @@ function stop(e) {
 function init() {
   clock = new THREE.Clock();
   scene = new THREE.Scene();
-  container = document.getElementById('container');
+  container = document.getElementById('avatarContainer');
   renderer = new THREE.WebGLRenderer({
     antialias: true,
     alpha: true
@@ -156,4 +156,4 @@ function render() {
   renderer.render(scene, camera);
 }
 
-init();
+init()

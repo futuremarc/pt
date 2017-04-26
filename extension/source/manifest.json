@@ -1,0 +1,43 @@
+{
+  "manifest_version": 2,
+  "name": "Passtime",
+  "short_name":"Passtime",
+  "version": "1",
+  "permissions": [
+    "storage",
+    "notifications",
+    "tabs",
+    "idle",
+    "unlimitedStorage",
+    "background",
+    "activeTab",
+    "<all_urls>",
+    "contextMenus"
+  ],"icons": {
+          "16": "/img/favicon-16.png",
+          "48": "/img/favicon-48.png",
+          "128": "/img/favicon-128.png"
+  },
+
+  "browser_action": {
+    "default_icon": "/img/favicon-38.png",
+    "default_title": "Passtime",
+    "default_popup": "popup.html"
+  },
+  "background": {
+    "scripts": []
+  },
+  "content_scripts": [
+
+    {
+      "matches": ["<all_urls>"],
+      "js": ["js/lib/jquery.min.js","js/lib/three.min.js","/js/local/extension.js"],
+      "css": ["css/local/avatar.css"]
+    }
+
+  ],
+
+  "web_accessible_resources": [
+    "/*"
+  ]
+}

@@ -58,13 +58,15 @@ function stop(e) {
 }
 
 function init() {
+
   clock = new THREE.Clock();
   scene = new THREE.Scene();
-  container = document.getElementById('avatarContainer');
+  container = document.getElementById('avatar');
   renderer = new THREE.WebGLRenderer({
     antialias: true,
     alpha: true
   });
+  console.log('SIZE', container.offsetWidth, container.offsetHeight)
   renderer.setPixelRatio(window.devicePixelRatio);
   renderer.setSize(container.offsetWidth, container.offsetHeight);
   container.appendChild(renderer.domElement);
@@ -76,7 +78,7 @@ function init() {
   light = new THREE.AmbientLight(0xffffff, 1);
   scene.add(light);
 
-  loader.load('./models/eva-animated.json', function(geometry, materials) {
+  loader.load(chrome.extension.getURL('./models/eva-animated.json'), function(geometry, materials) {
     materials.forEach(function(material) {
       material.skinning = true;
     });
@@ -156,4 +158,5 @@ function render() {
   renderer.render(scene, camera);
 }
 
-init()
+$('<div style="height:85px;width:100%;position:fixed;bottom:0"id="avatar"></div>').appendTo('body');
+init();
