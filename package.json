@@ -17,6 +17,7 @@
   },
   "homepage": "https://github.com/futuremarc/pt#readme",
   "dependencies": {
+    "app-module-path": "^2.2.0",
     "express": "^4.15.2",
     "mongoose": "^4.9.6",
     "socket.io": "^1.7.3"
