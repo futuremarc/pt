@@ -19,15 +19,19 @@ mongoose.connect(config.mongodb)
 const db = mongoose.connection
 
 db.on('error', (err) => {
-  console.log('connection error: ', err)
+  console.log('db connection error: ', err)
 })
 
 db.on('open', () => {
-  console.log('connected to database')
+  console.log('connected to db')
 })
 
-const sockets = require('sockets/socket')(io)
+const mainSockets = require('sockets/main/sockets')(io)
+const mobileSockets = require('sockets/mobile/sockets')(io)
+const extSockets = require('sockets/extension/sockets')(io)
 
 const server = http.listen(8080, function() {
   console.log('listening on', this.address().port)
 });
+
+
