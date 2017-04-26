@@ -53,7 +53,6 @@ app.use('/api', apiAuthRoutes)
 
 var landingSockets = require('sockets/landing/sockets')(io)
 var mobileSockets = require('sockets/mobile/sockets')(io)
-var extSockets = require('sockets/extension/sockets')(io)
 
 var server = http.listen(8080, function() {
   console.log('listening on', this.address().port)
