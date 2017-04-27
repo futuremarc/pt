@@ -49,7 +49,7 @@ $("body").on('submit', '#pt-auth-form', function(e) {
       if (data.status === 'success') {
 
         errorMessage.html(data.message + ' ' + data.data.name + '!')
-        storeCharacterLocal(data.data)
+        putCharacterLocal(data.data)
 
       } else {
         errorMessage.html(data.message)
@@ -62,13 +62,29 @@ $("body").on('submit', '#pt-auth-form', function(e) {
 })
 
 
-function storeCharacterLocal(data) {
+function putCharacterLocal(data) {
 
   chrome.storage.sync.set({
     'pt-user': data
   })
 
 }
+
+function putCharacterRemote(data) {
+
+  var id = data._id
+
+  $.ajax({
+    method: 'PUT',
+    url: 'http://localhost:8080/api/user/' + id,
+    data: data,
+    success: function(data) {
+      console.log(data)
+    }
+  })
+
+}
+
 
 function getCharacterLocal() {
 
@@ -161,12 +177,27 @@ function init(data) {
     camera.updateMatrix();
 
     document.addEventListener('keydown', walk, false);
-    document.addEventListener('keyup', stop, false);
+    document.addEventListener('keyup', stopWalk, false);
+    window.addEventListener('focus', getAndUpdateCharacterFromLocal, false);
     //window.addEventListener('mousemove', detectHover, false);
 
     animate();
     action.idle.play();
+
   });
+}
+
+function getAndUpdateCharacterFromLocal() {
+  chrome.storage.sync.get('pt-user', function(data) {
+
+    var data = data['pt-user']
+    if (!data) return
+
+    var pos = data.position
+    var rot = data.rotation
+    character.position.set(pos.x, pos.y, pos.z)
+    character.rotation.set(rot.x, rot.y, rot.z);
+  })
 }
 
 function fadeAction(name) {
@@ -222,7 +253,7 @@ function walk(e) {
 
 }
 
-function stop(e) {
+function stopWalk(e) {
   var keyCode = e.keyCode;
 
   if (keyCode !== 39 && keyCode !== 37) return
@@ -249,7 +280,8 @@ function stop(e) {
   character.data.position = pos
   character.data.rotation = rot
 
-  storeCharacterLocal(character.data)
+  putCharacterLocal(character.data)
+  putCharacterRemote(character.data)
 
 }
 

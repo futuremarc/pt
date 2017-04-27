@@ -6,6 +6,7 @@ var userSchema = new Schema({
   createdAt: Date,
   name: {
     required: true,
+    unique: true,
     type: String
   },
   email: {
@@ -20,21 +21,31 @@ var userSchema = new Schema({
     required: true,
     type: String
   },
-  friends: [{
+  followers: [{
     user: {
       type: Schema.Types.ObjectId,
       ref: 'User'
     },
-    messages: [String],
-    subscriptions: [String]
+    subscriptions: [{
+      type: Schema.Types.ObjectId,
+      ref: 'Subscription'
+    }],
+    isFriend: Boolean
+  }],
+  friendRequests: [{
+    type: Schema.Types.ObjectId,
+    ref: 'User'
   }],
   following: [{
     user: {
       type: Schema.Types.ObjectId,
       ref: 'User'
     },
-    messages: [String],
-    subscriptions: [String]
+    subscriptions: [{
+      type: Schema.Types.ObjectId,
+      ref: 'Subscription'
+    }],
+    isFriend: Boolean
   }],
   position: {
     x: Number,
@@ -50,7 +61,10 @@ var userSchema = new Schema({
     type: Schema.Types.ObjectId,
     ref: 'Post'
   }],
-  subscriptions: [String],
+  subscriptions: [{
+    type: Schema.Types.ObjectId,
+    ref: 'Subscription'
+  }],
   isLive: {
     type: Boolean,
     default: true
@@ -63,10 +77,9 @@ var userSchema = new Schema({
   resetPasswordExpires: Date
 })
 
-// METHODS
 
-userSchema.pre('save', function(next) {
-  // called on every save just before the object is saved
+userSchema.pre('save', function(next) { // called on every save just before the object is saved
+
   var currentDate = new Date();
   var self = this
   var SALT_FACTOR = 5
@@ -97,7 +110,6 @@ userSchema.pre('save', function(next) {
 userSchema.methods.comparePassword = function(candidatePassword, cb) {
 
   bcrypt.compare(candidatePassword, this.password, function(err, isMatch) {
-
     if (err) return cb(err);
     cb(null, isMatch);
   });

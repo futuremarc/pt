@@ -10,8 +10,13 @@ module.exports = function(passport) {
 	}, function(req, email, password, done) {
 
 		findOrCreateUser = function() {
+
 			User.findOne({
-				'email': email
+				$or: [{
+					email: req.body.email
+				}, {
+					name: req.body.name
+				}]
 			}, function(err, user) {
 				if (err) {
 					console.log("Error in signup")
@@ -21,29 +26,29 @@ module.exports = function(passport) {
 				if (user) {
 					console.log('User already exists')
 					return done(null, false, {
-							message: 'User already exists'
-						})
+						message: 'User already exists'
+					})
 				} else {
 					var newUser = new User();
 
 					//validate name, email and pw
-					if (!req.body.name){
+					if (!req.body.name) {
 						return done(null, false, {
 							message: 'Please choose a name'
 						})
-					}else if (!req.body.email){
+					} else if (!req.body.email) {
 						return done(null, false, {
 							message: 'Please enter your email'
 						})
 					}
 
-					newUser.email = email;
-					newUser.password = password;
+					newUser.email = req.body.email;
+					newUser.password = req.body.password;
 					newUser.name = req.body.name;
 					newUser.position = req.body.position;
 					newUser.rotation = req.body.rotation;
 
-					if (validatePassword(password)) {
+					if (validatePassword(req.body.password)) {
 
 						newUser.save(function(err) {
 							if (err) {

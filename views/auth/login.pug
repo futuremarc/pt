@@ -1,0 +1,22 @@
+extends ../landing/layout
+
+block css
+
+block content
+
+  form(id='pt-auth-form', data-name='login')
+
+    div(class='error-message')
+      h3 &nbsp;
+    br
+    div(id='auth-email-parent')
+      input(type='email', class='input-lg auth-email form-control', name='email', placeholder='Email', autocomplete='off')
+    br
+
+    div(id='auth-password-parent')
+      input(type='password', class='input-lg auth-password form-control', name='password', placeholder='Password')
+    br
+   
+    input(type='submit', class='btn btn-lg btn-block btn-custom', value='Login')
+
+block javascript

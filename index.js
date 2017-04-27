@@ -67,11 +67,13 @@ db.on('open', () => {
 
 var authRoutes = require('routes/auth/routes')(passport)
 var apiAuthRoutes = require('routes/api/auth')(passport)
+var apiUserRoutes = require('routes/api/user')()
 var webMainRoutes = require('routes/web/main')();
 
 app.use('/', webMainRoutes);
 app.use('/', authRoutes)
 app.use('/api', apiAuthRoutes)
+app.use('/api', apiUserRoutes)
 
 var landingSockets = require('sockets/landing/sockets')(io)
 var mobileSockets = require('sockets/mobile/sockets')(io)

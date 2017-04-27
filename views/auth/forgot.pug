@@ -1,0 +1,18 @@
+extends ../landing/layout
+
+block css
+
+block content
+
+  form(id='pt-auth-form', data-name='forgot')
+
+    div(class='error-message')
+      h3 &nbsp;
+    br
+    div(id='auth-email-parent')
+      input(type='email', class='input-lg auth-email form-control', name='email', placeholder='Email', autocomplete='off')
+    br
+   
+    input(type='submit', class='btn btn-lg btn-block btn-custom', value='I forgot my password')
+
+block javascript

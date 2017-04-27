@@ -34,8 +34,14 @@ gulp.task('watch', function(){
 
 /** run before deployment **/
 gulp.task('socket-url-replace', function(){
-  gulp.src(['public/js/local/dashboard/dashboard.js','public/js/local/stream/modules.js'],{base: "./"})
+  gulp.src(['public/js/local/*','extension/source/*'],{base: "./"})
     .pipe(replace('http://localhost:5050',config.url))
+    .pipe(gulp.dest("./"))
+})
+
+gulp.task('localhost-url-replace', function(){
+  gulp.src(['public/js/local/*','extension/source/*'],{base: "./"})
+    .pipe(replace('http://localhost:8080',config.url))
     .pipe(gulp.dest("./"))
 })
 
