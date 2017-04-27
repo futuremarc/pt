@@ -25,14 +25,14 @@
     "default_popup": "popup.html"
   },
   "background": {
-    "scripts": []
+    "scripts": ["/js/local/background.js"]
   },
   "content_scripts": [
 
     {
       "matches": ["<all_urls>"],
-      "js": ["js/lib/jquery.min.js","js/lib/three.min.js","/js/local/extension.js"],
-      "css": ["css/local/avatar.css"]
+      "js": ["/js/lib/jquery.min.js","/js/lib/three.min.js","/js/local/content.js"],
+      "css": ["/css/local/avatar.css"]
     }
 
   ],

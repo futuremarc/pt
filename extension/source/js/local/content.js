@@ -4,17 +4,89 @@ var character;
 var light;
 var textureLoader = new THREE.TextureLoader();
 var loader = new THREE.JSONLoader();
-var action = {},
-  mixer;
+var action = {};
+var mixer;
 var activeState = 'idle';
 
 var animations = ['idle', 'walk', 'run', 'hello'];
 
-function init() {
+
+$("body").on('submit', '#pt-auth-form', function(e) {
+
+  e.preventDefault();
+
+  var errorMessage = $(".error-message h3")
+
+  var email = $('.auth-email').val();
+  var pass = $('.auth-password').val();
+  var name = $('.auth-name').val();
+  var type = $(this).data('name')
+  var pos = {
+    x: character.position.x,
+    y: character.position.y,
+    z: character.position.z
+  }
+  var rot = {
+    x: character.rotation.x,
+    y: character.rotation.y,
+    z: character.rotation.z
+  }
+
+  var data = {
+    email: email,
+    password: pass,
+    name: name,
+    position: pos,
+    rotation: rot
+  }
+
+  $.ajax({
+    method: 'POST',
+    url: '/api/' + type,
+    data: data,
+    success: function(data) {
+      console.log(data)
+      if (data.status === 'success') {
+
+        errorMessage.html(data.message + ' ' + data.data.name + '!')
+        storeCharacterLocal(data.data)
+
+      } else {
+        errorMessage.html(data.message)
+      }
+    },
+    error: function(err) {
+      console.log(err)
+    }
+  })
+})
+
+
+function storeCharacterLocal(data) {
+
+  chrome.storage.sync.set({
+    'pt-user': data
+  })
+
+}
+
+function getCharacterLocal() {
+
+  chrome.storage.sync.get('pt-user', function(data) {
+    init(data['pt-user'])
+  })
+
+}
+
+
+function init(data) {
+
+  var data = data || {}
+  console.log('init data', data)
 
   clock = new THREE.Clock();
   scene = new THREE.Scene();
-  container = document.getElementById('pt-avatar');
+  container = document.getElementById('pt-character');
   renderer = new THREE.WebGLRenderer({
     antialias: true,
     alpha: true
@@ -37,10 +109,16 @@ function init() {
     });
 
     character = new THREE.SkinnedMesh(geometry, new THREE.MeshFaceMaterial(materials));
+    character.data = data
     hoveredCharacter = undefined
 
     mixer = new THREE.AnimationMixer(character);
-    character.rotateY(Math.PI / 2);
+    var rot = data.rotation || {
+      x: 0,
+      y: Math.PI / 2,
+      z: 0
+    }
+    character.rotation.set(rot.x, rot.y, rot.z);
 
     action.hello = mixer.clipAction(geometry.animations[0]);
     action.idle = mixer.clipAction(geometry.animations[1]);
@@ -63,12 +141,18 @@ function init() {
     characters = new THREE.Object3D();
     characters.add(character)
     scene.add(characters);
-    characters.position.set(0, -1, 0)
+
+    var pos = data.position || {
+      x: 0,
+      y: -1,
+      z: 0
+    }
+    character.position.set(pos.x, pos.y, pos.z);
+    characters.position.set(-pos.x, pos.y, pos.z);
     var box = new THREE.Box3().setFromObject(characters);
     box.center(characters.position);
     characters.localToWorld(box);
     characters.position.multiplyScalar(-1);
-
 
     camera.zoom = Math.min(container.offsetWidth / (box.max.x - box.min.x),
       container.offsetHeight / (box.max.y - box.min.y)) * .8;
@@ -78,7 +162,7 @@ function init() {
     document.addEventListener('keydown', walk, false);
     document.addEventListener('keyup', stop, false);
     //window.addEventListener('mousemove', detectHover, false);
-    
+
     animate();
     action.idle.play();
   });
@@ -108,6 +192,7 @@ var key = {
 
 function walk(e) {
   var keyCode = e.keyCode;
+  if (keyCode !== 39 && keyCode !== 37 && keyCode !== 38 && keyCode !== 40) return
 
   //right arrow
   if (keyCode === 39) {
@@ -138,6 +223,9 @@ function walk(e) {
 
 function stop(e) {
   var keyCode = e.keyCode;
+
+  if (keyCode !== 39 && keyCode !== 37) return
+
   if (keyCode === 39) {
     if (key.right) fadeAction(animations[0])
     key.right = false;
@@ -145,6 +233,23 @@ function stop(e) {
     if (key.left) fadeAction(animations[0])
     key.left = false;
   }
+
+  var pos = {
+    x: character.position.x,
+    y: character.position.y,
+    z: character.position.z
+  }
+  var rot = {
+    x: character.rotation.x,
+    y: character.rotation.y,
+    z: character.rotation.z
+  }
+
+  character.data.position = pos
+  character.data.rotation = rot
+
+  storeCharacterLocal(character.data)
+
 }
 
 function detectHover(e) {
@@ -157,19 +262,19 @@ function detectHover(e) {
 
   var intersects = raycaster.intersectObjects(characters.children, true);
 
-    if (intersects.length > 0) {
-      if (!hoveredCharacter) {
-        hoveredCharacter = intersects[0].object;
-        $('body').addClass('hovering')
-      }
-
-    } else {
-      if (hoveredCharacter) {
-        hoveredCharacter = undefined;
-        $('body').removeClass('hovering')
-      }
-
+  if (intersects.length > 0) {
+    if (!hoveredCharacter) {
+      hoveredCharacter = intersects[0].object;
+      $('body').addClass('hovering')
     }
+
+  } else {
+    if (hoveredCharacter) {
+      hoveredCharacter = undefined;
+      $('body').removeClass('hovering')
+    }
+
+  }
 
 }
 
@@ -188,18 +293,35 @@ function render() {
 }
 
 
-$('<div id="pt-avatar"></div>').appendTo('body');
+$('<div id="pt-character"></div>').appendTo('body');
 
-init();
+getCharacterLocal();
 
 
 
 /********* HELPERS *********/
 
+function toScreenPosition(obj, camera) {
+
+  var width = renderer.domElement.width
+  var height = renderer.domElement.height
+  var pos = obj.position
+
+  var p = new THREE.Vector3(pos.x, pos.y, pos.z);
+  var vector = p.project(camera);
+
+  vector.x = ((vector.x + 1) / 2 * width) / 2;
+  vector.y = -(vector.y - 1) / 2 * height;
+
+  return vector;
+
+};
+
 function debounce(func, wait, immediate) {
   var timeout;
   return function() {
-    var context = this, args = arguments;
+    var context = this,
+      args = arguments;
     var later = function() {
       timeout = null;
       if (!immediate) func.apply(context, args);

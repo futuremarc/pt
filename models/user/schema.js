@@ -38,7 +38,8 @@ var userSchema = new Schema({
   }],
   position: {
     x: Number,
-    y: Number
+    y: Number,
+    z: Number
   },
   rotation: {
     x: Number,
@@ -52,7 +53,7 @@ var userSchema = new Schema({
   subscriptions: [String],
   isLive: {
     type: Boolean,
-    default: false
+    default: true
   },
   favoritePosts: [{
     type: Schema.Types.ObjectId,
