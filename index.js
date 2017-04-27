@@ -6,6 +6,8 @@ var http = require('http').Server(app)
 var path = require('path')
 var favicon = require('serve-favicon')
 var bodyParser = require('body-parser')
+var cookieParser = require('cookie-parser');
+var uuid = require('uuid');
 var fs = require('fs')
 var passport = require('passport')
 var io = require('socket.io')(5050, {
@@ -29,6 +31,26 @@ app.use(bodyParser.urlencoded({
 app.use(express.static(path.join(__dirname, 'public')))
 app.use('/bower_components', express.static(path.join(__dirname, 'bower_components')))
 app.use(favicon(path.join(__dirname, '/public/img/brand', 'favicon.ico')))
+
+ //  user authentication
+var passport = require('passport');
+var session = require('express-session');
+
+app.use(session({
+  genid: function(req) {
+    return uuid.v4();
+  },
+  secret: config.sessionSecret,
+  resave: true,
+  saveUninitialized: true
+}));
+app.use(passport.initialize());
+app.use(passport.session());
+
+
+var initPassport = require('passport/init')
+initPassport(passport);
+
 
 var mongoose = require('mongoose')
 mongoose.connect(config.mongodb)

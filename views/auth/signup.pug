@@ -1,0 +1,25 @@
+extends ../landing/layout
+
+block css
+
+block content
+  form(id='auth-form', data-name='signup')
+    div(id='auth-email-parent')
+      input(type='email', class='input-lg auth-email', name='email', placeholder='Email', autocomplete='off')
+    br
+
+    div(id='auth-name-parent')
+      input(class='input-lg auth-name', name='name', placeholder='Name', autocomplete='off')
+    br
+
+    div(id='auth-password-parent')
+      input(type='password', class='input-lg auth-password', name='password', placeholder='Password (min. 8 chars)')
+
+    br
+    div(class='error-message')
+      h3
+    br
+
+    input(type='submit', class='btn btn-lg', value='Signup')
+
+block javascript

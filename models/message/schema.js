@@ -1,27 +1,20 @@
 var mongoose = require('mongoose')
 var Schema = mongoose.Schema
 
-var postSchema = new Schema({
-  user: {
-    type: Schema.Types.ObjectId,
-    ref: 'User'
-  },
-  type: String,
+var messageSchema = new Schema({
   content: String,
-  title: String,
-  isLive: {
-    type: Boolean,
-    default: false
+  post: {
+    type: Schema.Types.ObjectId,
+    ref: 'Post'
   },
-  favorites: [{
+  to: {
     type: Schema.Types.ObjectId,
     ref: 'User'
-  }],
-  viewedBy: [{
+  },
+  from: {
     type: Schema.Types.ObjectId,
     ref: 'User'
-  }],
-  thumbnail: String,
+  },
   createdAt: {
     type: Date,
     expires: 60 * 60 * 24,
@@ -30,5 +23,4 @@ var postSchema = new Schema({
 
 })
 
-
-module.exports = postSchema
+module.exports = messageSchema

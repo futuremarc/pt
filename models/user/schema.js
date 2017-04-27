@@ -3,24 +3,22 @@ var Schema = mongoose.Schema;
 var bcrypt = require('bcrypt-nodejs');
 
 var userSchema = new Schema({
+  createdAt: Date,
   name: {
-    type: String,
-    unique: true
-  }
+    required: true,
+    type: String
+  },
   email: {
     type: String,
     required: true,
     unique: true,
     trim: true
   },
+  texture: String,
+  model: Object,
   password: {
     required: true,
     type: String
-  },
-  createdAt: Date,
-  updatedAt: {
-    type: Date,
-    default: Date.now
   },
   friends: [{
     user: {
@@ -67,10 +65,7 @@ var userSchema = new Schema({
 // METHODS
 
 userSchema.pre('save', function(next) {
-  // this function is called on every save just before the object is saved
-  // this function is called itself by mongoose
-
-  // save or update the date fields
+  // called on every save just before the object is saved
   var currentDate = new Date();
   var self = this
   var SALT_FACTOR = 5
@@ -81,7 +76,7 @@ userSchema.pre('save', function(next) {
     this.createdAt = currentDate;
   }
 
-  if (!self.isModified('password')) return next();
+  if (!this.isModified('password')) return next();
   next()
 
   bcrypt.genSalt(SALT_FACTOR, function(err, salt) {

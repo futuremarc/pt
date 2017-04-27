@@ -1,10 +1,12 @@
+#pt-avatar {
+	height:115px;
+	width:100%;
+	position:fixed;
+	bottom:0;
+	z-index:2147483647;
+	pointer-events:none;
+}
 
-#avatarContainer {
-	box-sizing: border-box;
-	height: 75px;
-    left: 0;
-    margin: 0;
-    position: absolute;
-    bottom: 0;
-    width: 100%;
+.hovering{
+	cursor: pointer;
 }

@@ -1,0 +1,86 @@
+var LocalStrategy = require('passport-local').Strategy;
+var User = require('models/user/model')
+
+module.exports = function(passport) {
+
+	passport.use('signup', new LocalStrategy({
+		passReqToCallback: true,
+		usernameField: 'email',
+
+	}, function(req, email, password, done) {
+
+		findOrCreateUser = function() {
+			User.findOne({
+				'email': email
+			}, function(err, user) {
+				if (err) {
+					console.log("Error in signup")
+					return done(err)
+				}
+
+				if (user) {
+					console.log('User already exists')
+					return done(null, false, {
+							message: 'User already exists'
+						})
+				} else {
+					var newUser = new User();
+
+					//validate name, email and pw
+					if (!req.body.name){
+						return done(null, false, {
+							message: 'Please choose a name'
+						})
+					}else if (!req.body.email){
+						return done(null, false, {
+							message: 'Please enter your email'
+						})
+					}
+
+					newUser.email = email;
+					newUser.password = password;
+					newUser.name = req.body.name;
+
+					if (validatePassword(password)) {
+
+						newUser.save(function(err) {
+							if (err) {
+								console.log("Error saving user")
+								throw err
+							}
+
+							console.log("User saved successfully")
+							return done(null, newUser, {
+								message: 'Welcome'
+							})
+						})
+					} else {
+						return done(null, false, {
+							message: 'Password not valid format'
+						})
+					}
+				}
+
+			})
+		};
+
+		process.nextTick(findOrCreateUser);
+	}))
+
+}
+
+var validatePassword = function(password) {
+
+	var p = password;
+	errors = [];
+
+	if (p.length < 8) {
+		errors.push("Your password must be at least 8 characters");
+	}
+	if (errors.length > 0) {
+		return false;
+	} else {
+		return true;
+	}
+
+}
