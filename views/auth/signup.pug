@@ -20,34 +20,8 @@ block content
       input(type='password', class='input-lg auth-password form-control', name='password', placeholder='Password (min. 8 chars)')
     br
 
-    div(id="#auth-subs-container" style="display:none")
-      h4 What do you want to share with your friends?
+    div(id="auth-subs-container")
 
-      ul(id="#auth-subs")
-        li
-          label
-            input(type='checkbox')
-            |  SoundCloud
-        
-        li
-          label
-            input(type='checkbox')
-            |  Spotify
-        
-        li
-          label
-            input(type='checkbox')
-            |  YouTube
-        
-        li
-          label
-            input(type='checkbox')
-            |  Wikipedia
-        
-        li
-          label
-            input(type='checkbox')
-            |  NY Times
     br
  
     input(type='submit', class='btn btn-lg btn-block btn-custom', value='Signup')
@@ -55,3 +29,5 @@ block content
     h5 Passtime will never share, look at, or collect any other information and will never operate in incognito (private) browsing mode. Privacy settings can always be adjusted in the settings menu. All content expires in 24 hours.
 
 block javascript
+  script.
+    subscriptions='!{subscriptions}';

@@ -26,7 +26,7 @@ gulp.task('default', ['watch']);
 
 gulp.task('watch', function(){
   gulp.watch('source/scss/*.scss', ['build-css'])
-  gulp.watch('views/handlebars/**/*.handlebars', ['precompile'])
+  gulp.watch('views/handlebars/*/*.handlebars', ['precompile'])
   gulp.watch('source/js/auth/*.js',['auth-scripts'])
   gulp.watch('source/js/landing/*.js', ['landing-scripts'])
   gulp.watch('source/js/mobile/*.js', ['mobile-scripts'])

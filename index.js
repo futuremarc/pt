@@ -32,7 +32,7 @@ app.use(express.static(path.join(__dirname, 'public')))
 app.use('/bower_components', express.static(path.join(__dirname, 'bower_components')))
 app.use(favicon(path.join(__dirname, '/public/img/brand', 'favicon.ico')))
 
- //  user authentication
+//  user authentication
 var passport = require('passport');
 var session = require('express-session');
 
@@ -44,13 +44,12 @@ app.use(session({
   resave: true,
   saveUninitialized: true
 }));
+
 app.use(passport.initialize());
 app.use(passport.session());
 
-
 var initPassport = require('passport/init')
 initPassport(passport);
-
 
 var mongoose = require('mongoose')
 mongoose.connect(config.mongodb)
@@ -65,10 +64,12 @@ db.on('open', () => {
   console.log('connected to db')
 })
 
+var subscriptions = require('models/subscription/init')()
+
 var authRoutes = require('routes/auth/routes')(passport)
 var apiAuthRoutes = require('routes/api/auth')(passport)
 var apiUserRoutes = require('routes/api/user')()
-var webMainRoutes = require('routes/web/main')();
+var webMainRoutes = require('routes/web/main')(subscriptions);
 
 app.use('/', webMainRoutes);
 app.use('/', authRoutes)
@@ -81,5 +82,3 @@ var mobileSockets = require('sockets/mobile/sockets')(io)
 var server = http.listen(8080, function() {
   console.log('listening on', this.address().port)
 })
-
-

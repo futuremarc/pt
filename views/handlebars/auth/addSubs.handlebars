@@ -1,0 +1,15 @@
+<div>
+  <h4>What do you want to share with your friends?</h4>
+  <ul>
+    {{#each this}}
+      <li>
+        <div class="checkbox">
+          <label>
+            <input type="checkbox" data-id={{_id}} data-title="{{title}}" value="">
+            {{title}}
+          </label>
+        </div>
+      </li>
+    {{/each}}
+  </ul>
+</div>

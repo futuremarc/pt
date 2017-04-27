@@ -1,7 +1,7 @@
 var express = require('express');
 var router = express.Router();
 
-module.exports = function() {
+module.exports = function(subscriptions) {
 
   router.get('/', function(req, res, next) {
     res.render('landing/index.pug');
@@ -12,7 +12,11 @@ module.exports = function() {
   })
 
   router.get('/signup', function(req, res, next) {
-    res.render('auth/signup.pug')
+    
+    var subs = JSON.stringify(subscriptions)
+    res.render('auth/signup.pug', {
+      subscriptions: subs
+    })
   })
 
   router.get('/friend', function(req, res, next) {
