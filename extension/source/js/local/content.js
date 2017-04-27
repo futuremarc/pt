@@ -95,6 +95,7 @@ function init(data) {
   renderer.setPixelRatio(window.devicePixelRatio);
   renderer.setSize(container.offsetWidth, container.offsetHeight);
   container.appendChild(renderer.domElement);
+  $(renderer.domElement).addClass('override-page')
   camera = new THREE.OrthographicCamera(container.offsetWidth / -2, container.offsetWidth / 2, container.offsetHeight / 2, container.offsetHeight / -2, .1, 1000);
   camera.position.set(0, 1.2, 2)
   listener = new THREE.AudioListener();
@@ -293,7 +294,7 @@ function render() {
 }
 
 
-$('<div id="pt-character"></div>').appendTo('body');
+$('<div id="pt-character" class="override-page"></div>').appendTo('body');
 
 getCharacterLocal();
 
