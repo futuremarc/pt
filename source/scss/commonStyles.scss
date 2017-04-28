@@ -1,4 +1,6 @@
 .btn-custom {
-	background: skyblue;
-	color: white;
+	background: #7ec0ee;
+	&:hover{
+		background-color: #7ed1ff;
+	}
 }

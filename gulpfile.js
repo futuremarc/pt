@@ -64,7 +64,6 @@ gulp.task('build-css', function(){
 
 gulp.task('auth-scripts', function(){
   gulp.src('source/js/auth/*.js')
-    .pipe(concat('login.js'))
     .pipe(gulp.dest('public/js/local/auth/'))
 })
 
@@ -98,7 +97,3 @@ gulp.task('precompile', function(){
     .pipe(uglify())
     .pipe(gulp.dest('public/js/local/templates/'))
 })
-
-
-// for handlebars template precompilation
-//handlebars -m views/handlebars/> public/js/local/templates/templates.js

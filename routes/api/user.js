@@ -12,63 +12,13 @@ if (app.get('env') === 'development') {
 
 module.exports = function(passport) {
 
-  router.route('/user/:id')
-    .put(function(req, res) {
-      User
-        .findById(req.params.id)
-        .exec(function(err, user) {
-          if (err) {
-            return res.json({
-              status: "error",
-              data: null,
-              message: "Error updating user"
-            })
-          }
-
-          for (var prop in req.body) {
-            user[prop] = req.body[prop]
-          }
-
-          user.save(function(err) {
-            return res.json({
-              status: "success",
-              data: user,
-              message: "User updated"
-            })
-          })
-        })
-    })
-    .get(function(req, res) {
-      User
-        .findOne({
-          name: req.body.name
-        })
-        .exec(function(err, user) {
-          if (err) {
-            return res.json({
-              status: "error",
-              data: null,
-              message: "Error finding user"
-            })
-          }
-
-          return res.json({
-            status: "success",
-            data: user,
-            message: "User found"
-          })
-        })
-    })
-
-
-  router.route('/friend/:id')
-    .put(function(req, res) {
-      var friendId = req.params.id
+  router.route('/user/friend/:name')
+    .post(function(req, res) {
+      var friendName = req.params.name
       var userId = req.body.userId
 
       User
-        .findByIdAndUpdate(friendId, 
-        {
+        .findOneAndUpdate(friendName, {
           $addToSet: {
             friendRequests: userId
           }
@@ -89,16 +39,166 @@ module.exports = function(passport) {
           })
         })
     })
-
-  router.route('/follow/:id')
     .put(function(req, res) {
+
+      var friendId = req.params.id
+      var userId = req.body.userId
+
+      User
+        .findByIdAndUpdate(friendId, {
+          $pull: {
+            friendRequests: userId
+          }
+        })
+        .exec(function(err, user) {
+          if (err) {
+            return res.json({
+              status: "error",
+              data: null,
+              message: "Error deleting friend request"
+            })
+          }
+
+          var data = {
+            user: friendId,
+            isFriend: true
+          }
+
+          User
+            .findByIdAndUpdate(userId, {
+              $addToSet: {
+                following: data
+              }
+            })
+            .exec(function(err, user) {
+              if (err) {
+                return res.json({
+                  status: "error",
+                  data: null,
+                  message: "Error adding friend to user"
+                })
+              }
+
+              return res.json({
+                status: "success",
+                data: user,
+                message: "Added friend to user"
+              })
+            })
+
+
+          var data = {
+            user: userId,
+            isFriend: true
+          }
+
+          User
+            .findByIdAndUpdate(friendId, {
+              $addToSet: {
+                following: data
+              }
+            })
+            .exec(function(err, user) {
+              if (err) {
+                return res.json({
+                  status: "error",
+                  data: null,
+                  message: "Error adding user to friend's friends"
+                })
+              }
+
+              return res.json({
+                status: "success",
+                data: user,
+                message: "Added user to friend's friends"
+              })
+            })
+
+        })
+    })
+    .delete(function(req, res) {
+      var friendId = req.params.id
+      var userId = req.body.userId
+
+      User
+        .findByIdAndUpdate(userId, {
+          $pull: {
+            following: user.friendId
+          }
+        })
+        .exec(function(err, user) {
+          if (err) {
+            return res.json({
+              status: "error",
+              data: null,
+              message: "Error deleting friend from user"
+            })
+          }
+
+          return res.json({
+            status: "success",
+            data: user,
+            message: "Friend removed from user"
+          })
+
+        })
+      User
+        .findByIdAndUpdate(friendId, {
+          $pull: {
+            following: user.userId
+          }
+        })
+        .exec(function(err, user) {
+          if (err) {
+            return res.json({
+              status: "error",
+              data: null,
+              message: "Error deleting user from friend"
+            })
+          }
+
+          return res.json({
+            status: "success",
+            data: user,
+            message: "User removed from friend"
+          })
+
+        })
+
+    })
+    .get(function(req, res) {
+      User
+        .findById(req.params.id)
+        .populate({
+          path: 'followers',
+          select: 'user subscriptions isFriend'
+        })
+        .exec(function(err, user) {
+          if (err) {
+            return res.json({
+              status: "error",
+              data: null,
+              message: "Error finding friends"
+            })
+          }
+
+          return res.json({
+            status: "success",
+            data: user.followers,
+            message: "User found"
+          })
+        })
+    })
+
+  router.route('/user/follow/:id')
+    .post(function(req, res) {
       var subs = req.body.subscriptions
       var userId = req.body.userId
       var followId = req.params.id
 
       var data = {
-        user : followId,
-        subscriptions : subs
+        user: followId,
+        subscriptions: subs
       }
 
       User
@@ -123,6 +223,75 @@ module.exports = function(passport) {
           })
         })
     })
+    .put(function(req, res) {
+
+    })
+    .delete(function(req, res) {
+
+    })
+    .get(function(req, res) {
+
+    })
+
+  router.route('/user/:name')
+    .put(function(req, res) {
+      User
+        .findOne({
+          name: req.params.name
+        })
+        .exec(function(err, user) {
+          if (err) {
+            return res.json({
+              status: "error",
+              data: null,
+              message: "Error updating user"
+            })
+          }
+
+          for (var prop in req.body) {
+            user[prop] = req.body[prop]
+          }
+
+          user.save(function(err) {
+            return res.json({
+              status: "success",
+              data: user,
+              message: "Updated user"
+            })
+          })
+        })
+    })
+    .get(function(req, res) {
+      User
+        .findOne({
+          name: req.params.name
+        })
+        .exec(function(err, user) {
+          if (err) {
+            return res.json({
+              status: "error",
+              data: null,
+              message: "Error finding user"
+            })
+          }
+
+          if (user) {
+            return res.json({
+              status: "success",
+              data: user,
+              message: "Found user"
+            })
+          } else {
+
+            return res.json({
+              status: "not found",
+              data: user,
+              message: "Couldn't find user"
+            })
+          }
+        })
+    })
+
 
 
   return router

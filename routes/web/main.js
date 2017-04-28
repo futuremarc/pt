@@ -12,15 +12,20 @@ module.exports = function(subscriptions) {
   })
 
   router.get('/signup', function(req, res, next) {
-    
+
     var subs = JSON.stringify(subscriptions)
+  
     res.render('auth/signup.pug', {
       subscriptions: subs
     })
   })
 
-  router.get('/friend', function(req, res, next) {
-    res.render('auth/friend.pug')
+  router.get('/logout', function(req, res, next) {
+    res.render('auth/logout.pug')
+  })
+
+  router.get('/follow', function(req, res, next) {
+    res.render('auth/follow.pug')
   })
 
   router.get('/forgot', function(req, res) {

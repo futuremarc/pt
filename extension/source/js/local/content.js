@@ -42,14 +42,16 @@ $("body").on('submit', '#pt-auth-form', function(e) {
 
   $.ajax({
     method: 'POST',
-    url: '/api/' + type,
+    url: 'http://localhost:8080/api/' + type,
     data: data,
     success: function(data) {
       console.log(data)
       if (data.status === 'success') {
 
-        errorMessage.html(data.message + ' ' + data.data.name + '!')
+        errorMessage.html(data.message + ' <strong>' + data.data.name + '</strong>!')
+        character.data = data.data
         putCharacterLocal(data.data)
+        updateCharacter(data.data)
 
       } else {
         errorMessage.html(data.message)
@@ -60,6 +62,97 @@ $("body").on('submit', '#pt-auth-form', function(e) {
     }
   })
 })
+
+$("body").on('submit', '#pt-follow-form', function(e) {
+
+  e.preventDefault();
+
+  var msg = $(".error-message h3")
+
+  var name = $('.auth-name').val();
+  var userId = character.data._id
+
+
+  var data = {
+    userId: userId
+  }
+
+  $.ajax({
+    method: 'POST',
+    url: 'http://localhost:8080/api/user/friend/' + name,
+    data: data,
+    success: function(data) {
+      console.log(data)
+      if (data.status === 'success') {
+
+        msg.html(data.message + ' to <strong>' + data.data.name + '</strong>!')
+
+      } else {
+        msg.html(data.message)
+      }
+    },
+    error: function(err) {
+      console.log(err)
+    }
+  })
+})
+
+var timeout = null;
+
+$('body').on('keyup', '#pt-follow-form', function() {
+
+  var msg = $(".error-message h3")
+  var name = $(this).find('input').val()
+
+  msg.html('searching...')
+
+  $.ajax({
+    method: 'GET',
+    url: 'http://localhost:8080/api/user/' + name,
+    success: function(data) {
+      console.log(data)
+      if (data.status === 'success') {
+        clearTimeout(timeout)
+        if (data.data) msg.html(data.message + ' <strong>' + data.data.name + '</strong>!')
+        changeSubmitButton(false)
+
+
+      } else if (data.status === 'not found') {
+        changeSubmitButton(true)
+        timeout = setTimeout(function() {
+          msg.html('&nbsp;')
+        }, 1000)
+      } else if (data.status === 'error') {
+        msg.html(data.message)
+        changeSubmitButton(true)
+      }
+    },
+    error: function(err) {
+      console.log(err)
+    }
+  })
+
+})
+
+$('body').on('click', '#logout', function() {
+  chrome.storage.sync.set({
+    'pt-user': {}
+  },function(){
+    window.location.href = 'http://localhost:8080/logout'
+  })
+})
+
+function changeSubmitButton(disable, replaceText, id) {
+  if (!id) var btn = $("input[type='submit']")
+  else var btn = $(id)
+
+  if (replaceText) {
+    if (!btn.val()) btn.html(replaceText)
+    else btn.val(replaceText)
+  }
+
+  btn.attr('disabled', disable)
+}
 
 
 function putCharacterLocal(data) {
@@ -72,11 +165,13 @@ function putCharacterLocal(data) {
 
 function putCharacterRemote(data) {
 
-  var id = data._id
+  if (!data.name) return
+
+  var name = data.name
 
   $.ajax({
     method: 'PUT',
-    url: 'http://localhost:8080/api/user/' + id,
+    url: 'http://localhost:8080/api/user/' + name,
     data: data,
     success: function(data) {
       console.log(data)
@@ -188,6 +283,8 @@ function init(data) {
 }
 
 function getAndUpdateCharacterFromLocal() {
+  if (!character.data._id) return
+
   chrome.storage.sync.get('pt-user', function(data) {
 
     var data = data['pt-user']
@@ -198,6 +295,16 @@ function getAndUpdateCharacterFromLocal() {
     character.position.set(pos.x, pos.y, pos.z)
     character.rotation.set(rot.x, rot.y, rot.z);
   })
+}
+
+function updateCharacter(data) {
+
+    var pos = data.position
+    var rot = data.rotation
+    character.position.set(pos.x, pos.y, pos.z)
+    character.rotation.set(rot.x, rot.y, rot.z);
+    character.data = data
+
 }
 
 function fadeAction(name) {

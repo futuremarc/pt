@@ -1,0 +1,10 @@
+h3{
+	font-weight: 200 !important;
+}
+
+.btn-block{
+	color:white !important;
+	&:hover, &:focus, &:active{
+		color:white !important;
+	}
+}
