@@ -10,7 +10,7 @@ module.exports = function(passport) {
 	}, function(req, email, password, done) {
 
 		findOrCreateUser = function() {
-
+			
 			User.findOne({
 				$or: [{
 					email: req.body.email

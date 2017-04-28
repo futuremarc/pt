@@ -7,7 +7,8 @@ module.exports = function(passport){
 		passReqToCallback : true,
 		usernameField: 'email'
 	}, function(req, email, password, done){
-		User.findOne({'email':email}, function(err, user){
+
+		User.findOne({'email': email}, function(err, user){
 			if(err){
 				return done(err)
 			}
@@ -19,7 +20,7 @@ module.exports = function(passport){
 
 			user.comparePassword(password, function(err, isMatch){
 				if(isMatch){
-					return done(null, user, {message: 'Welcome back'})
+					return done(null, user, { message: 'Welcome back'})
 				} else {
 					return done(null, false, { message:'Incorrect password' })
 				}

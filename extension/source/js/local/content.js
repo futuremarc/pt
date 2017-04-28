@@ -109,6 +109,7 @@ $('body').on('keyup', '#pt-follow-form', function() {
   var errorMessage = $(".error-message h3")
   var name = $(this).find('input').val()
 
+  clearTimeout(timeout)
   errorMessage.html('searching...')
 
   var self = this
@@ -119,8 +120,7 @@ $('body').on('keyup', '#pt-follow-form', function() {
     success: function(data) {
       console.log(data)
       if (data.status === 'success') {
-        clearTimeout(timeout)
-        var timeout = null;
+        
         if (data.data) errorMessage.html(data.message + ' <strong>' + data.data.name + '</strong>!')
         $(self).data('id', data.data._id)
         changeSubmitButton(false)

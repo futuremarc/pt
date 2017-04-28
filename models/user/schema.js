@@ -78,7 +78,7 @@ var userSchema = new Schema({
 })
 
 
-userSchema.pre('save', function(next) { // called on every save just before the object is saved
+userSchema.pre('save', function(next) { // called before every document saved
 
   var currentDate = new Date();
   var self = this
@@ -109,7 +109,10 @@ userSchema.pre('save', function(next) { // called on every save just before the 
 
 userSchema.methods.comparePassword = function(candidatePassword, cb) {
 
+  var self = this
+
   bcrypt.compare(candidatePassword, this.password, function(err, isMatch) {
+    console.log('COMPARE PW', candidatePassword, self.password, err, isMatch)
     if (err) return cb(err);
     cb(null, isMatch);
   });
