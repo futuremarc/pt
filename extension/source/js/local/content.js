@@ -20,7 +20,8 @@ $("body").on('submit', '#pt-auth-form', function(e) {
   var email = $('.auth-email').val();
   var pass = $('.auth-password').val();
   var name = $('.auth-name').val();
-  var type = $(this).data('name')
+  var action = $(this).data('action')
+
   var pos = {
     x: character.position.x,
     y: character.position.y,
@@ -42,7 +43,7 @@ $("body").on('submit', '#pt-auth-form', function(e) {
 
   $.ajax({
     method: 'POST',
-    url: 'http://localhost:8080/api/' + type,
+    url: 'http://localhost:8080/api/' + action,
     data: data,
     success: function(data) {
       console.log(data)
@@ -67,28 +68,31 @@ $("body").on('submit', '#pt-follow-form', function(e) {
 
   e.preventDefault();
 
-  var msg = $(".error-message h3")
+  var errorMessage = $(".error-message h3")
 
   var name = $('.auth-name').val();
   var userId = character.data._id
-
+  var friendId = $(this).data('id')
 
   var data = {
-    userId: userId
+    userId : userId,
+    friendId : friendId
   }
+
+  console.log('request',data)
 
   $.ajax({
     method: 'POST',
-    url: 'http://localhost:8080/api/user/friend/' + name,
+    url: 'http://localhost:8080/api/user/friend/request/add',
     data: data,
     success: function(data) {
       console.log(data)
       if (data.status === 'success') {
 
-        msg.html(data.message + ' to <strong>' + data.data.name + '</strong>!')
+        errorMessage.html(data.message + ' to <strong>' + data.data.name + '</strong>!')
 
       } else {
-        msg.html(data.message)
+        errorMessage.html(data.message)
       }
     },
     error: function(err) {
@@ -97,14 +101,17 @@ $("body").on('submit', '#pt-follow-form', function(e) {
   })
 })
 
+
 var timeout = null;
 
 $('body').on('keyup', '#pt-follow-form', function() {
 
-  var msg = $(".error-message h3")
+  var errorMessage = $(".error-message h3")
   var name = $(this).find('input').val()
 
-  msg.html('searching...')
+  errorMessage.html('searching...')
+
+  var self = this
 
   $.ajax({
     method: 'GET',
@@ -113,17 +120,18 @@ $('body').on('keyup', '#pt-follow-form', function() {
       console.log(data)
       if (data.status === 'success') {
         clearTimeout(timeout)
-        if (data.data) msg.html(data.message + ' <strong>' + data.data.name + '</strong>!')
+        var timeout = null;
+        if (data.data) errorMessage.html(data.message + ' <strong>' + data.data.name + '</strong>!')
+        $(self).data('id', data.data._id)
         changeSubmitButton(false)
-
 
       } else if (data.status === 'not found') {
         changeSubmitButton(true)
         timeout = setTimeout(function() {
-          msg.html('&nbsp;')
+          errorMessage.html('&nbsp;')
         }, 1000)
       } else if (data.status === 'error') {
-        msg.html(data.message)
+        errorMessage.html(data.message)
         changeSubmitButton(true)
       }
     },
@@ -139,6 +147,30 @@ $('body').on('click', '#logout', function() {
     'pt-user': {}
   },function(){
     window.location.href = 'http://localhost:8080/logout'
+  })
+})
+
+$('body').on('click', '.friend-request-btn', function(e){
+
+  e.preventDefault()
+
+  var friendId = $(this).data('id')
+  var userId = character.data._id
+  var action = $(this).data('action')
+
+  var data = {
+    friendId : friendId,
+    userId : userId
+  }
+
+  console.log('data',data)
+  $.ajax({
+    method: 'PUT',
+    url: 'http://localhost:8080/api/user/friend/request/' + action,
+    data: data,
+    success: function(data) {
+      console.log(data)
+    }
   })
 })
 

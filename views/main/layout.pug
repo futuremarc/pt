@@ -2,7 +2,7 @@ html
   head
     title Passtime
     link(href='/bower_components/bootstrap/dist/css/bootstrap.min.css', rel='stylesheet')
-    link(href='/css/local/landing.css', rel='stylesheet')
+    link(href='/css/local/main.css', rel='stylesheet')
     link(href='/css/local/auth.css', rel='stylesheet')
     link(href='/css/local/commonStyles.css', rel='stylesheet')
     link(href='/css/local/bootstrapOverrides.css', rel='stylesheet')
@@ -16,6 +16,19 @@ html
     script(src='/bower_components/socket.io-client/dist/socket.io.js')
     script(src='/bower_components/handlebars/handlebars.runtime.min.js')
     script(src='/js/local/templates/templates.js')
+
+    a(href='/') Home
+    br
+    a(href='/signup') Signup
+    br
+    a(href='/login') Login
+    br
+    a(href='/follow') Add Friend
+    br
+    a(href='#' id="logout") Logout
+    br
+    div(id='name-tag') #{userName}
+    div(id="friend-requests-parent")
 
 
     block javascript

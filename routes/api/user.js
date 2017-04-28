@@ -12,13 +12,14 @@ if (app.get('env') === 'development') {
 
 module.exports = function(passport) {
 
-  router.route('/user/friend/:name')
+  router.route('/user/friend/request/:action')
     .post(function(req, res) {
-      var friendName = req.params.name
+
+      var friendId = req.body.friendId
       var userId = req.body.userId
 
       User
-        .findOneAndUpdate(friendName, {
+        .findByIdAndUpdate(friendId, {
           $addToSet: {
             friendRequests: userId
           }
@@ -41,13 +42,14 @@ module.exports = function(passport) {
     })
     .put(function(req, res) {
 
-      var friendId = req.params.id
+      var friendId = req.body.friendId
       var userId = req.body.userId
+      var action = req.params.action
 
       User
-        .findByIdAndUpdate(friendId, {
+        .findByIdAndUpdate(userId, {
           $pull: {
-            friendRequests: userId
+            friendRequests: friendId
           }
         })
         .exec(function(err, user) {
@@ -56,6 +58,14 @@ module.exports = function(passport) {
               status: "error",
               data: null,
               message: "Error deleting friend request"
+            })
+          }
+
+          if (action !== 'accept') {
+            return res.json({
+              status: "success",
+              data: user,
+              message: "Rejected friend request"
             })
           }
 
@@ -79,44 +89,44 @@ module.exports = function(passport) {
                 })
               }
 
-              return res.json({
-                status: "success",
-                data: user,
-                message: "Added friend to user"
-              })
-            })
-
-
-          var data = {
-            user: userId,
-            isFriend: true
-          }
-
-          User
-            .findByIdAndUpdate(friendId, {
-              $addToSet: {
-                following: data
+              var data = {
+                user: userId,
+                isFriend: true
               }
-            })
-            .exec(function(err, user) {
-              if (err) {
-                return res.json({
-                  status: "error",
-                  data: null,
-                  message: "Error adding user to friend's friends"
+
+              User
+                .findByIdAndUpdate(friendId, {
+                  $addToSet: {
+                    following: data
+                  }
                 })
-              }
+                .exec(function(err, user) {
+                  if (err) {
+                    return res.json({
+                      status: "error",
+                      data: null,
+                      message: "Error adding friend"
+                    })
+                  }
 
-              return res.json({
-                status: "success",
-                data: user,
-                message: "Added user to friend's friends"
-              })
+                  return res.json({
+                    status: "success",
+                    data: user,
+                    message: "Added friend"
+                  })
+                })
+
             })
 
         })
     })
-    .delete(function(req, res) {
+
+  router.route('/user/friend/:name')
+    .post(function(req, res) {
+
+    })
+
+  .delete(function(req, res) {
       var friendId = req.params.id
       var userId = req.body.userId
 
@@ -265,6 +275,10 @@ module.exports = function(passport) {
       User
         .findOne({
           name: req.params.name
+        })
+        .populate({
+          path: 'friendRequests',
+          select: 'name'
         })
         .exec(function(err, user) {
           if (err) {

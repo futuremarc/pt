@@ -1,16 +1,16 @@
-extends ../landing/layout
+extends ../main/layout
 
 block css
 
 block content
 
-  form(id='pt-auth-form', class='pt-form', data-name='login')
+  form(id='pt-auth-form', class='pt-form', data-action='login')
 
     div(class='error-message')
       h3 &nbsp;
     br
     div(id='auth-email-parent')
-      input(type='email', class='input-lg auth-email form-control', name='email', placeholder='Email', autocomplete='off')
+      input(type='email', class='input-lg auth-email form-control', name='email', placeholder='Email')
     br
 
     div(id='auth-password-parent')

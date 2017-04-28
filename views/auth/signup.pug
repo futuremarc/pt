@@ -1,16 +1,16 @@
-extends ../landing/layout
+extends ../main/layout
 
 block css
 
 block content
 
-  form(id='pt-auth-form', class='pt-form', data-name='signup')
+  form(id='pt-auth-form', class='pt-form', data-action='signup')
 
     div(class='error-message')
       h3 &nbsp;
     br
     div(id='auth-email-parent')
-      input(type='email', class='input-lg auth-email form-control', name='email', placeholder='Email', autocomplete='off')
+      input(type='email', class='input-lg auth-email form-control', name='email', placeholder='Email')
     br
 
     div(id='auth-name-parent')
@@ -29,6 +29,6 @@ block content
     h5 Passtime will never share, look at, or collect any other information and will never operate in incognito (private) browsing mode. Privacy settings can always be adjusted in the settings menu. All content expires in 24 hours.
 
 block javascript
-  script(src='/js/local/auth/signup.js')
   script.
     subscriptions='!{subscriptions}';
+  script(src='/js/local/auth/signup.js')

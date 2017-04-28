@@ -28,7 +28,7 @@ gulp.task('watch', function(){
   gulp.watch('source/scss/*.scss', ['build-css'])
   gulp.watch('views/handlebars/*/*.handlebars', ['precompile'])
   gulp.watch('source/js/auth/*.js',['auth-scripts'])
-  gulp.watch('source/js/landing/*.js', ['landing-scripts'])
+  gulp.watch('source/js/main/*.js', ['main-scripts'])
   gulp.watch('source/js/mobile/*.js', ['mobile-scripts'])
 })
 
@@ -46,7 +46,7 @@ gulp.task('localhost-url-replace', function(){
 })
 
 gulp.task('strip-minify', function(){
-  gulp.src(['public/js/local/auth/*.js','public/js/local/landing/*.js','public/js/local/mobile/*.js'],{base: "./"})
+  gulp.src(['public/js/local/auth/*.js','public/js/local/main/*.js','public/js/local/mobile/*.js'],{base: "./"})
     .pipe(stripDebug())
     .pipe(uglify())
     .pipe(gulp.dest("./"))
@@ -67,10 +67,10 @@ gulp.task('auth-scripts', function(){
     .pipe(gulp.dest('public/js/local/auth/'))
 })
 
-gulp.task('landing-scripts', function(){
-  gulp.src('source/js/landing/*.js')
-    .pipe(concat('landing.js'))
-    .pipe(gulp.dest('public/js/local/landing/'))
+gulp.task('main-scripts', function(){
+  gulp.src('source/js/main/*.js')
+    .pipe(concat('main.js'))
+    .pipe(gulp.dest('public/js/local/main/'))
 })
 
 gulp.task('mobile-scripts', function(){

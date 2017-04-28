@@ -76,7 +76,7 @@ app.use('/', authRoutes)
 app.use('/api', apiAuthRoutes)
 app.use('/api', apiUserRoutes)
 
-var landingSockets = require('sockets/landing/sockets')(io)
+var mainSockets = require('sockets/main/sockets')(io)
 var mobileSockets = require('sockets/mobile/sockets')(io)
 
 var server = http.listen(8080, function() {

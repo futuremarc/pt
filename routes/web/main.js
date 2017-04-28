@@ -1,10 +1,18 @@
 var express = require('express');
 var router = express.Router();
+var User = require('models/user/model')
 
 module.exports = function(subscriptions) {
 
   router.get('/', function(req, res, next) {
-    res.render('landing/index.pug');
+
+    if (!req.user) return res.render('main/index.pug')
+
+    return res.render('main/index.pug', {
+      loggedIn: true,
+      userName: req.user.name
+    })
+
   })
 
   router.get('/login', function(req, res, next) {
@@ -14,7 +22,7 @@ module.exports = function(subscriptions) {
   router.get('/signup', function(req, res, next) {
 
     var subs = JSON.stringify(subscriptions)
-  
+
     res.render('auth/signup.pug', {
       subscriptions: subs
     })
