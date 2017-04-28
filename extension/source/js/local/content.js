@@ -75,11 +75,9 @@ $("body").on('submit', '#pt-follow-form', function(e) {
   var friendId = $(this).data('id')
 
   var data = {
-    userId : userId,
-    friendId : friendId
+    userId: userId,
+    friendId: friendId
   }
-
-  console.log('request',data)
 
   $.ajax({
     method: 'POST',
@@ -120,7 +118,7 @@ $('body').on('keyup', '#pt-follow-form', function() {
     success: function(data) {
       console.log(data)
       if (data.status === 'success') {
-        
+
         if (data.data) errorMessage.html(data.message + ' <strong>' + data.data.name + '</strong>!')
         $(self).data('id', data.data._id)
         changeSubmitButton(false)
@@ -145,12 +143,12 @@ $('body').on('keyup', '#pt-follow-form', function() {
 $('body').on('click', '#logout', function() {
   chrome.storage.sync.set({
     'pt-user': {}
-  },function(){
+  }, function() {
     window.location.href = 'http://localhost:8080/logout'
   })
 })
 
-$('body').on('click', '.friend-request-btn', function(e){
+$('body').on('click', '.friend-request-btn', function(e) {
 
   e.preventDefault()
 
@@ -159,16 +157,21 @@ $('body').on('click', '.friend-request-btn', function(e){
   var action = $(this).data('action')
 
   var data = {
-    friendId : friendId,
-    userId : userId
+    friendId: friendId,
+    userId: userId
   }
 
-  console.log('data',data)
   $.ajax({
     method: 'PUT',
     url: 'http://localhost:8080/api/user/friend/request/' + action,
     data: data,
     success: function(data) {
+
+      console.log(data)
+      $('li[data-id="' + friendId + '"]').remove()
+
+    },
+    error: function(data) {
       console.log(data)
     }
   })
@@ -331,11 +334,11 @@ function getAndUpdateCharacterFromLocal() {
 
 function updateCharacter(data) {
 
-    var pos = data.position
-    var rot = data.rotation
-    character.position.set(pos.x, pos.y, pos.z)
-    character.rotation.set(rot.x, rot.y, rot.z);
-    character.data = data
+  var pos = data.position
+  var rot = data.rotation
+  character.position.set(pos.x, pos.y, pos.z)
+  character.rotation.set(rot.x, rot.y, rot.z);
+  character.data = data
 
 }
 

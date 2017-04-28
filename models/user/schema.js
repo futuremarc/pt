@@ -84,14 +84,11 @@ userSchema.pre('save', function(next) { // called before every document saved
   var self = this
   var SALT_FACTOR = 5
 
-  this.updatedAt = currentDate;
-
   if (!this.createdAt) {
     this.createdAt = currentDate;
   }
 
   if (!this.isModified('password')) return next();
-  next()
 
   bcrypt.genSalt(SALT_FACTOR, function(err, salt) {
     if (err) return next(err)
