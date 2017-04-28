@@ -32,8 +32,8 @@ module.exports = function(subscriptions) {
     res.render('auth/logout.pug')
   })
 
-  router.get('/follow', function(req, res, next) {
-    res.render('auth/follow.pug')
+  router.get('/friend', function(req, res, next) {
+    res.render('auth/friend.pug')
   })
 
   router.get('/forgot', function(req, res) {

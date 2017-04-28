@@ -64,7 +64,7 @@ $("body").on('submit', '#pt-auth-form', function(e) {
   })
 })
 
-$("body").on('submit', '#pt-follow-form', function(e) {
+$("body").on('submit', '#pt-friend-form', function(e) {
 
   e.preventDefault();
 
@@ -73,6 +73,7 @@ $("body").on('submit', '#pt-follow-form', function(e) {
   var name = $('.auth-name').val();
   var userId = character.data._id
   var friendId = $(this).data('id')
+  var action = $(this).data('action')
 
   var data = {
     userId: userId,
@@ -81,7 +82,7 @@ $("body").on('submit', '#pt-follow-form', function(e) {
 
   $.ajax({
     method: 'POST',
-    url: 'http://localhost:8080/api/user/friend/request/add',
+    url: 'http://localhost:8080/api/user/friend/request/' + action,
     data: data,
     success: function(data) {
       console.log(data)
@@ -102,7 +103,7 @@ $("body").on('submit', '#pt-follow-form', function(e) {
 
 var timeout = null;
 
-$('body').on('keyup', '#pt-follow-form', function() {
+$('body').on('keyup', '#pt-friend-form', function() {
 
   var errorMessage = $(".error-message h3")
   var name = $(this).find('input').val()
@@ -127,7 +128,7 @@ $('body').on('keyup', '#pt-follow-form', function() {
         changeSubmitButton(true)
         timeout = setTimeout(function() {
           errorMessage.html('&nbsp;')
-        }, 1000)
+        }, 2000)
       } else if (data.status === 'error') {
         errorMessage.html(data.message)
         changeSubmitButton(true)
@@ -241,7 +242,7 @@ function init(data) {
   renderer.setPixelRatio(window.devicePixelRatio);
   renderer.setSize(container.offsetWidth, container.offsetHeight);
   container.appendChild(renderer.domElement);
-  $(renderer.domElement).addClass('override-page')
+  $(renderer.domElement).addClass('pt-override-page')
   camera = new THREE.OrthographicCamera(container.offsetWidth / -2, container.offsetWidth / 2, container.offsetHeight / 2, container.offsetHeight / -2, .1, 1000);
   camera.position.set(0, 1.2, 2)
   listener = new THREE.AudioListener();
@@ -440,13 +441,13 @@ function detectHover(e) {
   if (intersects.length > 0) {
     if (!hoveredCharacter) {
       hoveredCharacter = intersects[0].object;
-      $('body').addClass('hovering')
+      $('body').addClass('pt-hovering')
     }
 
   } else {
     if (hoveredCharacter) {
       hoveredCharacter = undefined;
-      $('body').removeClass('hovering')
+      $('body').removeClass('pt-hovering')
     }
 
   }
@@ -468,10 +469,9 @@ function render() {
 }
 
 
-$('<div id="pt-character" class="override-page"></div>').appendTo('body');
+$('<div id="pt-character" class="pt-override-page"></div>').appendTo('body');
 
 getCharacterLocal();
-
 
 
 /********* HELPERS *********/

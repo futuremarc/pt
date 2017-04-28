@@ -21,7 +21,7 @@ var userSchema = new Schema({
     required: true,
     type: String
   },
-  followers: [{
+  friends: [{
     user: {
       type: Schema.Types.ObjectId,
       ref: 'User'
@@ -30,22 +30,14 @@ var userSchema = new Schema({
       type: Schema.Types.ObjectId,
       ref: 'Subscription'
     }],
-    isFriend: Boolean
+    isCloseFriend: {
+      type: Boolean,
+      default: true
+    }
   }],
   friendRequests: [{
     type: Schema.Types.ObjectId,
     ref: 'User'
-  }],
-  following: [{
-    user: {
-      type: Schema.Types.ObjectId,
-      ref: 'User'
-    },
-    subscriptions: [{
-      type: Schema.Types.ObjectId,
-      ref: 'Subscription'
-    }],
-    isFriend: Boolean
   }],
   position: {
     x: Number,
@@ -109,7 +101,6 @@ userSchema.methods.comparePassword = function(candidatePassword, cb) {
   var self = this
 
   bcrypt.compare(candidatePassword, this.password, function(err, isMatch) {
-    console.log('COMPARE PW', candidatePassword, self.password, err, isMatch)
     if (err) return cb(err);
     cb(null, isMatch);
   });

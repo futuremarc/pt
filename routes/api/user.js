@@ -70,14 +70,13 @@ module.exports = function(passport) {
           }
 
           var data = {
-            user: friendId,
-            isFriend: true
+            user: friendId
           }
 
           User
             .findByIdAndUpdate(userId, {
               $addToSet: {
-                following: data
+                friends: data
               }
             })
             .exec(function(err, user) {
@@ -90,14 +89,13 @@ module.exports = function(passport) {
               }
 
               var data = {
-                user: userId,
-                isFriend: true
+                user: userId
               }
 
               User
                 .findByIdAndUpdate(friendId, {
                   $addToSet: {
-                    following: data
+                    friends: data
                   }
                 })
                 .exec(function(err, user) {
@@ -105,7 +103,7 @@ module.exports = function(passport) {
                     return res.json({
                       status: "error",
                       data: null,
-                      message: "Error adding friend"
+                      message: "Error adding user to friend"
                     })
                   }
 
@@ -133,7 +131,7 @@ module.exports = function(passport) {
       User
         .findByIdAndUpdate(userId, {
           $pull: {
-            following: user.friendId
+            friends: user.friendId
           }
         })
         .exec(function(err, user) {
@@ -155,7 +153,7 @@ module.exports = function(passport) {
       User
         .findByIdAndUpdate(friendId, {
           $pull: {
-            following: user.userId
+            friends: user.userId
           }
         })
         .exec(function(err, user) {
@@ -180,8 +178,11 @@ module.exports = function(passport) {
       User
         .findById(req.params.id)
         .populate({
-          path: 'followers',
-          select: 'user subscriptions isFriend'
+          path: 'friends',
+          select: 'user subscriptions isCloseFriend'
+        }).populate({
+          path: 'user',
+          select: 'name'
         })
         .exec(function(err, user) {
           if (err) {
@@ -194,54 +195,12 @@ module.exports = function(passport) {
 
           return res.json({
             status: "success",
-            data: user.followers,
+            data: user.friends,
             message: "User found"
           })
         })
     })
 
-  router.route('/user/follow/:id')
-    .post(function(req, res) {
-      var subs = req.body.subscriptions
-      var userId = req.body.userId
-      var followId = req.params.id
-
-      var data = {
-        user: followId,
-        subscriptions: subs
-      }
-
-      User
-        .findByIdAndUpdate(userId, {
-          $addToSet: {
-            following: data
-          }
-        })
-        .exec(function(err, user) {
-          if (err) {
-            return res.json({
-              status: "error",
-              data: null,
-              message: "Error following user"
-            })
-          }
-
-          return res.json({
-            status: "success",
-            data: user,
-            message: "Following user"
-          })
-        })
-    })
-    .put(function(req, res) {
-
-    })
-    .delete(function(req, res) {
-
-    })
-    .get(function(req, res) {
-
-    })
 
   router.route('/user/:name')
     .put(function(req, res) {
@@ -278,6 +237,12 @@ module.exports = function(passport) {
         })
         .populate({
           path: 'friendRequests',
+          select: 'name'
+        }).populate({
+          path: 'friends',
+          select: 'user'
+        }).populate({
+          path: 'user',
           select: 'name'
         })
         .exec(function(err, user) {

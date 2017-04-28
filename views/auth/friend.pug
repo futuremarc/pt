@@ -4,7 +4,7 @@ block css
 
 block content
 
-  form(id='pt-follow-form', class='pt-form')
+  form(id='pt-friend-form', class='pt-form' data-action='add')
 
     div(class='error-message')
       h3 &nbsp;
@@ -16,4 +16,4 @@ block content
     input(type='submit', disabled="true", class='btn btn-lg btn-block btn-custom', value='Send request')
 
 block javascript
-  script(src='/js/local/auth/follow.js')
+  script(src='/js/local/auth/friend.js')
