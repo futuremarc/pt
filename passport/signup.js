@@ -47,6 +47,7 @@ module.exports = function(passport) {
 					newUser.name = req.body.name;
 					newUser.position = req.body.position;
 					newUser.rotation = req.body.rotation;
+					newUser.subscriptions = req.body.subscriptions;
 
 					if (validatePassword(req.body.password)) {
 

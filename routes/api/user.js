@@ -179,10 +179,10 @@ module.exports = function(passport) {
         .findById(req.params.id)
         .populate({
           path: 'friends',
-          select: 'user subscriptions isCloseFriend'
-        }).populate({
-          path: 'user',
-          select: 'name'
+          select: 'user',
+          populate: {
+            path: 'name'
+          }
         })
         .exec(function(err, user) {
           if (err) {
@@ -240,10 +240,10 @@ module.exports = function(passport) {
           select: 'name'
         }).populate({
           path: 'friends',
-          select: 'user'
-        }).populate({
-          path: 'user',
-          select: 'name'
+          select: 'user',
+          populate: {
+            path: 'name'
+          }
         })
         .exec(function(err, user) {
           if (err) {
