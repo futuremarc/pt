@@ -1,30 +1,25 @@
-function onFocus() {
-
-  $('#pt-canvas').show()
-
-  if (!myCharacter.data._id) return
-  updateCharacter(true)
-
-
-}
-
-function updateCharacter(fromLocal, fromRemote) {
+function updateCharacter(data, getRequest, cB) {
   var pos, rot
 
-  if (fromLocal) {
+  if (getRequest) {
 
-    chrome.storage.sync.get('pt-user', function(data) {
+    if (getRequest === 'fromLocal') {
 
-      var data = data['pt-user']
-      if (!data) return false
+      chrome.storage.sync.get('pt-user', function(data) {
 
-      pos = data.position
-      rot = data.rotation
-      myCharacter.position.set(pos.x, pos.y, pos.z)
-      myCharacter.rotation.set(rot.x, rot.y, rot.z)
-      myCharacter.data = data
+        var data = data['pt-user']
+        if (!data) return false
 
-    })
+        pos = data.position
+        rot = data.rotation
+        myCharacter.position.set(pos.x, pos.y, pos.z)
+        myCharacter.rotation.set(rot.x, rot.y, rot.z)
+        myCharacter.data = data
+        if (cB) cB()
+
+      })
+
+    }
 
   } else {
     pos = data.position
@@ -32,6 +27,8 @@ function updateCharacter(fromLocal, fromRemote) {
     myCharacter.position.set(pos.x, pos.y, pos.z)
     myCharacter.rotation.set(rot.x, rot.y, rot.z);
     myCharacter.data = data
+    if (cB) cB()
+
   }
 
 }
@@ -47,8 +44,6 @@ function putCharacterLocal(data) {
 
 function putCharacterRemote(data) {
 
-  if (!data.name) return
-
   var name = data.name
 
   $.ajax({
@@ -57,7 +52,10 @@ function putCharacterRemote(data) {
     data: data,
     success: function(data) {
       console.log(data)
-    }
+    },
+    error: function(err) {
+      console.log(err)
+    },
   })
 
 }
@@ -66,7 +64,7 @@ function putCharacterRemote(data) {
 function getCharacterLocal() {
 
   chrome.storage.sync.get('pt-user', function(data) {
-    init(data['pt-user'])
+    initScene(data['pt-user'])
   })
 
 }
@@ -83,7 +81,7 @@ var hoveredCharacter = undefined
 
 $('<div id="pt-canvas" class="pt-override-page"></div>').appendTo('body');
 
-function init(data) {
+function initScene(data) {
 
   var data = data || {}
 
@@ -91,7 +89,7 @@ function init(data) {
 
   clock = new THREE.Clock();
   scene = new THREE.Scene();
-  container = document.getElementById('pt-character');
+  container = document.getElementById('pt-canvas');
   renderer = new THREE.WebGLRenderer({
     antialias: true,
     alpha: true
@@ -140,13 +138,25 @@ function init(data) {
 
   document.addEventListener('keydown', onKeyDown, false);
   document.addEventListener('keyup', onKeyUp, false);
-  window.addEventListener('focus', onFocus, false);
-  window.addEventListener('blur', hideCharacter, false);
+  window.addEventListener('visibilitychange', onVisibilityChange, false);
   //window.addEventListener('mousemove', detectHover, false);
 
 }
 
-function hideCharacter() {
+function onVisibilityChange() {
+
+  if (document.visibilityState === 'visible') updateCharacter(null, 'fromLocal', showCanvas)
+  else hideCanvas()
+
+}
+
+function showCanvas() {
+
+  if (!myCharacter.data._id)
+    return
+}
+
+function hideCanvas() {
   $('#pt-canvas').hide()
 }
 
@@ -203,7 +213,7 @@ function onKeyUp(e) {
   myCharacter.data.rotation = rot
 
   putCharacterLocal(myCharacter.data)
-  putCharacterRemote(myCharacter.data)
+  if (myCharacter.data._id) putCharacterRemote(myCharacter.data)
 
 }
 

@@ -4,67 +4,83 @@ var bcrypt = require('bcrypt-nodejs');
 
 var userSchema = new Schema({
   createdAt: Date,
+
   name: {
     required: true,
     unique: true,
     type: String
   },
+
   email: {
     type: String,
     required: true,
     unique: true,
     trim: true
   },
-  texture: String,
-  model: Object,
+
   password: {
     required: true,
     type: String
   },
-  friends: [{
-    user: {
-      type: Schema.Types.ObjectId,
-      ref: 'User'
-    },
-    subscriptions: [{
-      type: Schema.Types.ObjectId,
-      ref: 'Subscription'
-    }],
-    isCloseFriend: {
-      type: Boolean,
-      default: true
-    }
-  }],
-  friendRequests: [{
-    type: Schema.Types.ObjectId,
-    ref: 'User'
-  }],
+
+  texture: String,
+  model: Object,
+  action: String,
+
   position: {
     x: Number,
     y: Number,
     z: Number
   },
+
   rotation: {
     x: Number,
     y: Number,
     z: Number
   },
+
+  friends: [{
+    user: {
+      type: Schema.Types.ObjectId,
+      ref: 'User'
+    },
+
+    subscriptions: [{
+      type: Schema.Types.ObjectId,
+      ref: 'Subscription'
+    }],
+
+    isCloseFriend: {
+      type: Boolean,
+      default: true
+    }
+  }],
+
+  friendRequests: [{
+    type: Schema.Types.ObjectId,
+    ref: 'User'
+  }],
+
   posts: [{
     type: Schema.Types.ObjectId,
     ref: 'Post'
   }],
+
   subscriptions: [{
     type: Schema.Types.ObjectId,
     ref: 'Subscription'
   }],
+
   isLive: {
     type: Boolean,
     default: true
   },
+
   favoritePosts: [{
     type: Schema.Types.ObjectId,
     ref: 'Post'
   }],
+
   resetPasswordToken: String,
   resetPasswordExpires: Date
 })
