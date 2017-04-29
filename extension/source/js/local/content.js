@@ -1,5 +1,5 @@
 function getAndUpdateCharacterFromLocal() {
-  if (!character.data._id) return
+  if (!myCharacter.data._id) return
 
   chrome.storage.sync.get('pt-user', function(data) {
 
@@ -8,8 +8,8 @@ function getAndUpdateCharacterFromLocal() {
 
     var pos = data.position
     var rot = data.rotation
-    character.position.set(pos.x, pos.y, pos.z)
-    character.rotation.set(rot.x, rot.y, rot.z);
+    myCharacter.position.set(pos.x, pos.y, pos.z)
+    myCharacter.rotation.set(rot.x, rot.y, rot.z);
   })
 }
 
@@ -17,9 +17,9 @@ function updateCharacter(data) {
 
   var pos = data.position
   var rot = data.rotation
-  character.position.set(pos.x, pos.y, pos.z)
-  character.rotation.set(rot.x, rot.y, rot.z);
-  character.data = data
+  myCharacter.position.set(pos.x, pos.y, pos.z)
+  myCharacter.rotation.set(rot.x, rot.y, rot.z);
+  myCharacter.data = data
 
 }
 
@@ -60,15 +60,12 @@ function getCharacterLocal() {
 
 var clock, container, camera, scene, renderer, controls, listener;
 
-var character;
+var myCharacter
+var characters = {};
 var light;
 var textureLoader = new THREE.TextureLoader();
 var loader = new THREE.JSONLoader();
-var action = {};
-var mixer;
-var activeState = 'idle';
-
-var animations = ['idle', 'walk', 'run', 'hello'];
+var hoveredCharacter = undefined
 
 
 function init(data) {
@@ -91,22 +88,105 @@ function init(data) {
   $(renderer.domElement).addClass('pt-override-page')
   camera = new THREE.OrthographicCamera(container.offsetWidth / -2, container.offsetWidth / 2, container.offsetHeight / 2, container.offsetHeight / -2, .1, 1000);
   camera.position.set(0, 1.2, 2)
-  listener = new THREE.AudioListener();
-  camera.add(listener);
 
   light = new THREE.AmbientLight(0xffffff, 1);
   scene.add(light);
+
+  document.addEventListener('keydown', onKeyDown, false);
+  document.addEventListener('keyup', onKeyUp, false);
+  window.addEventListener('focus', getAndUpdateCharacterFromLocal, false);
+  //window.addEventListener('mousemove', detectHover, false);
+
+
+  createCharacter(data, function(character) {
+
+    myCharacter = character
+
+    //adjust camera after creating first character
+    var box = new THREE.Box3().setFromObject(myCharacter);
+    box.center(myCharacter.position);
+    myCharacter.localToWorld(box);
+    myCharacter.position.multiplyScalar(-1);
+
+    camera.zoom = Math.min(container.offsetWidth / (box.max.x - box.min.x),
+      container.offsetHeight / (box.max.y - box.min.y)) * .8;
+    camera.updateProjectionMatrix();
+    camera.updateMatrix();
+
+    animate()
+
+  })
+
+
+
+}
+
+var key = {
+  left: false,
+  right: false
+}
+
+function onKeyDown(e) {
+
+  var keyCode = e.keyCode;
+  if (keyCode !== 39 && keyCode !== 37 && keyCode !== 38 && keyCode !== 40) return
+
+  if (keyCode === 39) {
+
+    if (!key.right) myCharacter.walk('right')
+    key.right = true;
+
+  } else if (keyCode === 37) {
+
+    if (!key.left) myCharacter.walk('left')
+    key.left = true;
+
+  } else if (keyCode === 38) myCharacter.wave() //up arrow
+  else if (keyCode === 40) myCharacter.pose() //down arrow
+
+}
+
+function onKeyUp(e) {
+  var keyCode = e.keyCode;
+
+  if (keyCode !== 39 && keyCode !== 37) return
+
+  if (keyCode === 39) {
+    if (key.right) myCharacter.stopWalk() //stop walk right
+    key.right = false;
+  } else if (keyCode === 37) {
+    if (key.left) myCharacter.stopWalk() //stop walk left
+    key.left = false;
+  }
+
+  var pos = {
+    x: myCharacter.position.x,
+    y: myCharacter.position.y,
+    z: myCharacter.position.z
+  }
+  var rot = {
+    x: myCharacter.rotation.x,
+    y: myCharacter.rotation.y,
+    z: myCharacter.rotation.z
+  }
+
+  myCharacter.data.position = pos
+  myCharacter.data.rotation = rot
+
+  putCharacterLocal(myCharacter.data)
+  putCharacterRemote(myCharacter.data)
+
+}
+
+function createCharacter(data, cB) {
 
   loader.load(chrome.extension.getURL('./models/eva-animated.json'), function(geometry, materials) {
     materials.forEach(function(material) {
       material.skinning = true;
     });
 
-    character = new THREE.SkinnedMesh(geometry, new THREE.MeshFaceMaterial(materials));
-    character.data = data
-    hoveredCharacter = undefined
+    var character = new THREE.SkinnedMesh(geometry, new THREE.MeshFaceMaterial(materials));
 
-    mixer = new THREE.AnimationMixer(character);
     var rot = data.rotation || {
       x: 0,
       y: Math.PI / 2,
@@ -114,152 +194,100 @@ function init(data) {
     }
     character.rotation.set(rot.x, rot.y, rot.z);
 
-    action.hello = mixer.clipAction(geometry.animations[0]);
-    action.idle = mixer.clipAction(geometry.animations[1]);
-    action.run = mixer.clipAction(geometry.animations[3]);
-    action.walk = mixer.clipAction(geometry.animations[4]);
-
-    action.hello.setEffectiveWeight(1);
-    action.idle.setEffectiveWeight(1);
-    action.run.setEffectiveWeight(1);
-    action.walk.setEffectiveWeight(1);
-
-    action.hello.setLoop(THREE.LoopOnce, 0);
-    action.hello.clampWhenFinished = true;
-
-    action.hello.enabled = true;
-    action.idle.enabled = true;
-    action.run.enabled = true;
-    action.walk.enabled = true;
-
-    characters = new THREE.Object3D();
-    characters.add(character)
-    scene.add(characters);
-
     var pos = data.position || {
       x: 0,
-      y: -1,
+      y: 0,
       z: 0
     }
     character.position.set(pos.x, pos.y, pos.z);
-    characters.position.set(-pos.x, pos.y, pos.z);
-    var box = new THREE.Box3().setFromObject(characters);
-    box.center(characters.position);
-    characters.localToWorld(box);
-    characters.position.multiplyScalar(-1);
 
-    camera.zoom = Math.min(container.offsetWidth / (box.max.x - box.min.x),
-      container.offsetHeight / (box.max.y - box.min.y)) * .8;
-    camera.updateProjectionMatrix();
-    camera.updateMatrix();
+    character.data = data
+    character.mixer = new THREE.AnimationMixer(character);
+    character.actions = {};
+    character.mixer;
+    character.animations = ['idle', 'walk', 'run', 'hello', 'pose'];
+    character.activeState = 'idle';
 
-    document.addEventListener('keydown', walk, false);
-    document.addEventListener('keyup', stopWalk, false);
-    window.addEventListener('focus', getAndUpdateCharacterFromLocal, false);
-    //window.addEventListener('mousemove', detectHover, false);
+    character.walk = function(direction) {
+      if (direction === 'right') var dir = 1
+      else dir = -1
 
-    animate();
-    action.idle.play();
+      this.rotation.y = dir * Math.PI / 2
+      this.fadeAction(this.animations[2])
+    }
+
+    character.stopWalk = function(){
+      this.fadeAction(this.animations[0])
+    }
+
+    character.wave = function() {
+      this.fadeAction(this.animations[3])
+    }
+
+    character.pose = function() {
+      this.fadeAction(this.animations[4])
+    }
+
+    character.fadeAction = function(name) {
+      var from = this.actions[this.activeState].play();
+      var to = this.actions[name].play();
+
+      from.enabled = true;
+      to.enabled = true;
+
+      if (to.loop === THREE.LoopOnce) {
+        to.reset();
+      }
+
+      from.crossFadeTo(to, 0.3);
+      this.activeState = name;
+
+    }
+
+    actions = character.actions
+    mixer = character.mixer
+
+    actions.hello = mixer.clipAction(geometry.animations[0]);
+    actions.idle = mixer.clipAction(geometry.animations[1]);
+    actions.run = mixer.clipAction(geometry.animations[3]);
+    actions.walk = mixer.clipAction(geometry.animations[4]);
+    actions.pose = mixer.clipAction(geometry.animations[2]);
+
+    for (var action in actions) {
+      actions[action].setEffectiveWeight(1);
+      actions.hello.enabled = true;
+    }
+
+    actions.hello.setLoop(THREE.LoopOnce, 0);
+    actions.hello.clampWhenFinished = true;
+
+    actions.idle.play();
+
+
+    characters[character.data._id] = character
+
+    scene.add(character);
+
+    if (cB) cB(character)
 
   });
-}
-
-function fadeAction(name) {
-  var from = action[activeState].play();
-  var to = action[name].play();
-
-  from.enabled = true;
-  to.enabled = true;
-
-  if (to.loop === THREE.LoopOnce) {
-    to.reset();
-  }
-
-  from.crossFadeTo(to, 0.3);
-  activeState = name;
-
-}
-
-
-var key = {
-  left: false,
-  right: false
-}
-
-function walk(e) {
-  var keyCode = e.keyCode;
-  if (keyCode !== 39 && keyCode !== 37 && keyCode !== 38 && keyCode !== 40) return
-
-  //right arrow
-  if (keyCode === 39) {
-    if (!key.right) {
-      character.rotation.y = Math.PI / 2
-      fadeAction(animations[2])
-    }
-    key.right = true;
-
-    //left arrow
-  } else if (keyCode === 37) {
-    if (!key.left) {
-      character.rotation.y = -Math.PI / 2
-      fadeAction(animations[2])
-    }
-    key.left = true;
-
-    //up arrow
-  } else if (keyCode === 38) {
-    fadeAction(animations[3])
-
-    //down arrow
-  } else if (keyCode === 40) {
-    fadeAction(animations[0])
-  }
-
-}
-
-function stopWalk(e) {
-  var keyCode = e.keyCode;
-
-  if (keyCode !== 39 && keyCode !== 37) return
-
-  if (keyCode === 39) {
-    if (key.right) fadeAction(animations[0])
-    key.right = false;
-  } else if (keyCode === 37) {
-    if (key.left) fadeAction(animations[0])
-    key.left = false;
-  }
-
-  var pos = {
-    x: character.position.x,
-    y: character.position.y,
-    z: character.position.z
-  }
-  var rot = {
-    x: character.rotation.x,
-    y: character.rotation.y,
-    z: character.rotation.z
-  }
-
-  character.data.position = pos
-  character.data.rotation = rot
-
-  putCharacterLocal(character.data)
-  putCharacterRemote(character.data)
 
 }
 
 
 function animate() {
-  if (key.right) character.position.x += .05
-  if (key.left) character.position.x -= .05
+  if (key.right) myCharacter.position.x += .05
+  if (key.left) myCharacter.position.x -= .05
   requestAnimationFrame(animate);
   render();
 }
 
 function render() {
+
   var delta = clock.getDelta();
-  mixer.update(delta);
+  for (var character in characters) {
+    characters[character].mixer.update(delta);
+  }
   renderer.render(scene, camera);
 }
 
@@ -293,14 +321,14 @@ $("body").on('submit', '#pt-auth-form', function(e) {
 
 
   var pos = {
-    x: character.position.x,
-    y: character.position.y,
-    z: character.position.z
+    x: myCharacter.position.x,
+    y: myCharacter.position.y,
+    z: myCharacter.position.z
   }
   var rot = {
-    x: character.rotation.x,
-    y: character.rotation.y,
-    z: character.rotation.z
+    x: myCharacter.rotation.x,
+    y: myCharacter.rotation.y,
+    z: myCharacter.rotation.z
   }
 
   var data = {
@@ -321,7 +349,7 @@ $("body").on('submit', '#pt-auth-form', function(e) {
       if (data.status === 'success') {
 
         errorMessage.html(data.message + ' <strong>' + data.data.name + '</strong>!')
-        character.data = data.data
+        myCharacter.data = data.data
         putCharacterLocal(data.data)
         updateCharacter(data.data)
         setTimeout(function() {
@@ -346,7 +374,7 @@ $("body").on('submit', '#pt-friend-form', function(e) {
   var errorMessage = $(".error-message h3")
 
   var name = $('.auth-name').val();
-  var userId = character.data._id
+  var userId = myCharacter.data._id
   var friendId = $(this).data('id')
   var action = $(this).data('action')
 
@@ -429,10 +457,10 @@ $('body').on('click', '.friend-request-btn, .friends-list-btn', function(e) {
   e.preventDefault()
 
   var friendId = $(this).data('id')
-  var userId = character.data._id
+  var userId = myCharacter.data._id
   var action = $(this).data('action')
   if (action === 'accept' || action === 'reject') var method = 'PUT'
-  else if (action === 'remove' ) var method = 'DELETE'
+  else if (action === 'remove') var method = 'DELETE'
 
   var data = {
     friendId: friendId,
@@ -446,13 +474,13 @@ $('body').on('click', '.friend-request-btn, .friends-list-btn', function(e) {
     success: function(data) {
       console.log(data)
 
-      if (data.status === 'success'){
-      $('li[data-id="' + friendId + '"]').remove()
-      if ($('.friend-request-btn').length === 0) $('#pt-requests-form').remove()
-      if ($('.friend-list-btn').length === 0) $('#pt-friends-form').remove() 
+      if (data.status === 'success') {
+        $('li[data-id="' + friendId + '"]').remove()
+        if ($('.friend-request-btn').length === 0) $('#pt-requests-form').remove()
+        if ($('.friend-list-btn').length === 0) $('#pt-friends-form').remove()
 
-        
-    }
+
+      }
 
     },
     error: function(data) {
@@ -502,7 +530,7 @@ function detectHover(e) {
   var raycaster = new THREE.Raycaster();
   raycaster.setFromCamera(new THREE.Vector2(x, y), camera);
 
-  var intersects = raycaster.intersectObjects(characters.children, true);
+  var intersects = raycaster.intersectObjects(scene.children, true);
 
   if (intersects.length > 0) {
     if (!hoveredCharacter) {
