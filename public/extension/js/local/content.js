@@ -1,25 +1,38 @@
-function getAndUpdateCharacterFromLocal() {
+function onFocus() {
+
+  $('#pt-canvas').show()
+
   if (!myCharacter.data._id) return
+  updateCharacter(true)
 
-  chrome.storage.sync.get('pt-user', function(data) {
 
-    var data = data['pt-user']
-    if (!data) return
-
-    var pos = data.position
-    var rot = data.rotation
-    myCharacter.position.set(pos.x, pos.y, pos.z)
-    myCharacter.rotation.set(rot.x, rot.y, rot.z);
-  })
 }
 
-function updateCharacter(data) {
+function updateCharacter(fromLocal, fromRemote) {
+  var pos, rot
 
-  var pos = data.position
-  var rot = data.rotation
-  myCharacter.position.set(pos.x, pos.y, pos.z)
-  myCharacter.rotation.set(rot.x, rot.y, rot.z);
-  myCharacter.data = data
+  if (fromLocal) {
+
+    chrome.storage.sync.get('pt-user', function(data) {
+
+      var data = data['pt-user']
+      if (!data) return false
+
+      pos = data.position
+      rot = data.rotation
+      myCharacter.position.set(pos.x, pos.y, pos.z)
+      myCharacter.rotation.set(rot.x, rot.y, rot.z)
+      myCharacter.data = data
+
+    })
+
+  } else {
+    pos = data.position
+    rot = data.rotation
+    myCharacter.position.set(pos.x, pos.y, pos.z)
+    myCharacter.rotation.set(rot.x, rot.y, rot.z);
+    myCharacter.data = data
+  }
 
 }
 
@@ -68,6 +81,7 @@ var textureLoader = new THREE.TextureLoader();
 var loader = new THREE.JSONLoader();
 var hoveredCharacter = undefined
 
+$('<div id="pt-canvas" class="pt-override-page"></div>').appendTo('body');
 
 function init(data) {
 
@@ -126,9 +140,14 @@ function init(data) {
 
   document.addEventListener('keydown', onKeyDown, false);
   document.addEventListener('keyup', onKeyUp, false);
-  window.addEventListener('focus', getAndUpdateCharacterFromLocal, false);
+  window.addEventListener('focus', onFocus, false);
+  window.addEventListener('blur', hideCharacter, false);
   //window.addEventListener('mousemove', detectHover, false);
 
+}
+
+function hideCharacter() {
+  $('#pt-canvas').hide()
 }
 
 var key = {
@@ -286,7 +305,6 @@ function createCharacter(data, cB) {
 
 }
 
-
 function animate() {
   if (key.right) myCharacter.position.x += .05
   if (key.left) myCharacter.position.x -= .05
@@ -303,11 +321,7 @@ function render() {
   renderer.render(scene, camera);
 }
 
-
-$('<div id="pt-character" class="pt-override-page"></div>').appendTo('body');
-
 getCharacterLocal();
-
 
 
 /********* FORMS ***********/

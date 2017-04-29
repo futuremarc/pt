@@ -129,7 +129,7 @@ module.exports = function(passport) {
         $pull: {
           friends: {
             user: friendId
-          }
+          } 
         }
       })
       .exec(function(err, user) {
@@ -146,7 +146,7 @@ module.exports = function(passport) {
             $pull: {
               friends: {
                 user: userId
-              }
+              } 
             }
           })
           .exec(function(err, user) {

@@ -70,6 +70,7 @@ module.exports = function(passport) {
 		};
 
 		process.nextTick(findOrCreateUser);
+		
 	}))
 
 }
