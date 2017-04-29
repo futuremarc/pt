@@ -357,7 +357,7 @@ $("body").on('submit', '#pt-friend-form', function(e) {
 
   $.ajax({
     method: 'POST',
-    url: 'http://localhost:8080/api/user/friend/request/' + action,
+    url: 'http://localhost:8080/api/user/friend/' + action,
     data: data,
     success: function(data) {
       console.log(data)
@@ -424,13 +424,15 @@ $('body').on('click', '#logout', function() {
   })
 })
 
-$('body').on('click', '.friend-request-btn', function(e) {
+$('body').on('click', '.friend-request-btn, .friends-list-btn', function(e) {
 
   e.preventDefault()
 
   var friendId = $(this).data('id')
   var userId = character.data._id
   var action = $(this).data('action')
+  if (action === 'accept' || action === 'reject') var method = 'PUT'
+  else if (action === 'remove' ) var method = 'DELETE'
 
   var data = {
     friendId: friendId,
@@ -438,14 +440,13 @@ $('body').on('click', '.friend-request-btn', function(e) {
   }
 
   $.ajax({
-    method: 'PUT',
-    url: 'http://localhost:8080/api/user/friend/request/' + action,
+    method: method,
+    url: 'http://localhost:8080/api/user/friend/' + action,
     data: data,
     success: function(data) {
-
       console.log(data)
-      $('li[data-id="' + friendId + '"]').remove() //remove button after accepting/rejecting
-      if ($('.friend-request-btn').length === 0) $('#pt-requests-form').remove() //remove form if no more friend requests
+
+      if (data.status === 'success') $('li[data-id="' + friendId + '"]').remove() //remove button after accepting/rejecting
 
     },
     error: function(data) {
@@ -453,7 +454,6 @@ $('body').on('click', '.friend-request-btn', function(e) {
     }
   })
 })
-
 
 /********* HELPERS *********/
 

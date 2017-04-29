@@ -1,0 +1,22 @@
+{{#if this}} 
+
+  <form id='pt-friends-form'>
+    <h3>Friends</h3>
+    <ul>
+      {{#each this}}
+        <li data-id='{{user._id}}'>
+          <div>
+            {{user.name}}
+          </div>
+          <ul class="list-inline">
+            <li>
+              <input type='submit' data-action='remove', data-name='{{user.name}}', data-id='{{user._id}}', class='btn btn-custom friends-list-btn', value='Remove'>
+            </li>
+          </ul>
+        </li>
+        <br/>
+      {{/each}}
+    </ul>
+  </form>
+
+{{/if}}

@@ -2,6 +2,7 @@ var express = require('express');
 var app = express()
 var router = express.Router();
 var User = require('models/user/model')
+var async = require('async')
 
 
 if (app.get('env') === 'development') {
@@ -12,7 +13,7 @@ if (app.get('env') === 'development') {
 
 module.exports = function(passport) {
 
-  router.route('/user/friend/request/:action')
+  router.route('/user/friend/:action')
     .post(function(req, res) {
 
       var friendId = req.body.friendId
@@ -61,7 +62,7 @@ module.exports = function(passport) {
             })
           }
 
-          if (action !== 'accept') {
+          if (action === 'reject') {
             return res.json({
               status: "success",
               data: user,
@@ -119,87 +120,89 @@ module.exports = function(passport) {
         })
     })
 
+  .delete(function(req, res) {
+    var friendId = req.body.friendId
+    var userId = req.body.userId
+
+    User
+      .findByIdAndUpdate(userId, {
+        $pull: {
+          friends: {
+            user: friendId
+          }
+        }
+      })
+      .exec(function(err, user) {
+        if (err) {
+          return res.json({
+            status: "error",
+            data: null,
+            message: "Error removing friend from user"
+          })
+        }
+
+        User
+          .findByIdAndUpdate(friendId, {
+            $pull: {
+              friends: {
+                user: userId
+              }
+            }
+          })
+          .exec(function(err, user) {
+            if (err) {
+              return res.json({
+                status: "error",
+                data: null,
+                message: "Error removing user from friend"
+              })
+            }
+
+            return res.json({
+              status: "success",
+              data: user,
+              message: "Removed friend"
+            })
+
+          })
+
+      })
+
+
+  })
+
   router.route('/user/friend/:name')
     .post(function(req, res) {
 
     })
 
-  .delete(function(req, res) {
-      var friendId = req.params.id
-      var userId = req.body.userId
-
-      User
-        .findByIdAndUpdate(userId, {
-          $pull: {
-            friends: user.friendId
-          }
-        })
-        .exec(function(err, user) {
-          if (err) {
-            return res.json({
-              status: "error",
-              data: null,
-              message: "Error deleting friend from user"
-            })
-          }
-
+  .get(function(req, res) {
+    User
+      .findById(req.params.id)
+      .populate({
+        path: 'friends',
+        select: 'user',
+        populate: {
+          path: 'user',
+          select: 'name _id'
+        }
+      })
+      .exec(function(err, user) {
+        if (err) {
           return res.json({
-            status: "success",
-            data: user,
-            message: "Friend removed from user"
+            status: "error",
+            data: null,
+            message: "Error finding friends"
           })
+        }
 
+        return res.json({
+          status: "success",
+          data: user.friends,
+          message: "Found friends"
         })
-      User
-        .findByIdAndUpdate(friendId, {
-          $pull: {
-            friends: user.userId
-          }
-        })
-        .exec(function(err, user) {
-          if (err) {
-            return res.json({
-              status: "error",
-              data: null,
-              message: "Error deleting user from friend"
-            })
-          }
-
-          return res.json({
-            status: "success",
-            data: user,
-            message: "User removed from friend"
-          })
-
-        })
-
-    })
-    .get(function(req, res) {
-      User
-        .findById(req.params.id)
-        .populate({
-          path: 'friends',
-          select: 'user',
-          populate: {
-            path: 'name'
-          }
-        })
-        .exec(function(err, user) {
-          if (err) {
-            return res.json({
-              status: "error",
-              data: null,
-              message: "Error finding friends"
-            })
-          }
-
-          return res.json({
-            status: "success",
-            data: user.friends,
-            message: "User found"
-          })
-        })
-    })
+      })
+  })
 
 
   router.route('/user/:name')
@@ -238,14 +241,9 @@ module.exports = function(passport) {
         .populate({
           path: 'friendRequests',
           select: 'name'
-        }).populate({
-          path: 'friends',
-          select: 'user',
-          populate: {
-            path: 'name'
-          }
         })
         .exec(function(err, user) {
+
           if (err) {
             return res.json({
               status: "error",
@@ -254,20 +252,48 @@ module.exports = function(passport) {
             })
           }
 
-          if (user) {
-            return res.json({
-              status: "success",
-              data: user,
-              message: "Found user"
-            })
-          } else {
-
+          if (!user) {
             return res.json({
               status: "not found",
               data: user,
               message: "Couldn't find user"
             })
+
           }
+
+          var friends = []
+
+          async.forEach(user.friends, function(friend, callback) {
+            User.populate(
+              friend, {
+                path: "user"
+              },
+              function(err, friend) {
+
+                friends.push(friend)
+                if (err) throw err;
+                callback();
+              }
+            );
+          }, function(err) {
+
+            if (err) return res.json({
+              status: "error",
+              data: null,
+              message: "Couldn't find friends of user"
+            })
+
+            user.friends = friends
+
+            return res.json({
+              status: "success",
+              data: user,
+              message: "Found user"
+            })
+
+          })
+
+
         })
     })
 

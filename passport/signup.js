@@ -42,12 +42,9 @@ module.exports = function(passport) {
 						})
 					}
 
-					newUser.email = req.body.email;
-					newUser.password = req.body.password;
-					newUser.name = req.body.name;
-					newUser.position = req.body.position;
-					newUser.rotation = req.body.rotation;
-					newUser.subscriptions = req.body.subscriptions;
+					for (var prop in req.body) {
+            newUser[prop] = req.body[prop]
+          }
 
 					if (validatePassword(req.body.password)) {
 

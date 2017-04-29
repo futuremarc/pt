@@ -28,7 +28,11 @@ html
     a(href='#' id="logout") Logout
     br
     div(id='name-tag') #{userName}
-    div(id="friend-requests-parent")
+
+    div(class='container')
+      div(class='row')
+        div(id='friend-requests-parent' class='col-xs-12 col-md-6')
+        div(id='friends-list-parent' class='col-xs-12 col-md-6')
 
 
     block javascript

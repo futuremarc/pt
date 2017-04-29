@@ -11,11 +11,15 @@ $('document').ready(function() {
         console.log(data)
         if (data.status === 'success') {
 
-          var requestsWrapper = $('#friend-requests-parent')
-
+          var container = $('#friend-requests-parent')
           var reqs = data.data.friendRequests
           var html = Templates.auth.addFriendRequests(reqs)
-          requestsWrapper.html(html)
+          container.html(html)
+
+          var container = $('#friends-list-parent')
+          var friends = data.data.friends
+          var html = Templates.auth.addFriendsList(friends)
+          container.html(html)
 
         } else {
           errorMessage.html(data.message)
@@ -25,7 +29,6 @@ $('document').ready(function() {
         console.log(err)
       }
     })
-
 
 
   }
