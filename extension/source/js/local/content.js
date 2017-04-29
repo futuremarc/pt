@@ -61,6 +61,7 @@ function getCharacterLocal() {
 var clock, container, camera, scene, renderer, controls, listener;
 
 var myCharacter
+var characterScene
 var characters = {};
 var light;
 var textureLoader = new THREE.TextureLoader();
@@ -91,22 +92,27 @@ function init(data) {
 
   light = new THREE.AmbientLight(0xffffff, 1);
   scene.add(light);
-
-  document.addEventListener('keydown', onKeyDown, false);
-  document.addEventListener('keyup', onKeyUp, false);
-  window.addEventListener('focus', getAndUpdateCharacterFromLocal, false);
-  //window.addEventListener('mousemove', detectHover, false);
-
+  characterScene = new THREE.Object3D();
 
   createCharacter(data, function(character) {
 
     myCharacter = character
 
-    //adjust camera after creating first character
-    var box = new THREE.Box3().setFromObject(myCharacter);
-    box.center(myCharacter.position);
-    myCharacter.localToWorld(box);
-    myCharacter.position.multiplyScalar(-1);
+
+    characterScene.add(character)
+    scene.add(characterScene);
+
+    var pos = data.position || {
+      x: 0,
+      y: -1,
+      z: 0
+    }
+    character.position.set(pos.x, pos.y, pos.z);
+    characterScene.position.set(-pos.x, pos.y, pos.z);
+    var box = new THREE.Box3().setFromObject(characterScene);
+    box.center(characterScene.position);
+    characterScene.localToWorld(box);
+    characterScene.position.multiplyScalar(-1);
 
     camera.zoom = Math.min(container.offsetWidth / (box.max.x - box.min.x),
       container.offsetHeight / (box.max.y - box.min.y)) * .8;
@@ -118,6 +124,10 @@ function init(data) {
   })
 
 
+  document.addEventListener('keydown', onKeyDown, false);
+  document.addEventListener('keyup', onKeyUp, false);
+  window.addEventListener('focus', getAndUpdateCharacterFromLocal, false);
+  //window.addEventListener('mousemove', detectHover, false);
 
 }
 
@@ -187,20 +197,6 @@ function createCharacter(data, cB) {
 
     var character = new THREE.SkinnedMesh(geometry, new THREE.MeshFaceMaterial(materials));
 
-    var rot = data.rotation || {
-      x: 0,
-      y: Math.PI / 2,
-      z: 0
-    }
-    character.rotation.set(rot.x, rot.y, rot.z);
-
-    var pos = data.position || {
-      x: 0,
-      y: 0,
-      z: 0
-    }
-    character.position.set(pos.x, pos.y, pos.z);
-
     character.data = data
     character.mixer = new THREE.AnimationMixer(character);
     character.actions = {};
@@ -209,6 +205,7 @@ function createCharacter(data, cB) {
     character.activeState = 'idle';
 
     character.walk = function(direction) {
+
       if (direction === 'right') var dir = 1
       else dir = -1
 
@@ -216,7 +213,7 @@ function createCharacter(data, cB) {
       this.fadeAction(this.animations[2])
     }
 
-    character.stopWalk = function(){
+    character.stopWalk = function() {
       this.fadeAction(this.animations[0])
     }
 
@@ -229,6 +226,7 @@ function createCharacter(data, cB) {
     }
 
     character.fadeAction = function(name) {
+
       var from = this.actions[this.activeState].play();
       var to = this.actions[name].play();
 
@@ -264,9 +262,23 @@ function createCharacter(data, cB) {
     actions.idle.play();
 
 
-    characters[character.data._id] = character
+    characters[data._id] = character
+    characterScene.add(character)
 
-    scene.add(character);
+    var rot = data.rotation || {
+      x: 0,
+      y: Math.PI / 2,
+      z: 0
+    }
+    character.rotation.set(rot.x, rot.y, rot.z);
+
+    var pos = data.position || {
+      x: 0,
+      y: -1,
+      z: 0
+    }
+    character.position.set(pos.x, pos.y, pos.z);
+
 
     if (cB) cB(character)
 
@@ -406,7 +418,9 @@ $("body").on('submit', '#pt-friend-form', function(e) {
 
 var timeout = null;
 
-$('body').on('keyup', '#pt-friend-form', function() {
+$('body').on('keyup', '#pt-friend-form', function(e) {
+
+  if (e.keyCode === 13) return
 
   var errorMessage = $(".error-message h3")
   var name = $(this).find('input').val()
@@ -458,6 +472,7 @@ $('body').on('click', '.friend-request-btn, .friends-list-btn', function(e) {
 
   var friendId = $(this).data('id')
   var userId = myCharacter.data._id
+  var purpose = $(this).data('purpose')
   var action = $(this).data('action')
   if (action === 'accept' || action === 'reject') var method = 'PUT'
   else if (action === 'remove') var method = 'DELETE'
@@ -467,6 +482,8 @@ $('body').on('click', '.friend-request-btn, .friends-list-btn', function(e) {
     userId: userId
   }
 
+  var self = this
+
   $.ajax({
     method: method,
     url: 'http://localhost:8080/api/user/friend/' + action,
@@ -474,13 +491,7 @@ $('body').on('click', '.friend-request-btn, .friends-list-btn', function(e) {
     success: function(data) {
       console.log(data)
 
-      if (data.status === 'success') {
-        $('li[data-id="' + friendId + '"]').remove()
-        if ($('.friend-request-btn').length === 0) $('#pt-requests-form').remove()
-        if ($('.friend-list-btn').length === 0) $('#pt-friends-form').remove()
-
-
-      }
+      if (data.status === 'success') $(self).parentsUntil(1).closest('li').remove()
 
     },
     error: function(data) {
