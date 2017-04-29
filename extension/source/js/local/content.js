@@ -446,7 +446,13 @@ $('body').on('click', '.friend-request-btn, .friends-list-btn', function(e) {
     success: function(data) {
       console.log(data)
 
-      if (data.status === 'success') $('li[data-id="' + friendId + '"]').remove() //remove button after accepting/rejecting
+      if (data.status === 'success'){
+      $('li[data-id="' + friendId + '"]').remove()
+      if ($('.friend-request-btn').length === 0) $('#pt-requests-form').remove()
+      if ($('.friend-list-btn').length === 0) $('#pt-friends-form').remove() 
+
+        
+    }
 
     },
     error: function(data) {
