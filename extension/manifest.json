@@ -25,14 +25,14 @@
     "default_popup": "popup.html"
   },
   "background": {
-    "scripts": ["/js/local/background.js"]
+    "scripts": ["public/js/local/background.js"]
   },
   "content_scripts": [
 
     {
       "matches": ["<all_urls>"],
       "js": ["public/js/lib/jquery.min.js","public/js/lib/three.min.js","public/js/lib/socket.io.min.js","public/js/local/content.js","public/js/local/sockets.js"],
-      "css": ["public/css/local/main.css"]
+      "css": ["public/css/local/extension.css"]
     }
 
   ],

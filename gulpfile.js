@@ -32,6 +32,9 @@ gulp.task('watch', function(){
   gulp.watch('source/js/main/*.js', ['main-scripts'])
   gulp.watch('source/js/mobile/*.js', ['mobile-scripts'])
   gulp.watch('source/js/extension/*.js', ['extension-scripts'])
+  gulp.watch('source/js/extension/*.js', ['socket-url-replace'])
+  gulp.watch('source/js/extension/*.js', ['localhost-url-replace'])
+
 })
 
 /** run before deployment **/
@@ -71,7 +74,7 @@ gulp.task('build-css-extension', function(){
     .pipe(sourcemaps.write())
     .pipe(autoprefix('last 2 versions'))
     .pipe(minifyCSS())
-    .pipe(gulp.dest('extension/public/css/local/main.css'))
+    .pipe(gulp.dest('extension/public/css/local/'))
 })
 
 gulp.task('auth-scripts', function(){
