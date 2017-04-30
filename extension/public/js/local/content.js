@@ -1,4 +1,4 @@
-var socket = io('https://passti.me:5050', {
+var socket = io('https://passti.me', {
   path: '/socket',
   secure: true
 })
