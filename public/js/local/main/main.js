@@ -31,6 +31,8 @@ $('document').ready(function() {
     })
 
 
+  }else{
+    $('#name-tag').html('Logged Out')
   }
 
 
