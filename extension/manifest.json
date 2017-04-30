@@ -5,6 +5,7 @@
   "version": "0.9",
   "permissions": [
     "storage",
+    "incognito",
     "notifications",
     "tabs",
     "idle",
@@ -31,7 +32,7 @@
 
     {
       "matches": ["<all_urls>"],
-      "js": ["/js/lib/jquery.min.js","/js/lib/three.min.js","/js/lib/socket.io.min.js","/js/local/content.js"],
+      "js": ["/js/lib/jquery.min.js","/js/lib/three.min.js","/js/lib/socket.io.min.js","/js/local/content.js","/js/local/sockets.js"],
       "css": ["/css/local/avatar.css"]
     }
 

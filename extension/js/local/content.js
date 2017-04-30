@@ -73,8 +73,8 @@ function initScene(data) {
   scene.add(characterScene);
 
   createMyCharacter(data, function() {
-    updateCharacter(null, 'putLocal')
-    updateCharacter(null, 'putRemote')
+    updateCharacter(myCharacter.data, 'putLocal')
+    if (myCharacter.data._id) updateCharacter(myCharacter.data, 'putRemote')
   })
 
   document.addEventListener('keydown', onKeyDown, false);
@@ -250,14 +250,14 @@ function updateCharacter(data, request, cB) {
       chrome.storage.sync.get('pt-user', function(data) {
 
         var data = data['pt-user']
-        if (!data) return false
-
         pos = data.position
         rot = data.rotation
 
         myCharacter.position.set(pos.x, pos.y, pos.z)
         myCharacter.rotation.set(rot.x, rot.y, rot.z)
         myCharacter.data = data
+
+        console.log('getLocal', data)
 
         if (cB) cB()
 
@@ -273,15 +273,22 @@ function updateCharacter(data, request, cB) {
         data: data,
         success: function(data) {
           console.log(data)
+          if (cB) cB()
         },
         error: function(err) {
           console.log(err)
         },
       })
 
-    } else if (request === 'putLocal') chrome.storage.sync.set({
-      'pt-user': data
-    })
+    } else if (request === 'putLocal') {
+
+      chrome.storage.sync.set({
+        'pt-user': data
+      }, function() {
+        if (cB) cB()
+      })
+
+    }
 
 
   } else {
@@ -296,13 +303,6 @@ function updateCharacter(data, request, cB) {
     if (cB) cB()
 
   }
-
-}
-
-function onVisibilityChange() {
-
-  if (document.visibilityState === 'visible') updateCharacter(null, 'getLocal', showCanvas)
-  else hideCanvas()
 
 }
 
@@ -332,7 +332,7 @@ function onKeyDown(e) {
   var id = myCharacter.data._id
   var liveFriends = myCharacter.data.liveFriends
   var pos = myCharacter.data.position
-  var rot =  myCharacter.data.rotation
+  var rot = myCharacter.data.rotation
 
   if (keyCode === 39) {
     if (!key.right) {
@@ -396,7 +396,7 @@ function onKeyDown(e) {
       friends: liveFriends
     })
 
-  } else if (keyCode === 40) {//down arrow
+  } else if (keyCode === 40) { //down arrow
 
     var action = 'pose'
     myCharacter[action]()
@@ -449,6 +449,9 @@ function onKeyUp(e) {
     myCharacter.data.position = pos
     myCharacter.data.rotation = rot
 
+
+    updateCharacter(myCharacter.data, 'putLocal')
+
     if (!myCharacter.data._id) return
 
 
@@ -461,24 +464,17 @@ function onKeyUp(e) {
 
   }
 
-
-  // if user has registered put data
-  if (myCharacter.data._id) {
-    updateCharacter(myCharacter.data, 'putLocal')
-    updateCharacter(myCharacter.data, 'putRemote')
-  }
+    // if user has registered put data
+  if (myCharacter.data._id) updateCharacter(myCharacter.data, 'putRemote')
 
 }
 
-function showCanvas() {
+function onVisibilityChange() {
 
-  if (!myCharacter.data._id)
-    return
+  if (document.visibilityState === 'visible') updateCharacter(null, 'getLocal')
+
 }
 
-function hideCanvas() {
-  $('#pt-canvas').hide()
-}
 
 
 initPt();
