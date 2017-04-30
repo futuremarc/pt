@@ -40,7 +40,7 @@ gulp.task('watch', function(){
 /** run before deployment **/
 gulp.task('socket-url-replace', function(){
   gulp.src(['public/js/local/*','extension/public/js/local/*'],{base: "./"})
-    .pipe(replace('http://localhost:5050',config.url))
+    .pipe(replace('http://localhost:5050', config.url))
     .pipe(gulp.dest("./"))
 })
 
