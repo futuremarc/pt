@@ -14,13 +14,13 @@
     "<all_urls>",
     "contextMenus"
   ],"icons": {
-          "16": "/img/favicon-16.png",
-          "48": "/img/favicon-48.png",
-          "128": "/img/favicon-128.png"
+          "16": "public/img/brand/favicon-16.png",
+          "48": "public/img/brand/favicon-48.png",
+          "128": "public/img/brand/favicon-128.png"
   },
 
   "browser_action": {
-    "default_icon": "/img/favicon-38.png",
+    "default_icon": "public/img/brand/favicon-38.png",
     "default_title": "Passtime",
     "default_popup": "popup.html"
   },
@@ -31,8 +31,8 @@
 
     {
       "matches": ["<all_urls>"],
-      "js": ["/js/lib/jquery.min.js","/js/lib/three.min.js","/js/lib/socket.io.min.js","/js/local/content.js","/js/local/sockets.js"],
-      "css": ["/css/local/avatar.css"]
+      "js": ["public/js/lib/jquery.min.js","public/js/lib/three.min.js","public/js/lib/socket.io.min.js","public/js/local/content.js","public/js/local/sockets.js"],
+      "css": ["public/css/local/main.css"]
     }
 
   ],

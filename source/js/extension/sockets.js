@@ -1,5 +1,5 @@
 
-var events = ['walk', 'stopWalk', 'action', 'message', 'post']
+var events = ['message', 'post']
 
 events.forEach(function(event) { //add identicle socket events
 
@@ -9,12 +9,11 @@ events.forEach(function(event) { //add identicle socket events
 
 })
 
-
 socket.on('join', function(data){
 
   var friend = myCharacter.data.friends[friend]
+  
   friend.isAlive = true
-
   getLiveFriends()
   createCharacter(data)
 
@@ -23,8 +22,8 @@ socket.on('join', function(data){
 socket.on('leave', function(data){
 
   var friend = myCharacter.data.friends[friend]
+  
   friend.isAlive = false
-
   getLiveFriends()
   removeCharacter()
   

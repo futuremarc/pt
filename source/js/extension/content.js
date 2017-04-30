@@ -417,7 +417,6 @@ var controls = {
 
       key.right = true;
 
-
     }
 
   },
