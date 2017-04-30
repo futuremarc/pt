@@ -1,10 +1,7 @@
-var socket = io('https://passti.me', {
-  path: '/socket',
-  secure: true
-})
+var socket = io('http://192.168.0.5:5050')
 
 function animate() {
-
+  
   if (key.right) myCharacter.position.x += .05
   if (key.left) myCharacter.position.x -= .05
 

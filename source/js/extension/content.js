@@ -1,10 +1,7 @@
-var socket = io('http://localhost:5050', {
-  path: '/socket',
-  secure: true
-})
+var socket = io('http://localhost:5050')
 
 function animate() {
-
+  
   if (key.right) myCharacter.position.x += .05
   if (key.left) myCharacter.position.x -= .05
 
