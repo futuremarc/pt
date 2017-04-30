@@ -736,4 +736,4 @@ function detectHover(e) {
 
   }
 
-}}
+}
