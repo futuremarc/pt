@@ -630,6 +630,7 @@ $('body').on('keyup', '#pt-friend-form', function(e) {
     }
   })
 
+
 })
 
 $('body').on('click', '#logout', function() {

@@ -35,7 +35,6 @@ gulp.task('watch', function(){
   //extension
   gulp.watch('source/scss/extension.scss', ['extension-build-css'])
   gulp.watch('source/js/extension/*.js', ['extension-scripts'])
-  gulp.watch('extension/public/js/local/*', ['extension-url-replace'])
 
 })
 
@@ -121,5 +120,5 @@ gulp.task('extension-url-replace', function(){
 
 gulp.task('extension-scripts', function(){
   gulp.src('source/js/extension/*')
-    .pipe(gulp.dest('./'))
+    .pipe(gulp.dest('extension/public/js/local/'))
 })
