@@ -2,7 +2,6 @@ var socket = io('https://passti.me', {
   path: '/socket'
 })
 
-
 function animate() {
 
   if (key.right) myCharacter.position.x += .05
@@ -731,7 +730,5 @@ function detectHover(e) {
     }
 
   }
-
-}}
 
 }
