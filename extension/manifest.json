@@ -5,7 +5,6 @@
   "version": "0.9",
   "permissions": [
     "storage",
-    "incognito",
     "notifications",
     "tabs",
     "idle",

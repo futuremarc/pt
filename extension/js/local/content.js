@@ -35,11 +35,10 @@ function initPt() {
 
 var textureLoader = new THREE.TextureLoader();
 var loader = new THREE.JSONLoader();
-var clock, container, camera, scene, light, renderer, controls;
+var clock, container, camera, scene, light, renderer, controls = {};
 var myCharacter, hoveredCharacter = undefined
-var characterScene //scene of all character meshs
+var sceneCharacters //scene of all character meshs
 var characters = {}; //data of all characters
-
 
 function initScene(data) {
 
@@ -69,8 +68,8 @@ function initScene(data) {
   light = new THREE.AmbientLight(0xffffff, 1);
   scene.add(light);
 
-  characterScene = new THREE.Object3D();
-  scene.add(characterScene);
+  sceneCharacters = new THREE.Object3D();
+  scene.add(sceneCharacters);
 
   createMyCharacter(data, function() {
     updateCharacter(myCharacter.data, 'putLocal')
@@ -96,12 +95,12 @@ function createMyCharacter(data) {
       z: 0
     }
 
-    characterScene.position.set(-pos.x, pos.y, pos.z);
+    sceneCharacters.position.set(-pos.x, pos.y, pos.z);
 
-    var box = new THREE.Box3().setFromObject(characterScene);
-    box.center(characterScene.position);
-    characterScene.localToWorld(box);
-    characterScene.position.multiplyScalar(-1);
+    var box = new THREE.Box3().setFromObject(sceneCharacters);
+    box.center(sceneCharacters.position);
+    sceneCharacters.localToWorld(box);
+    sceneCharacters.position.multiplyScalar(-1);
 
     camera.zoom = Math.min(container.offsetWidth / (box.max.x - box.min.x),
       container.offsetHeight / (box.max.y - box.min.y)) * .8;
@@ -161,7 +160,7 @@ function createCharacter(data, cB) {
     character.walk = function(direction) {
 
       if (direction === 'right') var dir = 1
-      else dir = -1
+      else var dir = -1
 
       this.rotation.y = dir * Math.PI / 2
       this.fadeAction(this.animations[2])
@@ -216,7 +215,7 @@ function createCharacter(data, cB) {
     actions.idle.play();
 
     characters[data._id] = character
-    characterScene.add(character)
+    sceneCharacters.add(character)
 
     var pos = data.position || {
         x: 0,
@@ -282,6 +281,20 @@ function updateCharacter(data, request, cB) {
 
     } else if (request === 'putLocal') {
 
+        var pos = {
+            x: myCharacter.position.x,
+            y: myCharacter.position.y,
+            z: myCharacter.position.z
+          },
+          rot = {
+            x: myCharacter.rotation.x,
+            y: myCharacter.rotation.y,
+            z: myCharacter.rotation.z
+          }
+
+        myCharacter.data.position = pos
+        myCharacter.data.rotation = rot
+
       chrome.storage.sync.set({
         'pt-user': data
       }, function() {
@@ -306,6 +319,12 @@ function updateCharacter(data, request, cB) {
 
 }
 
+function removeCharacter(data) {
+  scene.remove(sceneCharacters[data._id])
+  delete sceneCharacters[data._id]
+  delete characters[data._id]
+}
+
 var liveFriends = {}
 
 function getLiveFriends() {
@@ -324,92 +343,100 @@ var key = {
   right: false
 }
 
+var controls = {
+
+  37: function(data, keyUp) { //left arrow
+
+    if (keyUp) {
+
+      data.action = 'stopWalk'
+
+      if (key.left) myCharacter[data.action]()
+      key.left = false;
+
+      if (data._id) socket.emit('action', data)
+
+    } else {
+
+      if (!key.left) {
+
+        data.action = 'walk'
+        data.direction = 'left'
+
+        myCharacter[data.action](data.direction)
+        if (data._id) socket.emit('action', data)
+      }
+
+      key.left = true;
+
+    }
+  },
+  38: function(data) { //up arrow
+
+    data.action = 'wave'
+    myCharacter[data.action]()
+
+    if (data._id) socket.emit('action', data)
+
+  },
+
+  39: function(data, keyUp) { //right arrow
+
+    if (keyUp) {
+      data.action = 'stopWalk'
+
+      if (key.right) myCharacter[data.action]()
+      key.right = false;
+      if (data._id) socket.emit('action', data)
+
+    } else {
+
+      if (!key.right) {
+
+        data.action = 'walk'
+        data.direction = 'right'
+
+        myCharacter[data.action](data.direction)
+        if (data._id) socket.emit('action', data)
+      }
+
+      key.right = true;
+
+
+    }
+
+  },
+
+  40: function(data) {
+
+    data.action = 'pose'
+    myCharacter[data.action]()
+    if (data._id) socket.emit('action', data)
+  }
+
+}
+
 function onKeyDown(e) {
 
   var keyCode = e.keyCode;
+
   if (keyCode !== 39 && keyCode !== 37 && keyCode !== 38 && keyCode !== 40) return
 
   var id = myCharacter.data._id
   var liveFriends = myCharacter.data.liveFriends
+
+  myCharacter.data.position
   var pos = myCharacter.data.position
   var rot = myCharacter.data.rotation
 
-  if (keyCode === 39) {
-    if (!key.right) {
-
-      var action = 'walk'
-      var direction = 'right'
-
-      myCharacter[action](direction)
-
-      if (id) {
-
-        socket.emit(action, { //right arrow
-          _id: id,
-          position: pos,
-          rotation: rot,
-          direction: direction,
-          friends: liveFriends
-        })
-
-
-      }
-
-    }
-
-    key.right = true;
-
-  } else if (keyCode === 37) { //left arrow
-    if (!key.left) {
-
-      var action = 'walk'
-      var direction = 'left'
-
-      myCharacter[action](direction)
-
-      if (id) {
-
-        socket.emit('walk', {
-          _id: id,
-          position: pos,
-          rotation: rot,
-          direction: direction,
-          friends: liveFriends
-        })
-
-      }
-
-    }
-
-    key.left = true;
-
-  } else if (keyCode === 38) { //up arrow
-
-    var action = 'wave'
-    myCharacter[action]()
-
-    socket.emit('action', {
-      _id: id,
-      action: action,
-      position: pos,
-      rotation: rot,
-      friends: liveFriends
-    })
-
-  } else if (keyCode === 40) { //down arrow
-
-    var action = 'pose'
-    myCharacter[action]()
-
-    socket.emit('action', {
-      _id: id,
-      action: action,
-      position: pos,
-      rotation: rot,
-      friends: liveFriends
-    })
+  var data = {
+    _id: id,
+    liveFriends: liveFriends,
+    pos: pos,
+    rot: rot
   }
 
+  controls[keyCode](data)
 
 }
 
@@ -418,55 +445,20 @@ function onKeyUp(e) {
 
   if (keyCode !== 39 && keyCode !== 37) return
 
-  //animation
-  if (keyCode === 39 || keyCode === 37) {
-    if (keyCode === 39) {
+  var id = myCharacter.data._id
+  var liveFriends = myCharacter.data.liveFriends
+  var pos = myCharacter.data.position
+  var rot = myCharacter.data.rotation
 
-      if (key.right) myCharacter.stopWalk()
-      key.right = false;
-
-    } else {
-
-      if (key.left) myCharacter.stopWalk()
-      key.left = false;
-    }
-
-    var id = myCharacter.data._id
-    var liveFriends = myCharacter.data.liveFriends
-
-    //update Character data
-    var pos = {
-        x: myCharacter.position.x,
-        y: myCharacter.position.y,
-        z: myCharacter.position.z
-      },
-      rot = {
-        x: myCharacter.rotation.x,
-        y: myCharacter.rotation.y,
-        z: myCharacter.rotation.z
-      }
-
-    myCharacter.data.position = pos
-    myCharacter.data.rotation = rot
-
-
-    updateCharacter(myCharacter.data, 'putLocal')
-
-    if (!myCharacter.data._id) return
-
-
-    socket.emit('stopWalk', {
-      _id: id,
-      position: pos,
-      rotation: rot,
-      friends: liveFriends
-    })
-
+  var data = {
+    _id: id,
+    liveFriends: liveFriends,
+    pos: pos,
+    rot: rot
   }
 
-    // if user has registered put data
-  if (myCharacter.data._id) updateCharacter(myCharacter.data, 'putRemote')
-
+  controls[keyCode](data, true)
+  
 }
 
 function onVisibilityChange() {

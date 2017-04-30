@@ -3,7 +3,7 @@ module.exports = function(io) {
   var clients = {}
 
   io.on('connection', function(socket) {
-
+    
 
     socket.on('join', function(data) { //add socket.id to clients and liveFriends {}
 
@@ -44,13 +44,15 @@ module.exports = function(io) {
     })
 
 
-    var events = ['walk', 'stopWalk', 'updateAction', 'message', 'post']
+    var events = ['walk', 'stopWalk', 'action', 'message', 'post']
 
     events.forEach(function(event) { //add identicle socket events
 
       socket.on(event, function(data) {
         var id = data._id,
           liveFriends = data.liveFriends
+
+          console.log('emit', event, data)
 
         for (var friend in liveFriends) {
 
