@@ -121,5 +121,5 @@ gulp.task('extension-url-replace', function(){
 
 gulp.task('extension-scripts', function(){
   gulp.src('source/js/extension/*')
-    .pipe(gulp.dest('extension/public/js/local/'))
+    .pipe(gulp.dest('./'))
 })
