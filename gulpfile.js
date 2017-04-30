@@ -46,13 +46,13 @@ gulp.task('socket-url-replace', function(){
 
 gulp.task('socket-url-replace-extension', function(){
   gulp.src('extension/public/js/local/*',{base: "./"})
-    .pipe(replace('http://localhost:5050',config.url))
+    .pipe(replace('http://localhost:5050',config.extensionUrl))
     .pipe(gulp.dest("./"))
 })
 
 gulp.task('api-url-replace', function(){
   gulp.src('extension/public/js/local/*',{base: "./"})
-    .pipe(replace('http://localhost:8080', config.url))
+    .pipe(replace('http://localhost:8080', config.extensionUrl))
     .pipe(gulp.dest("./"))
 })
 

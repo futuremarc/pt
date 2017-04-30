@@ -1,4 +1,4 @@
-var socket = io('http://localhost:5050', {
+var socket = io('https://passti.me', {
   path: '/socket'
 })
 
@@ -283,7 +283,7 @@ function updateCharacter(data, request, cB) {
 
       $.ajax({
         method: 'PUT',
-        url: 'http://localhost:8080/api/user/' + name,
+        url: 'https://passti.me/api/user/' + name,
         data: data,
         success: function(data) {
           console.log(data)
@@ -532,7 +532,7 @@ $("body").on('submit', '#pt-auth-form', function(e) {
 
   $.ajax({
     method: 'POST',
-    url: 'http://localhost:8080/api/' + action,
+    url: 'https://passti.me/api/' + action,
     data: data,
     success: function(data) {
       console.log(data)
@@ -576,7 +576,7 @@ $("body").on('submit', '#pt-friend-form', function(e) {
 
   $.ajax({
     method: 'POST',
-    url: 'http://localhost:8080/api/user/friend/' + action,
+    url: 'https://passti.me/api/user/friend/' + action,
     data: data,
     success: function(data) {
       console.log(data)
@@ -611,7 +611,7 @@ $('body').on('keyup', '#pt-friend-form', function(e) {
 
   $.ajax({
     method: 'GET',
-    url: 'http://localhost:8080/api/user/' + name,
+    url: 'https://passti.me/api/user/' + name,
     success: function(data) {
       console.log(data)
       if (data.status === 'success') {
@@ -641,7 +641,7 @@ $('body').on('click', '#logout', function() {
   chrome.storage.sync.set({
     'pt-user': {}
   }, function() {
-    window.location.href = 'http://localhost:8080/logout'
+    window.location.href = 'https://passti.me/logout'
   })
 })
 
@@ -665,7 +665,7 @@ $('body').on('click', '.friend-request-btn, .friends-list-btn', function(e) {
 
   $.ajax({
     method: method,
-    url: 'http://localhost:8080/api/user/friend/' + action,
+    url: 'https://passti.me/api/user/friend/' + action,
     data: data,
     success: function(data) {
       console.log(data)
@@ -732,6 +732,11 @@ function detectHover(e) {
     if (hoveredCharacter) {
       hoveredCharacter = undefined;
       $('body').removeClass('pt-hovering')
+    }
+
+  }
+
+}'pt-hovering')
     }
 
   }
