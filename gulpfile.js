@@ -33,11 +33,9 @@ gulp.task('watch', function(){
   gulp.watch('source/js/mobile/*.js', ['mobile-scripts'])
 
   //extension
-  
+  gulp.watch('source/scss/extension.scss', ['extension-build-css'])
   gulp.watch('source/js/extension/*.js', ['extension-scripts'])
-  gulp.watch('source/scss/extension.scss', ['build-css-extension'])
-  gulp.watch('extension/public/js/local/*', ['api-url-replace'])
-  gulp.watch('extension/public/js/local/*', ['socket-url-extension'])
+  gulp.watch('extension/public/js/local/*', ['extension-url-replace'])
 
 })
 
@@ -45,12 +43,6 @@ gulp.task('watch', function(){
 gulp.task('socket-url-replace', function(){
   gulp.src(['public/js/local/*','extension/source/*'],{base: "./"})
     .pipe(replace('http://localhost:5050',config.url))
-    .pipe(gulp.dest("./"))
-})
-
-gulp.task('localhost-url-replace', function(){
-  gulp.src(['public/js/local/*','extension/source/*'],{base: "./"})
-    .pipe(replace('http://localhost:8080',config.url))
     .pipe(gulp.dest("./"))
 })
 
@@ -109,7 +101,7 @@ gulp.task('precompile', function(){
 
 
 //extension
-gulp.task('build-css-extension', function(){
+gulp.task('extension-build-css', function(){
   return gulp.src('source/scss/extension.scss')
     .pipe(sourcemaps.init())
       .pipe(sass())
@@ -119,17 +111,13 @@ gulp.task('build-css-extension', function(){
     .pipe(gulp.dest('extension/public/css/local/'))
 })
 
-gulp.task('socket-url-extension', function(){
+gulp.task('extension-url-replace', function(){
   gulp.src('extension/public/js/local/*',{base: "./"})
     .pipe(replace('http://localhost:5050', config.extensionUrl))
-    .pipe(gulp.dest("./"))
-})
-
-gulp.task('api-url-replace', function(){
-  gulp.src('extension/public/js/local/*',{base: "./"})
     .pipe(replace('http://localhost:8080', config.extensionUrl))
     .pipe(gulp.dest("./"))
 })
+
 
 gulp.task('extension-scripts', function(){
   gulp.src('source/js/extension/*')
