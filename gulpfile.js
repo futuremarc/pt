@@ -32,8 +32,8 @@ gulp.task('watch', function(){
   gulp.watch('source/js/main/*.js', ['main-scripts'])
   gulp.watch('source/js/mobile/*.js', ['mobile-scripts'])
   gulp.watch('source/js/extension/*.js', ['extension-scripts'])
-  gulp.watch('source/js/extension/*.js', ['socket-url-replace'])
-  gulp.watch('source/js/extension/*.js', ['localhost-url-replace'])
+  gulp.watch('source/js/extension/*.js', ['socket-url-replace-extension'])
+  gulp.watch('source/js/extension/*.js', ['api-url-replace'])
 
 })
 
@@ -44,9 +44,15 @@ gulp.task('socket-url-replace', function(){
     .pipe(gulp.dest("./"))
 })
 
-gulp.task('localhost-url-replace', function(){
-  gulp.src(['public/js/local/*','extension/public/js/local/*'],{base: "./"})
-    .pipe(replace('http://localhost:8080',config.url))
+gulp.task('socket-url-replace-extension', function(){
+  gulp.src('extension/public/js/local/*',{base: "./"})
+    .pipe(replace('http://localhost:5050',config.url))
+    .pipe(gulp.dest("./"))
+})
+
+gulp.task('api-url-replace', function(){
+  gulp.src('extension/public/js/local/*',{base: "./"})
+    .pipe(replace('http://localhost:8080', config.url))
     .pipe(gulp.dest("./"))
 })
 
