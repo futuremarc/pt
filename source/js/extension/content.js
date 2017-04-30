@@ -7,18 +7,18 @@ function animate() {
   if (key.right) myCharacter.position.x += .05
   if (key.left) myCharacter.position.x -= .05
 
-  for (var character in characters){
+  for (var character in characters) {
 
     var character = characters[character]
 
-    if (character.isWalking && character.data._id !== myCharacter.data._id){
+    if (character.isWalking && character.data._id !== myCharacter.data._id) {
       if (character.isWalking === 'right') character.position.x += .05
       else character.position.x -= .05
     }
 
   }
 
-  requestAnimationFrame(animate);  
+  requestAnimationFrame(animate);
   render();
 
 }
@@ -341,7 +341,7 @@ var liveFriends = {}
 
 function getLiveFriends() {
 
-  myCharacter.data.friends.forEach(function(friend){
+  myCharacter.data.friends.forEach(function(friend) {
 
     var friend = friend.user
     if (friend.isLive) liveFriends[friend._id] = friend._id
@@ -731,5 +731,50 @@ function detectHover(e) {
     }
 
   }
+
+}
+
+
+/****FROM BACKGROUND****/
+
+
+chrome.runtime.onMessage.addListener(receiver);
+
+function receiver(request, sender, sendResponse) {
+  console.log(request, sender)
+
+  if (request.idleState){
+
+    var state = request.idleState
+
+    if (state === 'idle' || state === 'locked'){
+
+      myCharacter.data.isLive = false
+      updateCharacter('putLocal')
+      updateCharacter('putRemote')
+
+      $('#pt-canvas').hide()
+
+      socket.emit('leave', {
+          _id: id,
+          friends: liveFriends
+        })
+
+    }else {
+
+      myCharacter.data.isLive = true
+      updateCharacter('putLocal')
+      updateCharacter('putRemote')
+
+      $('#pt-canvas').show()
+
+      socket.emit('join', {
+          _id: id,
+          friends: liveFriends
+        })
+    }
+    
+  }
+
 
 }
