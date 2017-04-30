@@ -736,9 +736,4 @@ function detectHover(e) {
 
   }
 
-}'pt-hovering')
-    }
-
-  }
-
 }
