@@ -1,7 +1,7 @@
 var socket = io('http://localhost:5050', {
-  path: '/socket'
+  path: '/socket',
+  secure: true
 })
-
 
 function animate() {
 
