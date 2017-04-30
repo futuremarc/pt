@@ -40,7 +40,7 @@ gulp.task('watch', function(){
 
 
 gulp.task('socket-url-replace', function(){
-  gulp.src(['public/js/local/*','extension/source/*'],{base: "./"})
+  gulp.src(['public/js/local/*'],{base: "./"})
     .pipe(replace('http://localhost:5050',config.url))
     .pipe(gulp.dest("./"))
 })
@@ -111,7 +111,7 @@ gulp.task('extension-build-css', function(){
 })
 
 gulp.task('extension-url-replace', function(){
-  gulp.src(['extension/public/js/local/*', 'public/js/local/*'],{base: "./"})
+  gulp.src(['extension/public/js/local/*', 'public/js/local/**/*'],{base: "./"})
     .pipe(replace('http://localhost:5050', config.url))
     .pipe(replace('http://localhost:8080', config.url))
     .pipe(gulp.dest("./"))
