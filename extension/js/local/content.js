@@ -6,7 +6,19 @@ var socket = io('http://localhost:5050', {
 function animate() {
 
   if (key.right) myCharacter.position.x += .05
-  if (key.left) myCharacter.position.x -= .05
+  else if (key.left) myCharacter.position.x -= .05
+
+  for (var character in characters){
+
+    var character = characters[character]
+
+    if (character.isWalking){
+      if (character.isWalking === 'right') character.position.x += .05
+      else character.position.x -= .05
+    }
+
+  }
+
   requestAnimationFrame(animate);
   render();
 
@@ -164,10 +176,12 @@ function createCharacter(data, cB) {
 
       this.rotation.y = dir * Math.PI / 2
       this.fadeAction(this.animations[2])
+      this.isWalking = direction
     }
 
     character.stopWalk = function() {
       this.fadeAction(this.animations[0])
+      this.isWalking = false
     }
 
     character.wave = function() {
@@ -281,19 +295,19 @@ function updateCharacter(data, request, cB) {
 
     } else if (request === 'putLocal') {
 
-        var pos = {
-            x: myCharacter.position.x,
-            y: myCharacter.position.y,
-            z: myCharacter.position.z
-          },
-          rot = {
-            x: myCharacter.rotation.x,
-            y: myCharacter.rotation.y,
-            z: myCharacter.rotation.z
-          }
+      var pos = {
+          x: myCharacter.position.x,
+          y: myCharacter.position.y,
+          z: myCharacter.position.z
+        },
+        rot = {
+          x: myCharacter.rotation.x,
+          y: myCharacter.rotation.y,
+          z: myCharacter.rotation.z
+        }
 
-        myCharacter.data.position = pos
-        myCharacter.data.rotation = rot
+      myCharacter.data.position = pos
+      myCharacter.data.rotation = rot
 
       chrome.storage.sync.set({
         'pt-user': data
@@ -445,6 +459,9 @@ function onKeyUp(e) {
 
   if (keyCode !== 39 && keyCode !== 37) return
 
+  updateCharacter(myCharacter.data, 'putLocal')
+  if (myCharacter.data._id) updateCharacter(myCharacter.data, 'putRemote')
+
   var id = myCharacter.data._id
   var liveFriends = myCharacter.data.liveFriends
   var pos = myCharacter.data.position
@@ -458,7 +475,7 @@ function onKeyUp(e) {
   }
 
   controls[keyCode](data, true)
-  
+
 }
 
 function onVisibilityChange() {
