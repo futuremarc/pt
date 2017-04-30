@@ -111,9 +111,9 @@ gulp.task('extension-build-css', function(){
 })
 
 gulp.task('extension-url-replace', function(){
-  gulp.src(['extension/public/js/local/*', 'public/js/local/**/*'],{base: "./"})
-    .pipe(replace('http://localhost:5050', config.extensionUrl))
-    .pipe(replace('http://localhost:8080', config.extensionUrl))
+  gulp.src(['extension/public/js/local/*', 'public/js/local/*'],{base: "./"})
+    .pipe(replace('http://localhost:5050', config.url))
+    .pipe(replace('http://localhost:8080', config.url))
     .pipe(gulp.dest("./"))
 })
 
