@@ -6,13 +6,13 @@ var socket = io('http://localhost:5050', {
 function animate() {
 
   if (key.right) myCharacter.position.x += .05
-  else if (key.left) myCharacter.position.x -= .05
+  if (key.left) myCharacter.position.x -= .05
 
   for (var character in characters){
 
     var character = characters[character]
 
-    if (character.isWalking){
+    if (character.isWalking && character._id !== myCharacter._id){
       if (character.isWalking === 'right') character.position.x += .05
       else character.position.x -= .05
     }
@@ -49,8 +49,9 @@ var textureLoader = new THREE.TextureLoader();
 var loader = new THREE.JSONLoader();
 var clock, container, camera, scene, light, renderer, controls = {};
 var myCharacter, hoveredCharacter = undefined
-var sceneCharacters //scene of all character meshs
-var characters = {}; //data of all characters
+
+var sceneCharacters //mesh
+var characters = {}; //data
 
 function initScene(data) {
 
