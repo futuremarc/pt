@@ -31,7 +31,7 @@
 
     {
       "matches": ["<all_urls>"],
-      "js": ["/js/lib/jquery.min.js","/js/lib/three.min.js","/js/local/content.js"],
+      "js": ["/js/lib/jquery.min.js","/js/lib/three.min.js","/js/lib/socket.io.min.js","/js/local/content.js"],
       "css": ["/css/local/avatar.css"]
     }
 

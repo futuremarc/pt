@@ -1,67 +1,30 @@
-function updateCharacter(data, getRequest, cB) {
-  var pos, rot
+var socket = io('http://localhost:5050', {
+  path: '/socket'
+})
 
-  if (getRequest) {
 
-    if (getRequest === 'fromLocal') {
+function animate() {
 
-      chrome.storage.sync.get('pt-user', function(data) {
+  if (key.right) myCharacter.position.x += .05
+  if (key.left) myCharacter.position.x -= .05
+  requestAnimationFrame(animate);
+  render();
 
-        var data = data['pt-user']
-        if (!data) return false
+}
 
-        pos = data.position
-        rot = data.rotation
-        myCharacter.position.set(pos.x, pos.y, pos.z)
-        myCharacter.rotation.set(rot.x, rot.y, rot.z)
-        myCharacter.data = data
-        if (cB) cB()
+function render() {
 
-      })
-
-    }
-
-  } else {
-    pos = data.position
-    rot = data.rotation
-    myCharacter.position.set(pos.x, pos.y, pos.z)
-    myCharacter.rotation.set(rot.x, rot.y, rot.z);
-    myCharacter.data = data
-    if (cB) cB()
-
+  var delta = clock.getDelta();
+  for (var character in characters) {
+    characters[character].mixer.update(delta);
   }
-
+  renderer.render(scene, camera);
 }
 
 
-function putCharacterLocal(data) {
+function initPt() {
 
-  chrome.storage.sync.set({
-    'pt-user': data
-  })
-
-}
-
-function putCharacterRemote(data) {
-
-  var name = data.name
-
-  $.ajax({
-    method: 'PUT',
-    url: 'http://localhost:8080/api/user/' + name,
-    data: data,
-    success: function(data) {
-      console.log(data)
-    },
-    error: function(err) {
-      console.log(err)
-    },
-  })
-
-}
-
-
-function getCharacterLocal() {
+  $('<div id="pt-canvas" class="pt-override-page"></div>').appendTo('body');
 
   chrome.storage.sync.get('pt-user', function(data) {
     initScene(data['pt-user'])
@@ -69,17 +32,14 @@ function getCharacterLocal() {
 
 }
 
-var clock, container, camera, scene, renderer, controls, listener;
 
-var myCharacter
-var characterScene
-var characters = {};
-var light;
 var textureLoader = new THREE.TextureLoader();
 var loader = new THREE.JSONLoader();
-var hoveredCharacter = undefined
+var clock, container, camera, scene, light, renderer, controls;
+var myCharacter, hoveredCharacter = undefined
+var characterScene //scene of all character meshs
+var characters = {}; //data of all characters
 
-$('<div id="pt-canvas" class="pt-override-page"></div>').appendTo('body');
 
 function initScene(data) {
 
@@ -89,38 +49,55 @@ function initScene(data) {
 
   clock = new THREE.Clock();
   scene = new THREE.Scene();
-  container = document.getElementById('pt-canvas');
+
   renderer = new THREE.WebGLRenderer({
     antialias: true,
     alpha: true
   });
 
+  container = document.getElementById('pt-canvas');
+
   renderer.setPixelRatio(window.devicePixelRatio);
   renderer.setSize(container.offsetWidth, container.offsetHeight);
+
   container.appendChild(renderer.domElement);
   $(renderer.domElement).addClass('pt-override-page')
+
   camera = new THREE.OrthographicCamera(container.offsetWidth / -2, container.offsetWidth / 2, container.offsetHeight / 2, container.offsetHeight / -2, .1, 1000);
   camera.position.set(0, 1.2, 2)
 
   light = new THREE.AmbientLight(0xffffff, 1);
   scene.add(light);
+
   characterScene = new THREE.Object3D();
+  scene.add(characterScene);
+
+  createMyCharacter(data, function() {
+    updateCharacter(null, 'putLocal')
+    updateCharacter(null, 'putRemote')
+  })
+
+  document.addEventListener('keydown', onKeyDown, false);
+  document.addEventListener('keyup', onKeyUp, false);
+  window.addEventListener('visibilitychange', onVisibilityChange, false);
+  window.addEventListener('mousemove', detectHover, false);
+
+}
+
+function createMyCharacter(data) {
 
   createCharacter(data, function(character) {
 
     myCharacter = character
-
-
-    characterScene.add(character)
-    scene.add(characterScene);
 
     var pos = data.position || {
       x: 0,
       y: -1,
       z: 0
     }
-    character.position.set(pos.x, pos.y, pos.z);
+
     characterScene.position.set(-pos.x, pos.y, pos.z);
+
     var box = new THREE.Box3().setFromObject(characterScene);
     box.center(characterScene.position);
     characterScene.localToWorld(box);
@@ -128,98 +105,46 @@ function initScene(data) {
 
     camera.zoom = Math.min(container.offsetWidth / (box.max.x - box.min.x),
       container.offsetHeight / (box.max.y - box.min.y)) * .8;
+
     camera.updateProjectionMatrix();
     camera.updateMatrix();
+
+    //if user registered
+    if (myCharacter._id) {
+
+      getLiveFriends()
+
+      if (!myCharacter.isLive) {
+
+        var id = myCharacter.data._id
+        var liveFriends = myCharacter.data.liveFriends
+        var pos = myCharacter.data.position
+        var rot = myCharacter.data.rotation
+
+        socket.emit('join', {
+          _id: id,
+          position: pos,
+          rotation: rot,
+          friends: liveFriends
+        })
+
+        myCharacter.isLive = true;
+
+      }
+
+
+    }
 
     animate()
 
   })
-
-
-  document.addEventListener('keydown', onKeyDown, false);
-  document.addEventListener('keyup', onKeyUp, false);
-  window.addEventListener('visibilitychange', onVisibilityChange, false);
-  //window.addEventListener('mousemove', detectHover, false);
-
-}
-
-function onVisibilityChange() {
-
-  if (document.visibilityState === 'visible') updateCharacter(null, 'fromLocal', showCanvas)
-  else hideCanvas()
-
-}
-
-function showCanvas() {
-
-  if (!myCharacter.data._id)
-    return
-}
-
-function hideCanvas() {
-  $('#pt-canvas').hide()
-}
-
-var key = {
-  left: false,
-  right: false
-}
-
-function onKeyDown(e) {
-
-  var keyCode = e.keyCode;
-  if (keyCode !== 39 && keyCode !== 37 && keyCode !== 38 && keyCode !== 40) return
-
-  if (keyCode === 39) {
-
-    if (!key.right) myCharacter.walk('right')
-    key.right = true;
-
-  } else if (keyCode === 37) {
-
-    if (!key.left) myCharacter.walk('left')
-    key.left = true;
-
-  } else if (keyCode === 38) myCharacter.wave() //up arrow
-  else if (keyCode === 40) myCharacter.pose() //down arrow
-
-}
-
-function onKeyUp(e) {
-  var keyCode = e.keyCode;
-
-  if (keyCode !== 39 && keyCode !== 37) return
-
-  if (keyCode === 39) {
-    if (key.right) myCharacter.stopWalk() //stop walk right
-    key.right = false;
-  } else if (keyCode === 37) {
-    if (key.left) myCharacter.stopWalk() //stop walk left
-    key.left = false;
-  }
-
-  var pos = {
-    x: myCharacter.position.x,
-    y: myCharacter.position.y,
-    z: myCharacter.position.z
-  }
-  var rot = {
-    x: myCharacter.rotation.x,
-    y: myCharacter.rotation.y,
-    z: myCharacter.rotation.z
-  }
-
-  myCharacter.data.position = pos
-  myCharacter.data.rotation = rot
-
-  putCharacterLocal(myCharacter.data)
-  if (myCharacter.data._id) putCharacterRemote(myCharacter.data)
 
 }
 
 function createCharacter(data, cB) {
 
   loader.load(chrome.extension.getURL('./models/eva-animated.json'), function(geometry, materials) {
+
     materials.forEach(function(material) {
       material.skinning = true;
     });
@@ -290,23 +215,22 @@ function createCharacter(data, cB) {
 
     actions.idle.play();
 
-
     characters[data._id] = character
     characterScene.add(character)
 
-    var rot = data.rotation || {
-      x: 0,
-      y: Math.PI / 2,
-      z: 0
-    }
-    character.rotation.set(rot.x, rot.y, rot.z);
-
     var pos = data.position || {
-      x: 0,
-      y: -1,
-      z: 0
-    }
+        x: 0,
+        y: -1,
+        z: 0
+      },
+      rot = data.rotation || {
+        x: 0,
+        y: Math.PI / 2,
+        z: 0
+      }
+
     character.position.set(pos.x, pos.y, pos.z);
+    character.rotation.set(rot.x, rot.y, rot.z);
 
 
     if (cB) cB(character)
@@ -315,23 +239,249 @@ function createCharacter(data, cB) {
 
 }
 
-function animate() {
-  if (key.right) myCharacter.position.x += .05
-  if (key.left) myCharacter.position.x -= .05
-  requestAnimationFrame(animate);
-  render();
-}
 
-function render() {
+function updateCharacter(data, request, cB) {
 
-  var delta = clock.getDelta();
-  for (var character in characters) {
-    characters[character].mixer.update(delta);
+  var pos, rot
+
+  if (request) {
+    if (request === 'getLocal') {
+
+      chrome.storage.sync.get('pt-user', function(data) {
+
+        var data = data['pt-user']
+        if (!data) return false
+
+        pos = data.position
+        rot = data.rotation
+
+        myCharacter.position.set(pos.x, pos.y, pos.z)
+        myCharacter.rotation.set(rot.x, rot.y, rot.z)
+        myCharacter.data = data
+
+        if (cB) cB()
+
+      })
+
+    } else if (request === 'putRemote') {
+
+      var name = data.name
+
+      $.ajax({
+        method: 'PUT',
+        url: 'http://localhost:8080/api/user/' + name,
+        data: data,
+        success: function(data) {
+          console.log(data)
+        },
+        error: function(err) {
+          console.log(err)
+        },
+      })
+
+    } else if (request === 'putLocal') chrome.storage.sync.set({
+      'pt-user': data
+    })
+
+
+  } else {
+
+    pos = data.position
+    rot = data.rotation
+
+    myCharacter.position.set(pos.x, pos.y, pos.z)
+    myCharacter.rotation.set(rot.x, rot.y, rot.z);
+    myCharacter.data = data
+
+    if (cB) cB()
+
   }
-  renderer.render(scene, camera);
+
 }
 
-getCharacterLocal();
+function onVisibilityChange() {
+
+  if (document.visibilityState === 'visible') updateCharacter(null, 'getLocal', showCanvas)
+  else hideCanvas()
+
+}
+
+var liveFriends = {}
+
+function getLiveFriends() {
+
+  for (var friend in myCharacter.data.friends) {
+
+    var friend = myCharacter.data.friends[friend]
+    if (friend.isAlive) liveFriends[friend._id] = [friend._id]
+
+  }
+
+}
+
+var key = {
+  left: false,
+  right: false
+}
+
+function onKeyDown(e) {
+
+  var keyCode = e.keyCode;
+  if (keyCode !== 39 && keyCode !== 37 && keyCode !== 38 && keyCode !== 40) return
+
+  var id = myCharacter.data._id
+  var liveFriends = myCharacter.data.liveFriends
+  var pos = myCharacter.data.position
+  var rot =  myCharacter.data.rotation
+
+  if (keyCode === 39) {
+    if (!key.right) {
+
+      var action = 'walk'
+      var direction = 'right'
+
+      myCharacter[action](direction)
+
+      if (id) {
+
+        socket.emit(action, { //right arrow
+          _id: id,
+          position: pos,
+          rotation: rot,
+          direction: direction,
+          friends: liveFriends
+        })
+
+
+      }
+
+    }
+
+    key.right = true;
+
+  } else if (keyCode === 37) { //left arrow
+    if (!key.left) {
+
+      var action = 'walk'
+      var direction = 'left'
+
+      myCharacter[action](direction)
+
+      if (id) {
+
+        socket.emit('walk', {
+          _id: id,
+          position: pos,
+          rotation: rot,
+          direction: direction,
+          friends: liveFriends
+        })
+
+      }
+
+    }
+
+    key.left = true;
+
+  } else if (keyCode === 38) { //up arrow
+
+    var action = 'wave'
+    myCharacter[action]()
+
+    socket.emit('action', {
+      _id: id,
+      action: action,
+      position: pos,
+      rotation: rot,
+      friends: liveFriends
+    })
+
+  } else if (keyCode === 40) {//down arrow
+
+    var action = 'pose'
+    myCharacter[action]()
+
+    socket.emit('action', {
+      _id: id,
+      action: action,
+      position: pos,
+      rotation: rot,
+      friends: liveFriends
+    })
+  }
+
+
+}
+
+function onKeyUp(e) {
+  var keyCode = e.keyCode;
+
+  if (keyCode !== 39 && keyCode !== 37) return
+
+  //animation
+  if (keyCode === 39 || keyCode === 37) {
+    if (keyCode === 39) {
+
+      if (key.right) myCharacter.stopWalk()
+      key.right = false;
+
+    } else {
+
+      if (key.left) myCharacter.stopWalk()
+      key.left = false;
+    }
+
+    var id = myCharacter.data._id
+    var liveFriends = myCharacter.data.liveFriends
+
+    //update Character data
+    var pos = {
+        x: myCharacter.position.x,
+        y: myCharacter.position.y,
+        z: myCharacter.position.z
+      },
+      rot = {
+        x: myCharacter.rotation.x,
+        y: myCharacter.rotation.y,
+        z: myCharacter.rotation.z
+      }
+
+    myCharacter.data.position = pos
+    myCharacter.data.rotation = rot
+
+    if (!myCharacter.data._id) return
+
+
+    socket.emit('stopWalk', {
+      _id: id,
+      position: pos,
+      rotation: rot,
+      friends: liveFriends
+    })
+
+  }
+
+
+  // if user has registered put data
+  if (myCharacter.data._id) {
+    updateCharacter(myCharacter.data, 'putLocal')
+    updateCharacter(myCharacter.data, 'putRemote')
+  }
+
+}
+
+function showCanvas() {
+
+  if (!myCharacter.data._id)
+    return
+}
+
+function hideCanvas() {
+  $('#pt-canvas').hide()
+}
+
+
+initPt();
 
 
 /********* FORMS ***********/
@@ -349,23 +499,22 @@ $("body").on('submit', '#pt-auth-form', function(e) {
   var subs = []
 
   $("#pt-auth-form input:checkbox:checked").each(function() {
+
     var sub = $(this).data('id')
     subs.push(sub)
-    console.log(sub)
   });
-  console.log('subs', subs)
 
 
   var pos = {
-    x: myCharacter.position.x,
-    y: myCharacter.position.y,
-    z: myCharacter.position.z
-  }
-  var rot = {
-    x: myCharacter.rotation.x,
-    y: myCharacter.rotation.y,
-    z: myCharacter.rotation.z
-  }
+      x: myCharacter.position.x,
+      y: myCharacter.position.y,
+      z: myCharacter.position.z
+    },
+    rot = {
+      x: myCharacter.rotation.x,
+      y: myCharacter.rotation.y,
+      z: myCharacter.rotation.z
+    }
 
   var data = {
     email: email,
@@ -385,9 +534,10 @@ $("body").on('submit', '#pt-auth-form', function(e) {
       if (data.status === 'success') {
 
         errorMessage.html(data.message + ' <strong>' + data.data.name + '</strong>!')
+
         myCharacter.data = data.data
-        putCharacterLocal(data.data)
-        updateCharacter(data.data)
+        updateCharacter(myCharacter.data, 'putLocal')
+
         setTimeout(function() {
           location.href = '/'
         }, 500)
@@ -582,20 +732,3 @@ function detectHover(e) {
   }
 
 }
-
-
-function debounce(func, wait, immediate) {
-  var timeout;
-  return function() {
-    var context = this,
-      args = arguments;
-    var later = function() {
-      timeout = null;
-      if (!immediate) func.apply(context, args);
-    };
-    var callNow = immediate && !timeout;
-    clearTimeout(timeout);
-    timeout = setTimeout(later, wait);
-    if (callNow) func.apply(context, args);
-  };
-};

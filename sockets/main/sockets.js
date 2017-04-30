@@ -4,70 +4,68 @@ module.exports = function(io) {
 
   io.on('connection', function(socket) {
 
-    socket.on('error', function(data) {
-      throw err
-    })
 
-    //add socket.id to clients and friends {}
-    socket.on('join', function(data) {
+    socket.on('join', function(data) { //add socket.id to clients and liveFriends {}
 
-      var id = data._id, friends = data.friends, mappedFriends = {}
-
-      friends.forEach(function(friend) {
-        mappedFriends[friend] = socket.id
-      })
+      var id = data._id,
+        liveFriends = data.liveFriends
 
       clients[id].socketId = socket.id
-      clients[id].friends = mappedFriends
+      clients[id].liveFriends = liveFriends
 
-      friends.forEach(function(friend) {
+      for (var friend in liveFriends) {
 
-        var friend = clients[friend]
-        friend.friends[id] = id
+        var friend = liveFriends[friend]
+        clients[friend].liveFriends[id] = id
 
-        if (io.sockets.connected[friend.socketId]) io.sockets.connected[friend.socketId].emit('join', data);
+        if (io.sockets.connected[clients[friend].socketId]) io.sockets.connected[clients[friend].socketId].emit('join', data);
 
-      })
+      }
+
     })
 
-    //remove from clients and friends {}
-    socket.on('leave', function(data) {
 
-      var id = data._id, friends = data.friends
+    socket.on('leave', function(data) { //remove from clients and liveFriends {}
 
-      friends.forEach(function(friend) {
+      var id = data._id,
+        liveFriends = data.liveFriends
 
-        var friend = clients[friend]
-        delete friend.friends[id]
+      for (var friend in liveFriends) {
 
-        if (io.sockets.connected[friend.socketId]) io.sockets.connected[friend.socketId].emit('leave', data);
+        var friend = liveFriends[friend]
+        delete clients[friend].liveFriends[id]
 
-      })
+        if (io.sockets.connected[clients[friend].socketId]) io.sockets.connected[clients[friend].socketId].emit('leave', data);
+
+      }
 
       delete clients[id]
 
     })
 
-    //add identicle socket events
-    var events = ['updatePos', 'updateAction', 'message', 'post']
 
-    events.forEach(function(event) {
+    var events = ['walk', 'stopWalk', 'updateAction', 'message', 'post']
+
+    events.forEach(function(event) { //add identicle socket events
 
       socket.on(event, function(data) {
+        var id = data._id,
+          liveFriends = data.liveFriends
 
-        var id = data._id, friends = data.friends
+        for (var friend in liveFriends) {
 
-        friends.forEach(function(friend) {
+          var friend = liveFriends[friend]
+          if (io.sockets.connected[clients[friend].socketId]) io.sockets.connected[clients[friend].socketId].emit('leave', data);
 
-          var friend = clients[friend]
-
-          if (io.sockets.connected[friend.socketId]) io.sockets.connected[friend.socketId].emit(event, data);
-        })
+        }
 
       })
 
+    })
 
 
+    socket.on('error', function(data) {
+      throw err
     })
 
   })
