@@ -2,6 +2,7 @@ var express = require('express');
 var app = express()
 var router = express.Router();
 var User = require('models/user/model')
+var async = require('async')
 
 
 if (app.get('env') === 'development') {
@@ -57,17 +58,45 @@ module.exports = function(passport) {
           })
         }
 
-        req.login(user, function(err) {
-          if (err) {
-            return next(err)
-          }
+        var friends = []
 
-          return res.json({
-            status: "success",
-            message: info.message,
-            data: user
+        async.forEach(user.friends, function(friend, callback) {
+          User.populate(
+            friend, {
+              path: "user"
+            },
+            function(err, friend) {
+
+              friends.push(friend)
+              if (err) throw err;
+              callback();
+            }
+          );
+        }, function(err) {
+
+          if (err) return res.json({
+            status: "error",
+            data: null,
+            message: "Couldn't sign up"
+          })
+
+          user.friends = friends
+
+
+          req.login(user, function(err) {
+            if (err) {
+              return next(err)
+            }
+
+            return res.json({
+              status: "success",
+              message: info.message,
+              data: user
+            })
           })
         })
+
+
       })(req, res, next);
     })
 

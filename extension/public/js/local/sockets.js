@@ -11,7 +11,7 @@ events.forEach(function(event) { //add identicle socket events
 
 socket.on('join', function(data){
 
-  var friend = myCharacter.data.friends[friend]
+  var friend = myCharacter.data.friends[friend].user
   
   friend.isAlive = true
   getLiveFriends()
@@ -21,7 +21,7 @@ socket.on('join', function(data){
 
 socket.on('leave', function(data){
 
-  var friend = myCharacter.data.friends[friend]
+  var friend = myCharacter.data.friends[friend].user
   
   friend.isAlive = false
   getLiveFriends()

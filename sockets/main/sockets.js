@@ -10,8 +10,12 @@ module.exports = function(io) {
       var id = data._id,
         liveFriends = data.liveFriends
 
+      clients[id] = {}
+
       clients[id].socketId = socket.id
       clients[id].liveFriends = liveFriends
+
+      console.log('join', data)
 
       for (var friend in liveFriends) {
 
@@ -30,6 +34,8 @@ module.exports = function(io) {
       var id = data._id,
         liveFriends = data.liveFriends
 
+        console.log('leave', data)
+
       for (var friend in liveFriends) {
 
         var friend = liveFriends[friend]
@@ -44,7 +50,7 @@ module.exports = function(io) {
     })
 
 
-    var events = ['walk', 'stopWalk', 'action', 'message', 'post']
+    var events = ['action', 'message', 'post']
 
     events.forEach(function(event) { //add identicle socket events
 
@@ -52,11 +58,11 @@ module.exports = function(io) {
         var id = data._id,
           liveFriends = data.liveFriends
 
-          console.log('emit', event, data)
-
         for (var friend in liveFriends) {
 
           var friend = liveFriends[friend]
+
+             console.log('emit', event,'clients', clients, 'friend', friend, 'data', data)
           if (io.sockets.connected[clients[friend].socketId]) io.sockets.connected[clients[friend].socketId].emit('leave', data);
 
         }

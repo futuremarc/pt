@@ -73,7 +73,7 @@ var userSchema = new Schema({
 
   isLive: {
     type: Boolean,
-    default: true
+    default: false
   },
 
   favoritePosts: [{

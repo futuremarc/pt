@@ -1,7 +1,10 @@
-var socket = io('http://localhost:5050')
+var socket = io('http://localhost:5050', {
+  path: '/socket'
+})
+
 
 function animate() {
-  
+
   if (key.right) myCharacter.position.x += .05
   if (key.left) myCharacter.position.x -= .05
 
@@ -9,7 +12,7 @@ function animate() {
 
     var character = characters[character]
 
-    if (character.isWalking && character._id !== myCharacter._id){
+    if (character.isWalking && character.data._id !== myCharacter.data._id){
       if (character.isWalking === 'right') character.position.x += .05
       else character.position.x -= .05
     }
@@ -118,15 +121,15 @@ function createMyCharacter(data) {
     camera.updateProjectionMatrix();
     camera.updateMatrix();
 
-    //if user registered
-    if (myCharacter._id) {
+    if (myCharacter.data._id) {
 
       getLiveFriends()
 
-      if (!myCharacter.isLive) {
+      console.log('createCharacter getLiveFriends', liveFriends)
+
+      if (!myCharacter.data.isLive) {
 
         var id = myCharacter.data._id
-        var liveFriends = myCharacter.data.liveFriends
         var pos = myCharacter.data.position
         var rot = myCharacter.data.rotation
 
@@ -137,7 +140,7 @@ function createMyCharacter(data) {
           friends: liveFriends
         })
 
-        myCharacter.isLive = true;
+        myCharacter.data.isLive = true;
 
       }
 
@@ -268,8 +271,6 @@ function updateCharacter(data, request, cB) {
         myCharacter.rotation.set(rot.x, rot.y, rot.z)
         myCharacter.data = data
 
-        console.log('getLocal', data)
-
         if (cB) cB()
 
       })
@@ -341,12 +342,12 @@ var liveFriends = {}
 
 function getLiveFriends() {
 
-  for (var friend in myCharacter.data.friends) {
+  myCharacter.data.friends.forEach(function(friend){
 
-    var friend = myCharacter.data.friends[friend]
-    if (friend.isAlive) liveFriends[friend._id] = [friend._id]
+    var friend = friend.user
+    if (friend.isLive) liveFriends[friend._id] = friend._id
 
-  }
+  })
 
 }
 
@@ -434,7 +435,6 @@ function onKeyDown(e) {
   if (keyCode !== 39 && keyCode !== 37 && keyCode !== 38 && keyCode !== 40) return
 
   var id = myCharacter.data._id
-  var liveFriends = myCharacter.data.liveFriends
 
   myCharacter.data.position
   var pos = myCharacter.data.position
@@ -460,7 +460,6 @@ function onKeyUp(e) {
   if (myCharacter.data._id) updateCharacter(myCharacter.data, 'putRemote')
 
   var id = myCharacter.data._id
-  var liveFriends = myCharacter.data.liveFriends
   var pos = myCharacter.data.position
   var rot = myCharacter.data.rotation
 
