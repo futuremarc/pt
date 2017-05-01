@@ -7,7 +7,7 @@ module.exports = function() {
 
   router.get('/', function(req, res, next) {
 
-    if (!req.user) return res.render('main/index.pug')
+    if (!req.user) return res.render('auth/login.pug')
 
     return res.render('main/index.pug', {
       loggedIn: true,
@@ -33,12 +33,15 @@ module.exports = function() {
 
   })
 
-  router.get('/subscription', function(req, res, next) {
+  router.get('/settings', function(req, res, next) {
+
+    if (!req.user) return res.render('auth/login.pug')
 
     Subscription.find({}).exec(function(err, result) {
 
       var subs = JSON.stringify(result)
-      res.render('auth/subscription.pug', {
+
+      res.render('auth/settings.pug', {
         loggedIn: true,
         userName: req.user.name,
         subscriptions: subs
@@ -50,11 +53,15 @@ module.exports = function() {
 
 
   router.get('/logout', function(req, res, next) {
-    res.render('auth/logout.pug')
+    req.logout()
+    res.redirect(req.headers.referer)
   })
 
   router.get('/friend', function(req, res, next) {
+
+    if (!req.user) return res.render('auth/login.pug')
     res.render('auth/friend.pug')
+
   })
 
   router.get('/forgot', function(req, res) {

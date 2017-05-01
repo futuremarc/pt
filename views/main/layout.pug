@@ -15,6 +15,7 @@ html
     script(src='/bower_components/bootstrap/dist/js/bootstrap.min.js')
     script(src='/bower_components/socket.io-client/dist/socket.io.min.js')
     script(src='/bower_components/handlebars/handlebars.runtime.min.js')
+    script(src='/js/local/auth/handlebar-helpers.js')
     script(src='/js/local/templates/templates.js')
 
     a(href='/') Home
@@ -25,7 +26,7 @@ html
     br
     a(href='/friend') Add Friend
     br
-    a(href='/subscription') Subscriptions
+    a(href='/settings') Settings
     br
     a(href='#' id="logout") Logout
     br
@@ -38,4 +39,3 @@ html
 
 
     block javascript
-      script(src='/js/local/auth/handlebar-helpers.js')

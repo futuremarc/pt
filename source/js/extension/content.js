@@ -280,7 +280,7 @@ function updateCharacter(data, request, cB) {
       myCharacter.rotation.set(rot.x, rot.y, rot.z)
       myCharacter.data = data
 
-      if (cB) cB()
+      if (cB) cB(data)
 
     })
 
@@ -294,7 +294,7 @@ function updateCharacter(data, request, cB) {
       data: data,
       success: function(data) {
         console.log(data)
-        if (cB) cB()
+        if (cB) cB(data)
       },
       error: function(err) {
         console.log(err)
@@ -312,7 +312,7 @@ function updateCharacter(data, request, cB) {
     chrome.storage.sync.set({
       'pt-user': data
     }, function() {
-      if (cB) cB()
+      if (cB) cB(data)
     })
 
   }
@@ -354,12 +354,16 @@ var controls = {
     if (keyUp) {
 
       data.action = 'stopWalk'
-      data.liveFriends = getLiveFriends()
 
       if (key.left) myCharacter[data.action]()
       key.left = false;
 
-      if (data._id) socket.emit('action', data)
+      if (isRegistered()) {
+        data.liveFriends = getLiveFriends()
+        socket.emit('action', data)
+      }
+
+
 
     } else {
 
@@ -367,10 +371,14 @@ var controls = {
 
         data.action = 'walk'
         data.direction = 'left'
-        data.liveFriends = getLiveFriends()
-
         myCharacter[data.action](data.direction)
-        if (data._id) socket.emit('action', data)
+
+        if (data._id) {
+          data.liveFriends = getLiveFriends()
+          socket.emit('action', data)
+        }
+
+
       }
 
       key.left = true;
@@ -379,22 +387,29 @@ var controls = {
   },
   38: function(data) { //up arrow
 
-    data.liveFriends = getLiveFriends()
     data.action = 'wave'
     myCharacter[data.action]()
 
-    if (data._id) socket.emit('action', data)
+    if (isRegistered()) {
+      data.liveFriends = getLiveFriends()
+      socket.emit('action', data)
+    }
 
   },
 
   39: function(data, keyUp) { //right arrow
 
     if (keyUp) {
+
       data.action = 'stopWalk'
 
       if (key.right) myCharacter[data.action]()
       key.right = false;
-      if (data._id) socket.emit('action', data)
+
+      if (isRegistered()) {
+        data.liveFriends = getLiveFriends()
+        socket.emit('action', data)
+      }
 
     } else {
 
@@ -402,10 +417,12 @@ var controls = {
 
         data.action = 'walk'
         data.direction = 'right'
-        data.liveFriends = getLiveFriends()
-
         myCharacter[data.action](data.direction)
-        if (data._id) socket.emit('action', data)
+
+        if (isRegistered()) {
+          data.liveFriends = getLiveFriends()
+          socket.emit('action', data)
+        }
       }
 
       key.right = true;
@@ -418,7 +435,11 @@ var controls = {
 
     data.action = 'pose'
     myCharacter[data.action]()
-    if (data._id) socket.emit('action', data)
+
+    if (isRegistered()) {
+      data.liveFriends = getLiveFriends()
+      socket.emit('action', data)
+    }
 
   }
 
@@ -428,9 +449,9 @@ function onKeyDown(e) {
 
   var keyCode = e.keyCode;
 
-  if (keyCode !== 39 && keyCode !== 37 && keyCode !== 38 && keyCode !== 40) return
+  if (keyCode !== 37 && keyCode !== 38 && keyCode !== 39 && keyCode !== 40) return
 
-  var id = isRegistered()
+  var id = myCharacter.data._id
   var pos = myCharacter.data.position
   var rot = myCharacter.data.rotation
 
@@ -444,22 +465,25 @@ function onKeyDown(e) {
 
 }
 
+
 function onKeyUp(e) {
   var keyCode = e.keyCode;
 
-  if (keyCode !== 39 && keyCode !== 37) return
+  if (keyCode !== 37 && keyCode !== 38 && keyCode !== 39 && keyCode !== 40) return
 
-  updateCharacter(myCharacter.data, 'putLocal')
-  if (isRegistered()) updateCharacter(myCharacter.data, 'putRemote')
+  if (!isQuickGesture) {  //dont put in db if user is doing quick gesture
 
-  var id = isRegistered()
+    updateCharacter(myCharacter.data, 'putLocal')
+    if (isRegistered()) updateCharacter(myCharacter.data, 'putRemote')
+
+  }
+
+  var id = myCharacter.data._id
   var pos = myCharacter.data.position
   var rot = myCharacter.data.rotation
-  var liveFriends = getLiveFriends()
 
   var data = {
     _id: id,
-    liveFriends: liveFriends,
     pos: pos,
     rot: rot
   }
@@ -483,6 +507,7 @@ initPt();
 
 $("body").on('submit', '#pt-auth-form', function(e) {
 
+
   e.preventDefault();
 
   var errorMessage = $(".error-message h3")
@@ -492,6 +517,8 @@ $("body").on('submit', '#pt-auth-form', function(e) {
   var name = $('.auth-name').val();
   var action = $(this).data('action')
   var subs = []
+  var timeout = null
+
 
   $("#pt-auth-form input:checkbox:checked").each(function() {
 
@@ -499,12 +526,25 @@ $("body").on('submit', '#pt-auth-form', function(e) {
     subs.push(sub)
   });
 
-  if (action === 'subscription') {
+  if (action === 'settings') {
+
+    errorMessage.html('&nbsp;')
 
     updateCharacter({
       subscriptions: subs
-    }, 'putRemote')
-    
+    }, 'putRemote', function(data) {
+
+      console.log(data)
+
+      errorMessage.html(data.message + ' settings!')
+      clearTimeout(timeout)
+
+      timeout = setTimeout(function() {
+        errorMessage.html('&nbsp;')
+      }, 2000)
+
+    })
+
     return
   }
 
@@ -587,9 +627,10 @@ $("body").on('submit', '#pt-friend-form', function(e) {
 })
 
 
-var timeout = null;
 
 $('body').on('keyup', '#pt-friend-form', function(e) {
+
+  var timeout = null
 
   if (e.keyCode === 13) return
 
@@ -685,6 +726,11 @@ $('body').on('click', '#logout', function() {
 
 
 /********* HELPERS *********/
+
+
+function isQuickGesture(keyCode){
+  return (keyCode === 38) //wave
+}
 
 function isRegistered() {
   return myCharacter.data._id
