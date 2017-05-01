@@ -1,7 +1,6 @@
 $('document').ready(function() {
   
 
-
   if (loggedIn) {
 
     var errorMessage = $(".error-message h3")
@@ -33,4 +32,6 @@ $('document').ready(function() {
     })
 
   }
+
+
 })

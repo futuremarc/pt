@@ -18,6 +18,7 @@ socket.on('join', function(data) {
   
 })
 
+
 socket.on('leave', function(data) {
   console.log('leave', data)
 
@@ -30,7 +31,6 @@ socket.on('leave', function(data) {
 
 
 socket.on('action', function(data) {
-
   var id = data._id
 
   if (!characters[id]) {
@@ -47,5 +47,4 @@ socket.on('action', function(data) {
     console.log('action', data)
 
   }
-
 })

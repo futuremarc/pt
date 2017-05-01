@@ -15,9 +15,8 @@ function animate() {
       if (character.isWalking === 'right') character.position.x += .05
       else character.position.x -= .05
     }
-
   }
-
+  
   requestAnimationFrame(animate);
   render();
 
@@ -44,6 +43,10 @@ function initPt() {
 }
 
 
+
+
+/************* SCENE *************/
+
 var textureLoader = new THREE.TextureLoader();
 var loader = new THREE.JSONLoader();
 var clock, container, camera, scene, light, renderer, controls = {};
@@ -51,6 +54,7 @@ var myCharacter, hoveredCharacter = undefined
 
 var sceneCharacters //mesh
 var characters = {}; //data
+
 
 function initScene(data) {
 
@@ -83,19 +87,14 @@ function initScene(data) {
   sceneCharacters = new THREE.Object3D();
   scene.add(sceneCharacters);
 
-  createMyCharacter(data, function() {
-
-    updateCharacter(myCharacter.data, 'putLocal')
-    if (isRegistered()) updateCharacter(myCharacter.data, 'putRemote')
-
-  })
-
-  document.addEventListener('keydown', onKeyDown, false);
-  document.addEventListener('keyup', onKeyUp, false);
-  window.addEventListener('visibilitychange', onVisibilityChange, false);
-  window.addEventListener('mousemove', detectHover, false);
+  createMyCharacter(data, putCharacter)
 
 }
+
+
+
+/************* CHARACTER *************/
+
 
 function createMyCharacter(data) {
 
@@ -126,13 +125,11 @@ function createMyCharacter(data) {
 
     if (id) {
 
-
       if (!myCharacter.data.isLive) {
 
         myCharacter.data.isLive = true
 
-        updateCharacter(myCharacter.data, 'putLocal')
-        updateCharacter(myCharacter.data, 'putRemote', function() {
+        putCharacter(null, function() {
 
           var liveFriends = getLiveFriends()
 
@@ -152,9 +149,6 @@ function createMyCharacter(data) {
         })
 
       }
-
-
-
     }
 
     animate()
@@ -219,6 +213,7 @@ function createCharacter(data, cB) {
       this.activeState = name;
 
     }
+
 
     actions = character.actions
     mixer = character.mixer
@@ -294,6 +289,7 @@ function updateCharacter(data, request, cB) {
       data: data,
       success: function(data) {
         console.log(data)
+
         if (cB) cB(data)
       },
       error: function(err) {
@@ -317,30 +313,8 @@ function updateCharacter(data, request, cB) {
 
   }
 
-
 }
 
-
-function removeCharacter(data) {
-  scene.remove(sceneCharacters[data._id])
-  delete sceneCharacters[data._id]
-  delete characters[data._id]
-}
-
-function getLiveFriends() {
-
-  var liveFriends = {}
-
-  myCharacter.data.friends.forEach(function(friend) {
-
-    var friend = friend.user
-    if (friend.isLive) liveFriends[friend._id] = friend._id
-
-  })
-
-  return liveFriends
-
-}
 
 var key = {
   left: false,
@@ -354,7 +328,6 @@ var controls = {
     if (keyUp) {
 
       data.action = 'stopWalk'
-
       if (key.left) myCharacter[data.action]()
       key.left = false;
 
@@ -362,8 +335,6 @@ var controls = {
         data.liveFriends = getLiveFriends()
         socket.emit('action', data)
       }
-
-
 
     } else {
 
@@ -377,8 +348,6 @@ var controls = {
           data.liveFriends = getLiveFriends()
           socket.emit('action', data)
         }
-
-
       }
 
       key.left = true;
@@ -402,7 +371,6 @@ var controls = {
     if (keyUp) {
 
       data.action = 'stopWalk'
-
       if (key.right) myCharacter[data.action]()
       key.right = false;
 
@@ -420,13 +388,14 @@ var controls = {
         myCharacter[data.action](data.direction)
 
         if (isRegistered()) {
+
+          putCharacter()
           data.liveFriends = getLiveFriends()
           socket.emit('action', data)
         }
       }
 
       key.right = true;
-
     }
 
   },
@@ -445,6 +414,13 @@ var controls = {
 
 }
 
+
+
+
+
+/*************DOCUMENT LISTENERS*************/
+
+
 function onKeyDown(e) {
 
   var keyCode = e.keyCode;
@@ -454,6 +430,8 @@ function onKeyDown(e) {
   var id = myCharacter.data._id
   var pos = myCharacter.data.position
   var rot = myCharacter.data.rotation
+
+
 
   var data = {
     _id: id,
@@ -465,18 +443,12 @@ function onKeyDown(e) {
 
 }
 
-
 function onKeyUp(e) {
   var keyCode = e.keyCode;
 
   if (keyCode !== 37 && keyCode !== 38 && keyCode !== 39 && keyCode !== 40) return
 
-  if (!isQuickGesture) {  //dont put in db if user is doing quick gesture
-
-    updateCharacter(myCharacter.data, 'putLocal')
-    if (isRegistered()) updateCharacter(myCharacter.data, 'putRemote')
-
-  }
+  if (!isQuickGesture(keyCode)) putCharacter()
 
   var id = myCharacter.data._id
   var pos = myCharacter.data.position
@@ -488,339 +460,25 @@ function onKeyUp(e) {
     rot: rot
   }
 
-  controls[keyCode](data, true)
+  if (!isGesture(keyCode)) controls[keyCode](data, true)
 
 }
 
 function onVisibilityChange() {
-
   if (document.visibilityState === 'visible') updateCharacter(null, 'getLocal')
-
 }
 
+document.addEventListener('keydown', onKeyDown, false);
+document.addEventListener('keyup', onKeyUp, false);
+window.addEventListener('visibilitychange', onVisibilityChange, false);
+window.addEventListener('mousemove', detectHover, false);
 
 
-initPt();
 
 
-/********* FORMS ***********/
 
-$("body").on('submit', '#pt-auth-form', function(e) {
 
-
-  e.preventDefault();
-
-  var errorMessage = $(".error-message h3")
-
-  var email = $('.auth-email').val();
-  var pass = $('.auth-password').val();
-  var name = $('.auth-name').val();
-  var action = $(this).data('action')
-  var subs = []
-  var timeout = null
-
-
-  $("#pt-auth-form input:checkbox:checked").each(function() {
-
-    var sub = $(this).data('id')
-    subs.push(sub)
-  });
-
-  if (action === 'settings') {
-
-    errorMessage.html('&nbsp;')
-
-    updateCharacter({
-      subscriptions: subs
-    }, 'putRemote', function(data) {
-
-      console.log(data)
-
-      errorMessage.html(data.message + ' settings!')
-      clearTimeout(timeout)
-
-      timeout = setTimeout(function() {
-        errorMessage.html('&nbsp;')
-      }, 2000)
-
-    })
-
-    return
-  }
-
-
-  var pos = getCharacterPos()
-  var rot = getCharacterRot()
-
-  var data = {
-    email: email,
-    password: pass,
-    name: name,
-    position: pos,
-    rotation: rot,
-    subscriptions: subs
-  }
-
-
-  $.ajax({
-    method: 'POST',
-    url: 'http://localhost:8080/api/' + action,
-    data: data,
-    success: function(data) {
-      console.log(data)
-      if (data.status === 'success') {
-
-        errorMessage.html(data.message + ' <strong>' + data.data.name + '</strong>!')
-
-        myCharacter.data = data.data
-        updateCharacter(myCharacter.data, 'putLocal')
-
-        setTimeout(function() {
-          location.href = '/'
-        }, 500)
-
-      } else {
-        errorMessage.html(data.message)
-      }
-    },
-    error: function(err) {
-      console.log(err)
-    }
-  })
-})
-
-
-$("body").on('submit', '#pt-friend-form', function(e) {
-
-  e.preventDefault();
-
-  var errorMessage = $(".error-message h3")
-
-  var name = $('.auth-name').val();
-  var userId = myCharacter.data._id
-  var friendId = $(this).data('id')
-  var action = $(this).data('action')
-
-  var data = {
-    userId: userId,
-    friendId: friendId
-  }
-
-  $.ajax({
-    method: 'POST',
-    url: 'http://localhost:8080/api/user/friend/' + action,
-    data: data,
-    success: function(data) {
-      console.log(data)
-      if (data.status === 'success') {
-
-        errorMessage.html(data.message + ' to <strong>' + data.data.name + '</strong>!')
-
-      } else {
-        errorMessage.html(data.message)
-      }
-    },
-    error: function(err) {
-      console.log(err)
-    }
-  })
-})
-
-
-
-$('body').on('keyup', '#pt-friend-form', function(e) {
-
-  var timeout = null
-
-  if (e.keyCode === 13) return
-
-  var errorMessage = $(".error-message h3")
-  var name = $(this).find('input').val()
-
-  clearTimeout(timeout)
-  errorMessage.html('searching...')
-
-  var self = this
-
-  $.ajax({
-    method: 'GET',
-    url: 'http://localhost:8080/api/user/' + name,
-    success: function(data) {
-      console.log(data)
-      if (data.status === 'success') {
-
-        if (data.data) errorMessage.html(data.message + ' <strong>' + data.data.name + '</strong>!')
-        $(self).data('id', data.data._id)
-        changeSubmitButton(false)
-
-      } else if (data.status === 'not found') {
-        changeSubmitButton(true)
-        timeout = setTimeout(function() {
-          errorMessage.html('&nbsp;')
-        }, 2000)
-      } else if (data.status === 'error') {
-        errorMessage.html(data.message)
-        changeSubmitButton(true)
-      }
-    },
-    error: function(err) {
-      console.log(err)
-    }
-  })
-
-
-})
-
-$('body').on('click', '.friend-request-btn, .friends-list-btn', function(e) {
-
-  e.preventDefault()
-
-  var friendId = $(this).data('id')
-  var userId = myCharacter.data._id
-  var purpose = $(this).data('purpose')
-  var action = $(this).data('action')
-  if (action === 'accept' || action === 'reject') var method = 'PUT'
-  else if (action === 'remove') var method = 'DELETE'
-
-  var data = {
-    friendId: friendId,
-    userId: userId
-  }
-
-  var self = this
-
-  $.ajax({
-    method: method,
-    url: 'http://localhost:8080/api/user/friend/' + action,
-    data: data,
-    success: function(data) {
-      console.log(data)
-
-      //if (data.status === 'success') $(self).parentsUntil(1).closest('li').remove()
-
-      var container = $('#friend-requests-parent')
-      var reqs = data.data.friendRequests
-      var html = Templates.auth.addFriendRequests(reqs)
-      container.html(html)
-
-      var container = $('#friends-list-parent')
-      var friends = data.data.friends
-      var html = Templates.auth.addFriendsList(friends)
-      container.html(html)
-
-    },
-    error: function(data) {
-      console.log(data)
-    }
-  })
-})
-
-
-$('body').on('click', '#logout', function() {
-  chrome.storage.sync.set({
-    'pt-user': {}
-  }, function() {
-    window.location.href = 'http://localhost:8080/logout'
-  })
-})
-
-
-/********* HELPERS *********/
-
-
-function isQuickGesture(keyCode){
-  return (keyCode === 38) //wave
-}
-
-function isRegistered() {
-  return myCharacter.data._id
-}
-
-function getCharacterPos() {
-
-  var pos = {
-    x: myCharacter.position.x,
-    y: myCharacter.position.y,
-    z: myCharacter.position.z
-  }
-
-  return pos
-
-}
-
-
-function getCharacterRot() {
-
-  var rot = {
-    x: myCharacter.rotation.x,
-    y: myCharacter.rotation.y,
-    z: myCharacter.rotation.z
-  }
-
-  return rot
-
-}
-
-
-
-function toScreenPosition(obj, camera) {
-
-  var width = renderer.domElement.width
-  var height = renderer.domElement.height
-  var pos = obj.position
-
-  var p = new THREE.Vector3(pos.x, pos.y, pos.z);
-  var vector = p.project(camera);
-
-  vector.x = ((vector.x + 1) / 2 * width) / 2;
-  vector.y = -(vector.y - 1) / 2 * height;
-
-  return vector;
-
-};
-
-
-function changeSubmitButton(disable, replaceText, id) {
-  if (!id) var btn = $("input[type='submit']")
-  else var btn = $(id)
-
-  if (replaceText) {
-    if (!btn.val()) btn.html(replaceText)
-    else btn.val(replaceText)
-  }
-
-  btn.attr('disabled', disable)
-}
-
-
-function detectHover(e) {
-
-  var x = (e.clientX / window.innerWidth) * 2 - 1;
-  var y = -(e.clientY / window.innerHeight) * 2 + 1;
-
-  var raycaster = new THREE.Raycaster();
-  raycaster.setFromCamera(new THREE.Vector2(x, y), camera);
-
-  var intersects = raycaster.intersectObjects(scene.children, true);
-
-  if (intersects.length > 0) {
-    if (!hoveredCharacter) {
-      hoveredCharacter = intersects[0].object;
-      $('body').addClass('pt-hovering')
-    }
-
-  } else {
-    if (hoveredCharacter) {
-      hoveredCharacter = undefined;
-      $('body').removeClass('pt-hovering')
-    }
-
-  }
-
-}
-
-
-/****FROM BACKGROUND****/
+/*************FROM BACKGROUND*************/
 
 
 chrome.runtime.onMessage.addListener(receiver);
@@ -839,8 +497,7 @@ function receiver(request, sender, sendResponse) {
       if (id) {
 
         myCharacter.data.isLive = false
-        updateCharacter(myCharacter.data, 'putLocal')
-        updateCharacter(myCharacter.data, 'putRemote')
+        putCharacter()
 
         var liveFriends = getLiveFriends()
 
@@ -882,3 +539,7 @@ function receiver(request, sender, sendResponse) {
 
 
 }
+
+
+
+initPt();
