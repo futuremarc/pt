@@ -1,4 +1,4 @@
-var socket = io('http://localhost:5050', {
+var socket = io('https://passti.me', {
   path: '/socket'
 })
 
@@ -285,7 +285,7 @@ function updateCharacter(data, request, cB) {
 
     $.ajax({
       method: 'PUT',
-      url: 'http://localhost:8080/api/user/' + name,
+      url: 'https://passti.me/api/user/' + name,
       data: data,
       success: function(data) {
         console.log(data)

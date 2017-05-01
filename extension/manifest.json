@@ -21,8 +21,7 @@
 
   "browser_action": {
     "default_icon": "public/img/brand/favicon-38.png",
-    "default_title": "Passtime",
-    "default_popup": "popup.html"
+    "default_title": "Passtime"
   },
   "background": {
     "scripts": ["public/js/local/background.js"]

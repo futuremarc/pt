@@ -6,10 +6,10 @@ function idleStateChanged(e) {
   chrome.tabs.query({}, function(tabs) {
 
     tabs.forEach(function(tab) {
-      
+
       chrome.tabs.sendMessage(tab.id, {
         idleState: e
-      }, function(res){
+      }, function(res) {
         console.log(res)
       });
 
@@ -18,3 +18,12 @@ function idleStateChanged(e) {
   });
 
 }
+
+
+chrome.browserAction.onClicked.addListener(function(tab) {
+
+  chrome.tabs.update({
+    url: 'https://passti.me'
+  });
+
+});
