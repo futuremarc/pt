@@ -11,11 +11,10 @@ module.exports = function(io) {
         liveFriends = data.liveFriends
 
       clients[id] = {}
-
       clients[id].socketId = socket.id
       clients[id].liveFriends = liveFriends
 
-      console.log('join', data)
+      console.log('join', data, clients)
 
       for (var friend in liveFriends) {
 

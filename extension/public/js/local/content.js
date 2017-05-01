@@ -1,4 +1,4 @@
-var socket = io('http://localhost:5050', {
+var socket = io('https://passti.me', {
   path: '/socket'
 })
 
@@ -85,7 +85,7 @@ function initScene(data) {
 
   createMyCharacter(data, function() {
     updateCharacter(myCharacter.data, 'putLocal')
-    if (myCharacter.data._id) updateCharacter(myCharacter.data, 'putRemote')
+    if (isRegistered()) updateCharacter(myCharacter.data, 'putRemote')
   })
 
   document.addEventListener('keydown', onKeyDown, false);
@@ -120,29 +120,28 @@ function createMyCharacter(data) {
     camera.updateProjectionMatrix();
     camera.updateMatrix();
 
-    if (myCharacter.data._id) {
+    var id = isRegistered()
+
+    if (id) {
 
       getLiveFriends()
 
-      console.log('createCharacter getLiveFriends', liveFriends)
+      var pos = myCharacter.data.position
+      var rot = myCharacter.data.rotation
+
+      console.log('join')
+
+      socket.emit('join', {
+        _id: id,
+        position: pos,
+        rotation: rot,
+        liveFriends: liveFriends
+      })
+
 
       if (!myCharacter.data.isLive) {
-
-        var id = myCharacter.data._id
-        var pos = myCharacter.data.position
-        var rot = myCharacter.data.rotation
-
-        socket.emit('join', {
-          _id: id,
-          position: pos,
-          rotation: rot,
-          friends: liveFriends
-        })
-
         myCharacter.data.isLive = true;
-
       }
-
 
     }
 
@@ -257,79 +256,58 @@ function updateCharacter(data, request, cB) {
 
   var pos, rot
 
-  if (request) {
-    if (request === 'getLocal') {
+  if (request === 'getLocal') {
 
-      chrome.storage.sync.get('pt-user', function(data) {
+    chrome.storage.sync.get('pt-user', function(data) {
 
-        var data = data['pt-user']
-        pos = data.position
-        rot = data.rotation
+      var data = data['pt-user']
+      pos = data.position
+      rot = data.rotation
 
-        myCharacter.position.set(pos.x, pos.y, pos.z)
-        myCharacter.rotation.set(rot.x, rot.y, rot.z)
-        myCharacter.data = data
+      myCharacter.position.set(pos.x, pos.y, pos.z)
+      myCharacter.rotation.set(rot.x, rot.y, rot.z)
+      myCharacter.data = data
 
+      if (cB) cB()
+
+    })
+
+  } else if (request === 'putRemote') {
+
+    var name = data.name
+
+    $.ajax({
+      method: 'PUT',
+      url: 'https://passti.me/api/user/' + name,
+      data: data,
+      success: function(data) {
+        console.log(data)
         if (cB) cB()
+      },
+      error: function(err) {
+        console.log(err)
+      },
+    })
 
-      })
+  } else if (request === 'putLocal') {
 
-    } else if (request === 'putRemote') {
+    var pos = getCharacterPos()
+    var rot = getCharacterRot()
 
-      var name = data.name
+    myCharacter.data.position = pos
+    myCharacter.data.rotation = rot
 
-      $.ajax({
-        method: 'PUT',
-        url: 'http://localhost:8080/api/user/' + name,
-        data: data,
-        success: function(data) {
-          console.log(data)
-          if (cB) cB()
-        },
-        error: function(err) {
-          console.log(err)
-        },
-      })
-
-    } else if (request === 'putLocal') {
-
-      var pos = {
-          x: myCharacter.position.x,
-          y: myCharacter.position.y,
-          z: myCharacter.position.z
-        },
-        rot = {
-          x: myCharacter.rotation.x,
-          y: myCharacter.rotation.y,
-          z: myCharacter.rotation.z
-        }
-
-      myCharacter.data.position = pos
-      myCharacter.data.rotation = rot
-
-      chrome.storage.sync.set({
-        'pt-user': data
-      }, function() {
-        if (cB) cB()
-      })
-
-    }
-
-
-  } else {
-
-    pos = data.position
-    rot = data.rotation
-
-    myCharacter.position.set(pos.x, pos.y, pos.z)
-    myCharacter.rotation.set(rot.x, rot.y, rot.z);
-    myCharacter.data = data
-
-    if (cB) cB()
+    chrome.storage.sync.set({
+      'pt-user': data
+    }, function() {
+      if (cB) cB()
+    })
 
   }
 
+
 }
+
 
 function removeCharacter(data) {
   scene.remove(sceneCharacters[data._id])
@@ -347,6 +325,8 @@ function getLiveFriends() {
     if (friend.isLive) liveFriends[friend._id] = friend._id
 
   })
+
+  console.log('getLiveFriends', liveFriends)
 
 }
 
@@ -433,7 +413,7 @@ function onKeyDown(e) {
 
   if (keyCode !== 39 && keyCode !== 37 && keyCode !== 38 && keyCode !== 40) return
 
-  var id = myCharacter.data._id
+  var id = isRegistered()
 
   myCharacter.data.position
   var pos = myCharacter.data.position
@@ -456,9 +436,9 @@ function onKeyUp(e) {
   if (keyCode !== 39 && keyCode !== 37) return
 
   updateCharacter(myCharacter.data, 'putLocal')
-  if (myCharacter.data._id) updateCharacter(myCharacter.data, 'putRemote')
+  if (isRegistered()) updateCharacter(myCharacter.data, 'putRemote')
 
-  var id = myCharacter.data._id
+  var id = isRegistered()
   var pos = myCharacter.data.position
   var rot = myCharacter.data.rotation
 
@@ -504,17 +484,8 @@ $("body").on('submit', '#pt-auth-form', function(e) {
     subs.push(sub)
   });
 
-
-  var pos = {
-      x: myCharacter.position.x,
-      y: myCharacter.position.y,
-      z: myCharacter.position.z
-    },
-    rot = {
-      x: myCharacter.rotation.x,
-      y: myCharacter.rotation.y,
-      z: myCharacter.rotation.z
-    }
+  var pos = getCharacterPos()
+  var rot = getCharacterRot()
 
   var data = {
     email: email,
@@ -527,7 +498,7 @@ $("body").on('submit', '#pt-auth-form', function(e) {
 
   $.ajax({
     method: 'POST',
-    url: 'http://localhost:8080/api/' + action,
+    url: 'https://passti.me/api/' + action,
     data: data,
     success: function(data) {
       console.log(data)
@@ -571,7 +542,7 @@ $("body").on('submit', '#pt-friend-form', function(e) {
 
   $.ajax({
     method: 'POST',
-    url: 'http://localhost:8080/api/user/friend/' + action,
+    url: 'https://passti.me/api/user/friend/' + action,
     data: data,
     success: function(data) {
       console.log(data)
@@ -606,7 +577,7 @@ $('body').on('keyup', '#pt-friend-form', function(e) {
 
   $.ajax({
     method: 'GET',
-    url: 'http://localhost:8080/api/user/' + name,
+    url: 'https://passti.me/api/user/' + name,
     success: function(data) {
       console.log(data)
       if (data.status === 'success') {
@@ -637,7 +608,7 @@ $('body').on('click', '#logout', function() {
   chrome.storage.sync.set({
     'pt-user': {}
   }, function() {
-    window.location.href = 'http://localhost:8080/logout'
+    window.location.href = 'https://passti.me/logout'
   })
 })
 
@@ -661,7 +632,7 @@ $('body').on('click', '.friend-request-btn, .friends-list-btn', function(e) {
 
   $.ajax({
     method: method,
-    url: 'http://localhost:8080/api/user/friend/' + action,
+    url: 'https://passti.me/api/user/friend/' + action,
     data: data,
     success: function(data) {
       console.log(data)
@@ -676,6 +647,36 @@ $('body').on('click', '.friend-request-btn, .friends-list-btn', function(e) {
 })
 
 /********* HELPERS *********/
+
+function isRegistered() {
+  return myCharacter.data._id
+}
+
+function getCharacterPos(){
+
+  var pos = {
+    x: myCharacter.position.x,
+    y: myCharacter.position.y,
+    z: myCharacter.position.z
+  }
+
+  return pos
+
+}
+
+
+function getCharacterRot() {
+
+  var rot = {
+    x: myCharacter.rotation.x,
+    y: myCharacter.rotation.y,
+    z: myCharacter.rotation.z
+  }
+
+  return rot
+
+}
+
 
 
 function toScreenPosition(obj, camera) {
@@ -743,37 +744,53 @@ chrome.runtime.onMessage.addListener(receiver);
 function receiver(request, sender, sendResponse) {
   console.log(request, sender)
 
-  if (request.idleState){
+  if (request.idleState) {
 
     var state = request.idleState
+    var id = isRegistered()
 
-    if (state === 'idle' || state === 'locked'){
+    if (state === 'idle' || state === 'locked') {
 
-      myCharacter.data.isLive = false
-      updateCharacter('putLocal')
-      updateCharacter('putRemote')
+
+
+      if (id) {
+
+        myCharacter.data.isLive = false
+        updateCharacter(myCharacter.data, 'putLocal')
+        updateCharacter(myCharacter.data, 'putRemote')
+
+        console.log('leave')
+
+        socket.emit('leave', {
+          _id: id,
+          liveFriends: liveFriends
+        })
+
+      }
 
       $('#pt-canvas').hide()
 
-      socket.emit('leave', {
+
+    } else {
+
+      if (id) {
+
+        myCharacter.data.isLive = true
+        updateCharacter(null, 'getLocal')
+
+        console.log('join')
+
+        socket.emit('join', {
           _id: id,
-          friends: liveFriends
+          liveFriends: liveFriends
         })
 
-    }else {
-
-      myCharacter.data.isLive = true
-      updateCharacter('putLocal')
-      updateCharacter('putRemote')
+      }
 
       $('#pt-canvas').show()
 
-      socket.emit('join', {
-          _id: id,
-          friends: liveFriends
-        })
     }
-    
+
   }
 
 
