@@ -38,7 +38,7 @@ module.exports = function(io) {
       for (var friend in liveFriends) {
 
         var friend = liveFriends[friend]
-        if clients[friend] delete clients[friend].liveFriends[id]
+        if (clients[friend]) delete clients[friend].liveFriends[id]
 
         if (io.sockets.connected[clients[friend].socketId]) io.sockets.connected[clients[friend].socketId].emit('leave', data);
 
