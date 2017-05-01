@@ -9,29 +9,23 @@ events.forEach(function(event) { //add identicle socket events
 })
 
 socket.on('join', function(data) {
+  console.log('join', data)
 
   var id = data._id
   var friend = myCharacter.data.friends[data._id]
-
   friend.isAlive = true
+  createCharacter(data)
   
-  var liveFriends =  getLiveFriends()
-  if (!characters[id]) createCharacter(data)
-  console.log('join', data)
-
 })
 
 socket.on('leave', function(data) {
+  console.log('leave', data)
 
   var id = data._id
   var friend = myCharacter.data.friends[data._id]
-
   friend.isAlive = false
-
-  var liveFriends = getLiveFriends()
-  if (characters[id]) removeCharacter()
-  console.log('leave', data)
-
+  removeCharacter()
+  
 })
 
 
@@ -42,13 +36,13 @@ socket.on('action', function(data) {
   if (!characters[id]) {
 
     createCharacter(data, function(character) {
-
       character[data.action](data)
       console.log('action', data)
+
     })
   } else {
 
-    var character = sceneCharacters[data._id]
+    var character = sceneCharacters[id]
     character[data.action](data)
     console.log('action', data)
 

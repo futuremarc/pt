@@ -1,4 +1,5 @@
 $('document').ready(function() {
+  
 
   if (loggedIn) {
 
@@ -29,7 +30,6 @@ $('document').ready(function() {
         console.log(err)
       }
     })
-
 
   }
 

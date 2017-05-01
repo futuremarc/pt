@@ -80,7 +80,7 @@ gulp.task('mobile-scripts', function(){
 
 gulp.task('precompile', function(){
 
-    gulp.src('views/handlebars/**/[^_]*.handlebars')
+    gulp.src('views/handlebars/auth/[^_]*.handlebars')
     .pipe(handlebars({
       handlebars: require('handlebars')
     }))
@@ -96,10 +96,10 @@ gulp.task('precompile', function(){
     .pipe(stripDebug())
     .pipe(uglify())
     .pipe(gulp.dest('public/js/local/templates/'))
+    .pipe(gulp.dest('extension/public/js/local/templates/'))
 })
 
 
-//extension
 gulp.task('extension-build-css', function(){
   return gulp.src('source/scss/extension.scss')
     .pipe(sourcemaps.init())

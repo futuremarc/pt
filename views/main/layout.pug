@@ -25,6 +25,8 @@ html
     br
     a(href='/friend') Add Friend
     br
+    a(href='/subscription') Subscriptions
+    br
     a(href='#' id="logout") Logout
     br
     div(id='name-tag') #{userName}
@@ -36,3 +38,4 @@ html
 
 
     block javascript
+      script(src='/js/local/auth/handlebar-helpers.js')

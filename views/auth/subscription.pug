@@ -1,0 +1,24 @@
+extends ../main/layout
+
+block css
+
+block content
+
+  form(id='pt-auth-form', class='pt-form', data-action='subscription')
+
+    div(class='error-message')
+      h3 &nbsp;
+    br
+ 
+    div(id="auth-subs-parent")
+    br
+ 
+    input(type='submit', class='btn btn-lg btn-block btn-custom', value='Update')
+    
+block javascript
+  script.
+    subscriptions='!{subscriptions}';
+    loggedIn = "#{loggedIn}";
+    name = "#{userName}";
+  script(src='/js/local/auth/handlebar-helpers.js')
+  script(src='/js/local/auth/subscription.js')

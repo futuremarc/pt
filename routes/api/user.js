@@ -3,6 +3,7 @@ var app = express()
 var router = express.Router();
 var User = require('models/user/model')
 var async = require('async')
+var mongoose = require('mongoose')
 
 
 if (app.get('env') === 'development') {
@@ -99,7 +100,7 @@ module.exports = function(passport) {
                     friends: data
                   }
                 })
-                .exec(function(err, user) {
+                .exec(function(err, friend) {
                   if (err) {
                     return res.json({
                       status: "error",
@@ -247,10 +248,20 @@ module.exports = function(passport) {
           }
 
           for (var prop in req.body) {
+            console.log('REQ', req.body[prop])
             user[prop] = req.body[prop]
           }
 
-          user.save(function(err) {
+          user.save(function(err, user) {
+
+            if (err) {
+              return res.json({
+                status: "error",
+                data: null,
+                message: "Couldn't update user"
+              })
+            }
+
             return res.json({
               status: "success",
               data: user,
@@ -266,7 +277,10 @@ module.exports = function(passport) {
         })
         .populate({
           path: 'friendRequests',
-          select: 'name'
+          select: 'name',
+          populate: {
+            path: 'subscriptions'
+          }
         })
         .exec(function(err, user) {
 

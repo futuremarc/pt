@@ -3,13 +3,13 @@
 {{#if this}} 
 
   <ul>
-    {{#each this}}
+    {{#each subscriptions}}
 
       <li>
 
         <div class="checkbox">
           <label>
-            <input type="checkbox", data-id='{{_id}}', data-title="{{title}}", value="">
+            <input type="checkbox", data-id='{{_id}}', data-title="{{title}}", {{#if ../mySubscriptions}} {{#ifIn _id ../mySubscriptions}}checked{{/ifIn}} {{/if}} value="">
             {{title}}
           </label>
         </div>

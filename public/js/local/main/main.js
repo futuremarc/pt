@@ -1,4 +1,6 @@
 $('document').ready(function() {
+  
+
 
   if (loggedIn) {
 
@@ -6,7 +8,7 @@ $('document').ready(function() {
 
     $.ajax({
       method: 'GET',
-      url: 'https://passti.me/api/user/' + name,
+      url: 'http://localhost:8080/api/user/' + name,
       success: function(data) {
         console.log(data)
         if (data.status === 'success') {
@@ -30,8 +32,5 @@ $('document').ready(function() {
       }
     })
 
-
   }
-
-
 })

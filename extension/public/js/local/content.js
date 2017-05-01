@@ -1,4 +1,4 @@
-var socket = io('https://passti.me', {
+var socket = io('http://localhost:5050', {
   path: '/socket'
 })
 
@@ -286,11 +286,11 @@ function updateCharacter(data, request, cB) {
 
   } else if (request === 'putRemote') {
 
-    var name = data.name
+    var name = myCharacter.data.name
 
     $.ajax({
       method: 'PUT',
-      url: 'https://passti.me/api/user/' + name,
+      url: 'http://localhost:8080/api/user/' + name,
       data: data,
       success: function(data) {
         console.log(data)
@@ -379,11 +379,11 @@ var controls = {
   },
   38: function(data) { //up arrow
 
-      data.liveFriends = getLiveFriends()
-      data.action = 'wave'
-      myCharacter[data.action]()
+    data.liveFriends = getLiveFriends()
+    data.action = 'wave'
+    myCharacter[data.action]()
 
-      if (data._id) socket.emit('action', data)
+    if (data._id) socket.emit('action', data)
 
   },
 
@@ -416,9 +416,9 @@ var controls = {
 
   40: function(data) {
 
-      data.action = 'pose'
-      myCharacter[data.action]()
-      if (data._id) socket.emit('action', data)
+    data.action = 'pose'
+    myCharacter[data.action]()
+    if (data._id) socket.emit('action', data)
 
   }
 
@@ -499,6 +499,16 @@ $("body").on('submit', '#pt-auth-form', function(e) {
     subs.push(sub)
   });
 
+  if (action === 'subscription') {
+
+    updateCharacter({
+      subscriptions: subs
+    }, 'putRemote')
+    
+    return
+  }
+
+
   var pos = getCharacterPos()
   var rot = getCharacterRot()
 
@@ -511,9 +521,10 @@ $("body").on('submit', '#pt-auth-form', function(e) {
     subscriptions: subs
   }
 
+
   $.ajax({
     method: 'POST',
-    url: 'https://passti.me/api/' + action,
+    url: 'http://localhost:8080/api/' + action,
     data: data,
     success: function(data) {
       console.log(data)
@@ -557,7 +568,7 @@ $("body").on('submit', '#pt-friend-form', function(e) {
 
   $.ajax({
     method: 'POST',
-    url: 'https://passti.me/api/user/friend/' + action,
+    url: 'http://localhost:8080/api/user/friend/' + action,
     data: data,
     success: function(data) {
       console.log(data)
@@ -592,7 +603,7 @@ $('body').on('keyup', '#pt-friend-form', function(e) {
 
   $.ajax({
     method: 'GET',
-    url: 'https://passti.me/api/user/' + name,
+    url: 'http://localhost:8080/api/user/' + name,
     success: function(data) {
       console.log(data)
       if (data.status === 'success') {
@@ -619,14 +630,6 @@ $('body').on('keyup', '#pt-friend-form', function(e) {
 
 })
 
-$('body').on('click', '#logout', function() {
-  chrome.storage.sync.set({
-    'pt-user': {}
-  }, function() {
-    window.location.href = 'https://passti.me/logout'
-  })
-})
-
 $('body').on('click', '.friend-request-btn, .friends-list-btn', function(e) {
 
   e.preventDefault()
@@ -647,12 +650,22 @@ $('body').on('click', '.friend-request-btn, .friends-list-btn', function(e) {
 
   $.ajax({
     method: method,
-    url: 'https://passti.me/api/user/friend/' + action,
+    url: 'http://localhost:8080/api/user/friend/' + action,
     data: data,
     success: function(data) {
       console.log(data)
 
-      if (data.status === 'success') $(self).parentsUntil(1).closest('li').remove()
+      //if (data.status === 'success') $(self).parentsUntil(1).closest('li').remove()
+
+      var container = $('#friend-requests-parent')
+      var reqs = data.data.friendRequests
+      var html = Templates.auth.addFriendRequests(reqs)
+      container.html(html)
+
+      var container = $('#friends-list-parent')
+      var friends = data.data.friends
+      var html = Templates.auth.addFriendsList(friends)
+      container.html(html)
 
     },
     error: function(data) {
@@ -660,6 +673,16 @@ $('body').on('click', '.friend-request-btn, .friends-list-btn', function(e) {
     }
   })
 })
+
+
+$('body').on('click', '#logout', function() {
+  chrome.storage.sync.set({
+    'pt-user': {}
+  }, function() {
+    window.location.href = 'http://localhost:8080/logout'
+  })
+})
+
 
 /********* HELPERS *********/
 

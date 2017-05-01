@@ -43,16 +43,16 @@ module.exports = function() {
     sub.save(function(err, doc) {
       if (err) {
         if (err.code == '11000') {
-          console.log(sub.title, "subscription doc exists")
+          console.log(sub, "subscription exists in db")
           return
         } else {
           throw err
         }
       }else{
-        console.log(sub.title, "subscription doc added!")
+        console.log(sub.title, "subscription added to db!")
       }
     })
   })
 
-  return subscriptions
+  return 
 }
