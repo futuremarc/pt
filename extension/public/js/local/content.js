@@ -338,8 +338,6 @@ function getLiveFriends() {
 
   })
 
-  console.log('getLiveFriends', liveFriends)
-
   return liveFriends
 
 }
@@ -356,6 +354,7 @@ var controls = {
     if (keyUp) {
 
       data.action = 'stopWalk'
+      data.liveFriends = getLiveFriends()
 
       if (key.left) myCharacter[data.action]()
       key.left = false;
@@ -368,6 +367,7 @@ var controls = {
 
         data.action = 'walk'
         data.direction = 'left'
+        data.liveFriends = getLiveFriends()
 
         myCharacter[data.action](data.direction)
         if (data._id) socket.emit('action', data)
@@ -379,10 +379,11 @@ var controls = {
   },
   38: function(data) { //up arrow
 
-    data.action = 'wave'
-    myCharacter[data.action]()
+      data.liveFriends = getLiveFriends()
+      data.action = 'wave'
+      myCharacter[data.action]()
 
-    if (data._id) socket.emit('action', data)
+      if (data._id) socket.emit('action', data)
 
   },
 
@@ -401,6 +402,7 @@ var controls = {
 
         data.action = 'walk'
         data.direction = 'right'
+        data.liveFriends = getLiveFriends()
 
         myCharacter[data.action](data.direction)
         if (data._id) socket.emit('action', data)
@@ -414,9 +416,10 @@ var controls = {
 
   40: function(data) {
 
-    data.action = 'pose'
-    myCharacter[data.action]()
-    if (data._id) socket.emit('action', data)
+      data.action = 'pose'
+      myCharacter[data.action]()
+      if (data._id) socket.emit('action', data)
+
   }
 
 }
@@ -428,15 +431,11 @@ function onKeyDown(e) {
   if (keyCode !== 39 && keyCode !== 37 && keyCode !== 38 && keyCode !== 40) return
 
   var id = isRegistered()
-
-  myCharacter.data.position
   var pos = myCharacter.data.position
   var rot = myCharacter.data.rotation
-  var liveFriends = getLiveFriends()
 
   var data = {
     _id: id,
-    liveFriends: liveFriends,
     pos: pos,
     rot: rot
   }
