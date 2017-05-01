@@ -84,8 +84,10 @@ function initScene(data) {
   scene.add(sceneCharacters);
 
   createMyCharacter(data, function() {
+
     updateCharacter(myCharacter.data, 'putLocal')
     if (isRegistered()) updateCharacter(myCharacter.data, 'putRemote')
+
   })
 
   document.addEventListener('keydown', onKeyDown, false);
@@ -124,24 +126,34 @@ function createMyCharacter(data) {
 
     if (id) {
 
-      getLiveFriends()
-
-      var pos = myCharacter.data.position
-      var rot = myCharacter.data.rotation
-
-      console.log('join')
-
-      socket.emit('join', {
-        _id: id,
-        position: pos,
-        rotation: rot,
-        liveFriends: liveFriends
-      })
-
 
       if (!myCharacter.data.isLive) {
-        myCharacter.data.isLive = true;
+
+        myCharacter.data.isLive = true
+
+        updateCharacter(myCharacter.data, 'putLocal')
+        updateCharacter(myCharacter.data, 'putRemote', function() {
+
+          var liveFriends = getLiveFriends()
+
+          var pos = myCharacter.data.position
+          var rot = myCharacter.data.rotation
+
+          console.log('join')
+
+          socket.emit('join', {
+            _id: id,
+            position: pos,
+            rotation: rot,
+            liveFriends: liveFriends
+          })
+
+
+        })
+
       }
+
+
 
     }
 
@@ -315,9 +327,9 @@ function removeCharacter(data) {
   delete characters[data._id]
 }
 
-var liveFriends = {}
-
 function getLiveFriends() {
+
+  var liveFriends = {}
 
   myCharacter.data.friends.forEach(function(friend) {
 
@@ -327,6 +339,8 @@ function getLiveFriends() {
   })
 
   console.log('getLiveFriends', liveFriends)
+
+  return liveFriends
 
 }
 
@@ -418,6 +432,7 @@ function onKeyDown(e) {
   myCharacter.data.position
   var pos = myCharacter.data.position
   var rot = myCharacter.data.rotation
+  var liveFriends = getLiveFriends()
 
   var data = {
     _id: id,
@@ -441,6 +456,7 @@ function onKeyUp(e) {
   var id = isRegistered()
   var pos = myCharacter.data.position
   var rot = myCharacter.data.rotation
+  var liveFriends = getLiveFriends()
 
   var data = {
     _id: id,
@@ -652,7 +668,7 @@ function isRegistered() {
   return myCharacter.data._id
 }
 
-function getCharacterPos(){
+function getCharacterPos() {
 
   var pos = {
     x: myCharacter.position.x,
@@ -752,19 +768,20 @@ function receiver(request, sender, sendResponse) {
     if (state === 'idle' || state === 'locked') {
 
 
-
       if (id) {
 
         myCharacter.data.isLive = false
         updateCharacter(myCharacter.data, 'putLocal')
         updateCharacter(myCharacter.data, 'putRemote')
 
-        console.log('leave')
+        var liveFriends = getLiveFriends()
 
         socket.emit('leave', {
           _id: id,
           liveFriends: liveFriends
         })
+
+        console.log('leave')
 
       }
 
@@ -778,12 +795,14 @@ function receiver(request, sender, sendResponse) {
         myCharacter.data.isLive = true
         updateCharacter(null, 'getLocal')
 
-        console.log('join')
+        var liveFriends = getLiveFriends()
 
         socket.emit('join', {
           _id: id,
           liveFriends: liveFriends
         })
+
+        console.log('join')
 
       }
 
