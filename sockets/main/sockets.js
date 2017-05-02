@@ -2,11 +2,11 @@ var clients = {}
 
 
 module.exports = function(io) {
-  
+
 
   function broadcastToFriends(event, data, liveFriends) {
 
-    console.log('broadcast', event, data, liveFriends)
+    console.log('broadcast', event, data, clients)
 
     for (var friend in liveFriends) {
 
