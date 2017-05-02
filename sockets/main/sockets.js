@@ -1,11 +1,12 @@
+var clients = {}
+
+
 module.exports = function(io) {
-
-  var clients = {}
-
+  
 
   function broadcastToFriends(event, data, liveFriends) {
 
-    console.log('broadcast', event)
+    console.log('broadcast', event, data, liveFriends)
 
     for (var friend in liveFriends) {
 
@@ -18,11 +19,6 @@ module.exports = function(io) {
 
   io.on('connection', function(socket) {
 
-    socket.on('connect', function(){ //hold temp reference of user until signed in
-
-      var socketId = socket.id;
-      clients[socketId] = socketId
-    })
 
     socket.on('join', function(data) { //add socket.id to clients and liveFriends {}
 
@@ -30,7 +26,6 @@ module.exports = function(io) {
       var socketId = socket.id;
       var liveFriends = data.liveFriends
 
-      delete clients[socketId] //remove temp ref to user
       clients[id] = socketId
       broadcastToFriends('join', data, liveFriends)
 
@@ -41,7 +36,6 @@ module.exports = function(io) {
       var id = data._id
       var liveFriends = data.liveFriends
 
-      if (clients[id]) delete clients[id]
       broadcastToFriends('leave', data, liveFriends)
 
     })
@@ -51,7 +45,6 @@ module.exports = function(io) {
       var id = data._id
       var liveFriends = data.liveFriends
 
-      if (clients[id]) delete clients[id]
       broadcastToFriends('leave', data, liveFriends)
 
     })

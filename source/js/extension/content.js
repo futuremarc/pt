@@ -32,12 +32,18 @@ function initPt() {
 
   $('<div id="pt-canvas" class="pt-override-page"></div>').appendTo('body');
 
+
   chrome.storage.sync.get('pt-user', function(data) {
 
     var signedIntoSite = $('#name-tag').html() === ''
-    var signedIntoExtension = data['pt-user']._id
 
-    if (signedIntoExtension && signedIntoSite) signInFromExtension(data['pt-user'])
+    if (data['pt-user'] && data['pt-user']._id) var signedIntoExtension = true
+    else var signedIntoExtension = false
+
+    if (signedIntoExtension && signedIntoSite) updateCharacter(null, 'getRemote', function(){
+      signInFromExtension(data['pt-user'])
+    }) 
+
     initScene(data['pt-user'])
 
   })
@@ -311,6 +317,34 @@ function updateCharacter(data, request, cB) {
       if (cB) cB(data)
     })
 
+  } else if (request === 'getRemote') {
+
+    var name = myCharacter.data.name
+
+      $.ajax({
+        method: 'GET',
+        url: 'http://localhost:8080/api/user/' + name,
+        success: function(data) {
+          console.log(data)
+          if (data.status === 'success') {
+
+            chrome.storage.sync.set({
+              'pt-user': data
+            }, function() {
+              
+               myCharacter.data = data
+               if (cB) cB(data)
+            })
+
+          } else {
+            errorMessage.html(data.message)
+          }
+        },
+        error: function(err) {
+          console.log(err)
+        }
+      })
+
   }
 
 }
@@ -484,6 +518,7 @@ function onVisibilityChange() {
 /*************FROM BACKGROUND*************/
 
 
+
 function onIdleState(data) {
 
   var state = data.idleState
@@ -519,8 +554,6 @@ function onIdleState(data) {
   }
 
 }
-
-
 function onMessage(data, sender, sendResponse) {
   console.log(data, sender)
 
