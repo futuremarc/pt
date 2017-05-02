@@ -39,10 +39,9 @@ function initPt() {
   chrome.storage.sync.get('pt-user', function(data) {
 
     var signedIntoSite = $('#name-tag').html() === ''
+    var signedIntoExtension = data['pt-user']._id 
 
-    console.log(data['pt-user'], signedIntoSite)
-
-    if (data['pt-user'] && signedIntoSite) signInFromExtension(data['pt-user'])
+    if (signedIntoExtension && signedIntoSite) signInFromExtension(data['pt-user'])
     initScene(data['pt-user'])
 
   })
@@ -268,8 +267,6 @@ function createCharacter(data, cB) {
 
 
 function updateCharacter(data, request, cB) {
-
-  console.log('update char')
 
   var pos, rot
 

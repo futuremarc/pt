@@ -53,6 +53,8 @@ module.exports = function(passport) {
           $pull: {
             friendRequests: friendId
           }
+        }, {
+          new: true
         })
         .exec(function(err, user) {
           if (err) {
@@ -80,6 +82,8 @@ module.exports = function(passport) {
               $addToSet: {
                 friends: data
               }
+            }, {
+              new: true
             })
             .exec(function(err, user) {
               if (err) {
@@ -99,6 +103,8 @@ module.exports = function(passport) {
                   $addToSet: {
                     friends: data
                   }
+                }, {
+                  new: true
                 })
                 .exec(function(err, friend) {
                   if (err) {
@@ -109,10 +115,36 @@ module.exports = function(passport) {
                     })
                   }
 
-                  return res.json({
-                    status: "success",
-                    data: user,
-                    message: "Added friend"
+                  var friends = []
+
+                  async.forEach(user.friends, function(friend, callback) {
+                    User.populate(
+                      friend, {
+                        path: "user"
+                      },
+                      function(err, friend) {
+
+                        friends.push(friend)
+                        if (err) throw err;
+                        callback();
+                      }
+                    );
+                  }, function(err) {
+
+                    if (err) return res.json({
+                      status: "error",
+                      data: null,
+                      message: "Couldn't find friends of user"
+                    })
+
+                    user.friends = friends
+
+                    return res.json({
+                      status: "success",
+                      data: user,
+                      message: "Added friend"
+                    })
+
                   })
                 })
 
@@ -132,6 +164,8 @@ module.exports = function(passport) {
             user: friendId
           }
         }
+      }, {
+        new: true
       })
       .exec(function(err, user) {
         if (err) {
@@ -142,30 +176,56 @@ module.exports = function(passport) {
           })
         }
 
-        User
-          .findByIdAndUpdate(friendId, {
-            $pull: {
-              friends: {
-                user: userId
-              }
-            }
-          })
-          .exec(function(err, user) {
-            if (err) {
-              return res.json({
-                status: "error",
-                data: null,
-                message: "Error removing user from friend"
-              })
-            }
+        var friends = []
 
-            return res.json({
-              status: "success",
-              data: user,
-              message: "Removed friend"
-            })
+        async.forEach(user.friends, function(friend, callback) {
+          User.populate(
+            friend, {
+              path: "user"
+            },
+            function(err, friend) {
 
+              friends.push(friend)
+              if (err) throw err;
+              callback();
+            }
+          );
+        }, function(err) {
+
+          if (err) return res.json({
+            status: "error",
+            data: null,
+            message: "Couldn't find friends of user"
           })
+
+          user.friends = friends
+
+          return res.json({
+            status: "success",
+            data: user,
+            message: "Removed friend"
+          })
+
+        })
+
+      })
+
+    User
+      .findByIdAndUpdate(friendId, {
+        $pull: {
+          friends: {
+            user: userId
+          }
+        }
+      })
+      .exec(function(err, user) {
+        if (err) {
+          return res.json({
+            status: "error",
+            data: null,
+            message: "Error removing user from friend"
+          })
+        }
 
       })
 

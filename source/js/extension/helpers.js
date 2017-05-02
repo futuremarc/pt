@@ -137,7 +137,7 @@ function detectHover(e) {
 
 
 function signInFromExtension(data){
-  
+
   var errorMessage = $(".error-message h3")
 
   var my = data
@@ -145,9 +145,7 @@ function signInFromExtension(data){
   var data = {
     email: my.email,
     password: my.password,
-    name: my.name,
-    position: my.position,
-    rotation: my.rotation
+    name: my.name
   }
 
   $.ajax({
