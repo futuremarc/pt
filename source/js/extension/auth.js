@@ -109,6 +109,7 @@ $("body").on('submit', '#pt-friend-form', function(e) {
       if (data.status === 'success') {
 
         errorMessage.html(data.message + ' to <strong>' + data.data.name + '</strong>!')
+        updateCharacter(null, 'getRemote')
 
       } else {
         errorMessage.html(data.message)
@@ -189,6 +190,7 @@ $('body').on('click', '.friend-request-btn, .friends-list-btn', function(e) {
     data: data,
     success: function(data) {
       console.log(data)
+      updateCharacter(null, 'getRemote')
 
       //if (data.status === 'success') $(self).parentsUntil(1).closest('li').remove()
 

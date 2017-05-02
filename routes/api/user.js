@@ -86,6 +86,7 @@ module.exports = function(passport) {
               new: true
             })
             .exec(function(err, user) {
+              
               if (err) {
                 return res.json({
                   status: "error",
@@ -308,7 +309,6 @@ module.exports = function(passport) {
           }
 
           for (var prop in req.body) {
-            console.log('REQ', req.body[prop])
             user[prop] = req.body[prop]
           }
 

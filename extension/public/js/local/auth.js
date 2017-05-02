@@ -58,7 +58,7 @@ $("body").on('submit', '#pt-auth-form', function(e) {
 
   $.ajax({
     method: 'POST',
-    url: 'http://localhost:8080/api/' + action,
+    url: 'https://passti.me/api/' + action,
     data: data,
     success: function(data) {
       console.log(data)
@@ -102,13 +102,14 @@ $("body").on('submit', '#pt-friend-form', function(e) {
 
   $.ajax({
     method: 'POST',
-    url: 'http://localhost:8080/api/user/friend/' + action,
+    url: 'https://passti.me/api/user/friend/' + action,
     data: data,
     success: function(data) {
       console.log(data)
       if (data.status === 'success') {
 
         errorMessage.html(data.message + ' to <strong>' + data.data.name + '</strong>!')
+        updateCharacter(null, 'getRemote')
 
       } else {
         errorMessage.html(data.message)
@@ -138,7 +139,7 @@ $('body').on('keyup', '#pt-friend-form', function(e) {
 
   $.ajax({
     method: 'GET',
-    url: 'http://localhost:8080/api/user/' + name,
+    url: 'https://passti.me/api/user/' + name,
     success: function(data) {
       console.log(data)
       if (data.status === 'success') {
@@ -185,10 +186,11 @@ $('body').on('click', '.friend-request-btn, .friends-list-btn', function(e) {
 
   $.ajax({
     method: method,
-    url: 'http://localhost:8080/api/user/friend/' + action,
+    url: 'https://passti.me/api/user/friend/' + action,
     data: data,
     success: function(data) {
       console.log(data)
+      updateCharacter(null, 'getRemote')
 
       //if (data.status === 'success') $(self).parentsUntil(1).closest('li').remove()
 
@@ -214,6 +216,6 @@ $('body').on('click', '#logout', function() {
   chrome.storage.sync.set({
     'pt-user': {}
   }, function() {
-    window.location.href = 'http://localhost:8080/logout'
+    window.location.href = 'https://passti.me/logout'
   })
 })

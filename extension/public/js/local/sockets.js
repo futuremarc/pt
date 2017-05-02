@@ -1,51 +1,35 @@
-var events = ['message', 'post']
 
-events.forEach(function(event) { //add identicle socket events
+var socketEvents = {
 
-  socket.on(event, function(data) {
-    console.log(event, data)
-  })
+  'message': function(data) {
+    console.log(data)
+  },
 
-})
+  'post': function(data) {
+    console.log(data)
+  },
 
-socket.on('join', function(data) {
-  console.log('join', data)
+  'join': function(data) {
 
-  var id = data._id
-  var friend = myCharacter.data.friends[data._id]
-  friend.isAlive = true
-  createCharacter(data)
-  
-})
+    var friend = myCharacter.data.friends[friend].user
+    friend.isAlive = true
+    getLiveFriends()
+    createCharacter(data)
+  },
 
-socket.on('leave', function(data) {
-  console.log('leave', data)
+  'leave': function(data) {
 
-  var id = data._id
-  var friend = myCharacter.data.friends[data._id]
-  friend.isAlive = false
-  removeCharacter()
-  
-})
+    var friend = myCharacter.data.friends[friend].user
+    friend.isAlive = false
+    getLiveFriends()
+    removeCharacter()
+  },
 
+  'action': function(data) {
 
-socket.on('action', function(data) {
-
-  var id = data._id
-
-  if (!characters[id]) {
-
-    createCharacter(data, function(character) {
-      character[data.action](data)
-      console.log('action', data)
-
-    })
-  } else {
-
-    var character = sceneCharacters[id]
-    character[data.action](data)
-    console.log('action', data)
+    var friend = sceneCharacters[data._id]
+    friend[data.action](data)
 
   }
 
-})
+}

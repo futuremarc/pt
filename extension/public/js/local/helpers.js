@@ -2,8 +2,17 @@ function putCharacter(cB) {
 
   updateCharacter(myCharacter.data, 'putLocal')
   if (isRegistered()) updateCharacter(myCharacter.data, 'putRemote', cB)
-
 }
+
+function emitMessage(data) {
+  chrome.runtime.sendMessage(data);
+}
+
+function onSocket(data) {
+  var event = data.event
+  socketEvents[event](data)
+}
+
 
 function isQuickGesture(keyCode) {
   return (keyCode === 38) //wave
@@ -51,7 +60,7 @@ function removeCharacter(data) {
   scene.remove(sceneCharacters[data._id])
   delete sceneCharacters[data._id]
   delete characters[data._id]
-  
+
 }
 
 function getLiveFriends() {
@@ -99,7 +108,7 @@ function changeSubmitButton(disable, replaceText, id) {
   btn.attr('disabled', disable)
 }
 
-function addDomListeners(){
+function addDomListeners() {
 
   document.addEventListener('keydown', onKeyDown, false);
   document.addEventListener('keyup', onKeyUp, false);
@@ -136,7 +145,7 @@ function detectHover(e) {
 }
 
 
-function signInFromExtension(data){
+function signInFromExtension(data) {
 
   var errorMessage = $(".error-message h3")
 
@@ -150,14 +159,14 @@ function signInFromExtension(data){
 
   $.ajax({
     method: 'POST',
-    url: 'http://localhost:8080/api/login',
+    url: 'https://passti.me/api/login',
     data: data,
     success: function(data) {
       console.log(data)
       if (data.status === 'success') {
 
         errorMessage.html(data.message + ' <strong>' + data.data.name + '</strong>!')
-      
+
         setTimeout(function() {
           location.href = '/'
         }, 500)

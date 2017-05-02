@@ -1,9 +1,34 @@
-chrome.idle.onStateChanged.addListener(idleStateChange);
-chrome.runtime.onInstalled.addListener(onInstall);
-chrome.browserAction.onClicked.addListener(onBrowserAction);
+var socket = io('https://passti.me', {
+  path: '/socket'
+})
+
+initSockets()
 
 
 
+function emitMsgToClient(data) {
+  console.log('emitmsg', data)
+  chrome.runtime.sendMessage(data);
+}
+
+function emitMsgToServer(event, data) {
+  console.log('emitsocket', event, data)
+  socket.emit(event, data)
+}
+
+function initSockets() {
+
+  var events = ['message', 'post', 'action']
+
+  events.forEach(function(event) { //add identicle socket events
+    socket.on(event, function(data) {
+
+      console.log(event, data)
+      emitMsgToClient(data)
+    })
+  })
+
+}
 
 function onInstall(data) {
   console.log(data)
@@ -48,7 +73,49 @@ function onBrowserAction(activeTab) {
 
 }
 
+var isFirstJoin = true
+
+
+function onJoin(data) {
+
+  if (isFirstJoin) {
+
+    console.log('isFirstJoin', isFirstJoin)
+    isFirstJoin = false
+    emitMsgToServer('join', data)
+  }
+
+}
 
 
 
+function onMessage(data, sender, sendResponse) {
+  console.log(data)
 
+  var isSocketMessage = data.event
+  if (isSocketMessage) {
+
+    var event = data.event
+
+    switch (event) {
+
+      case 'join':
+        onJoin(data)
+        break;
+
+      default:
+        emitMsgToServer(event, data)
+
+    }
+
+
+  }
+
+
+}
+
+
+chrome.idle.onStateChanged.addListener(idleStateChange);
+chrome.runtime.onInstalled.addListener(onInstall);
+chrome.browserAction.onClicked.addListener(onBrowserAction);
+chrome.runtime.onMessage.addListener(onMessage);

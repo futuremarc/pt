@@ -1,7 +1,3 @@
-var socket = io('http://localhost:5050', {
-  path: '/socket'
-})
-
 function animate() {
 
   if (key.right) myCharacter.position.x += .05
@@ -39,7 +35,7 @@ function initPt() {
   chrome.storage.sync.get('pt-user', function(data) {
 
     var signedIntoSite = $('#name-tag').html() === ''
-    var signedIntoExtension = data['pt-user']._id 
+    var signedIntoExtension = data['pt-user']._id
 
     if (signedIntoExtension && signedIntoSite) signInFromExtension(data['pt-user'])
     initScene(data['pt-user'])
@@ -132,32 +128,30 @@ function createMyCharacter(data) {
 
     if (id) {
 
-      if (!myCharacter.data.isLive) {
+      myCharacter.data.isLive = true
 
-        myCharacter.data.isLive = true
+      putCharacter(function() {
 
-        putCharacter(function() {
+        var liveFriends = getLiveFriends()
 
-          var liveFriends = getLiveFriends()
+        var pos = myCharacter.data.position
+        var rot = myCharacter.data.rotation
 
-          var pos = myCharacter.data.position
-          var rot = myCharacter.data.rotation
+        console.log('join')
 
-          console.log('join')
+        var data = {
+          event: 'join',
+          _id: id,
+          position: pos,
+          rotation: rot,
+          liveFriends: liveFriends
+        }
 
-          socket.emit('join', {
-            _id: id,
-            position: pos,
-            rotation: rot,
-            liveFriends: liveFriends
-          })
+        emitMessage(data)
 
+      })
 
-        })
-
-      }
     }
-
     animate()
 
   })
@@ -292,7 +286,7 @@ function updateCharacter(data, request, cB) {
 
     $.ajax({
       method: 'PUT',
-      url: 'http://localhost:8080/api/user/' + name,
+      url: 'https://passti.me/api/user/' + name,
       data: data,
       success: function(data) {
         console.log(data)
@@ -334,12 +328,15 @@ var controls = {
     if (keyUp) {
 
       data.action = 'stopWalk'
+      data.event = 'action'
+
       if (key.left) myCharacter[data.action]()
       key.left = false;
 
       if (isRegistered()) {
+
         data.liveFriends = getLiveFriends()
-        socket.emit('action', data)
+        emitMessage(data)
       }
 
     } else {
@@ -348,11 +345,13 @@ var controls = {
 
         data.action = 'walk'
         data.direction = 'left'
+
         myCharacter[data.action](data.direction)
 
         if (data._id) {
+
           data.liveFriends = getLiveFriends()
-          socket.emit('action', data)
+          emitMessage(data)
         }
       }
 
@@ -363,11 +362,13 @@ var controls = {
   38: function(data) { //up arrow
 
     data.action = 'wave'
+    data.event = 'action'
+
     myCharacter[data.action]()
 
     if (isRegistered()) {
       data.liveFriends = getLiveFriends()
-      socket.emit('action', data)
+      emitMessage(data)
     }
 
   },
@@ -377,12 +378,14 @@ var controls = {
     if (keyUp) {
 
       data.action = 'stopWalk'
+      data.event = 'action'
+
       if (key.right) myCharacter[data.action]()
       key.right = false;
 
       if (isRegistered()) {
         data.liveFriends = getLiveFriends()
-        socket.emit('action', data)
+        emitMessage(data)
       }
 
     } else {
@@ -391,13 +394,15 @@ var controls = {
 
         data.action = 'walk'
         data.direction = 'right'
+        data.event = 'action'
+
         myCharacter[data.action](data.direction)
 
         if (isRegistered()) {
 
           putCharacter()
           data.liveFriends = getLiveFriends()
-          socket.emit('action', data)
+          emitMessage(data)
         }
       }
 
@@ -409,11 +414,13 @@ var controls = {
   40: function(data) {
 
     data.action = 'pose'
+    data.event = 'action'
+
     myCharacter[data.action]()
 
     if (isRegistered()) {
       data.liveFriends = getLiveFriends()
-      socket.emit('action', data)
+      emitMessage(data)
     }
 
   }
@@ -477,65 +484,65 @@ function onVisibilityChange() {
 /*************FROM BACKGROUND*************/
 
 
-chrome.runtime.onMessage.addListener(receiver);
+function onIdleState(data) {
 
-function receiver(request, sender, sendResponse) {
-  console.log(request, sender)
+  var state = data.idleState
+  var id = isRegistered()
 
-  if (request.idleState) {
+  if (state === 'idle' || state === 'locked') {
 
-    var state = request.idleState
-    var id = isRegistered()
+    if (id) {
 
-    if (state === 'idle' || state === 'locked') {
+      myCharacter.data.isLive = false
+      putCharacter()
 
-
-      if (id) {
-
-        myCharacter.data.isLive = false
-        putCharacter()
-
-        var liveFriends = getLiveFriends()
-
-        socket.emit('leave', {
-          _id: id,
-          liveFriends: liveFriends
-        })
-
-        console.log('leave')
-
-      }
-
-      $('#pt-canvas').hide()
-
-
-    } else {
-
-      if (id) {
-
-        myCharacter.data.isLive = true
-        updateCharacter(null, 'getLocal')
-
-        var liveFriends = getLiveFriends()
-
-        socket.emit('join', {
-          _id: id,
-          liveFriends: liveFriends
-        })
-
-        console.log('join')
-
-      }
-
-      $('#pt-canvas').show()
-
+      var liveFriends = getLiveFriends()
+      console.log('leave')
     }
 
-  }
+    $('#pt-canvas').hide()
 
+
+  } else {
+
+    if (id) {
+
+      myCharacter.data.isLive = true
+      updateCharacter(null, 'getLocal')
+
+      var liveFriends = getLiveFriends()
+      console.log('join')
+    }
+
+    $('#pt-canvas').show()
+
+  }
 
 }
 
 
+function onMessage(data, sender, sendResponse) {
+  console.log(data, sender)
 
-initPt();
+  switch (data) {
+
+    case idleState:
+      onIdleState(data)
+      break;
+    case isSocket:
+      onSocket(data)
+      break;
+    case 3:
+      day = "Wednesday";
+      break;
+    case 4:
+      day = "Thursday";
+      break;
+  }
+
+}
+
+chrome.runtime.onMessage.addListener(onMessage);
+initPt()
+
+//wait for bg

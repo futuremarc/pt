@@ -24,7 +24,7 @@
     "default_title": "Passtime"
   },
   "background": {
-    "scripts": ["public/js/local/background.js"]
+    "scripts": ["public/js/lib/socket.io.min.js","public/js/local/background.js"]
   },
   "content_scripts": [
 
