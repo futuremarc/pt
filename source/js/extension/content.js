@@ -16,7 +16,7 @@ function animate() {
       else character.position.x -= .05
     }
   }
-  
+
   requestAnimationFrame(animate);
   render();
 
@@ -37,11 +37,17 @@ function initPt() {
   $('<div id="pt-canvas" class="pt-override-page"></div>').appendTo('body');
 
   chrome.storage.sync.get('pt-user', function(data) {
+
+    var signedIntoSite = $('#name-tag').html() === ''
+
+    console.log(data['pt-user'], signedIntoSite)
+
+    if (data['pt-user'] && signedIntoSite) signInFromExtension(data['pt-user'])
     initScene(data['pt-user'])
+
   })
 
 }
-
 
 
 
@@ -88,6 +94,8 @@ function initScene(data) {
   scene.add(sceneCharacters);
 
   createMyCharacter(data, putCharacter)
+
+  addDomListeners()
 
 }
 
@@ -261,6 +269,8 @@ function createCharacter(data, cB) {
 
 function updateCharacter(data, request, cB) {
 
+  console.log('update char')
+
   var pos, rot
 
   if (request === 'getLocal') {
@@ -415,8 +425,6 @@ var controls = {
 
 
 
-
-
 /*************DOCUMENT LISTENERS*************/
 
 
@@ -466,14 +474,6 @@ function onKeyUp(e) {
 function onVisibilityChange() {
   if (document.visibilityState === 'visible') updateCharacter(null, 'getLocal')
 }
-
-document.addEventListener('keydown', onKeyDown, false);
-document.addEventListener('keyup', onKeyUp, false);
-window.addEventListener('visibilitychange', onVisibilityChange, false);
-window.addEventListener('mousemove', detectHover, false);
-
-
-
 
 
 

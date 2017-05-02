@@ -1,16 +1,33 @@
-chrome.idle.onStateChanged.addListener(idleStateChanged);
+chrome.idle.onStateChanged.addListener(idleStateChange);
+chrome.runtime.onInstalled.addListener(onInstall);
+chrome.browserAction.onClicked.addListener(onBrowserAction);
 
-function idleStateChanged(e) {
-  console.log(e);
+
+
+
+function onInstall(data) {
+  console.log(data)
+
+  if (data.reason == "install") { //new install
+
+    var url = 'https://passti.me'
+    chrome.tabs.create({
+      url: url
+    });
+
+  } else if (data.reason == "update") {} //send msg notifying of updates
+
+}
+
+
+function idleStateChange(data) {
+  console.log(data);
 
   chrome.tabs.query({}, function(tabs) {
 
     tabs.forEach(function(tab) {
-
       chrome.tabs.sendMessage(tab.id, {
-        idleState: e
-      }, function(res) {
-        console.log(res)
+        idleState: data
       });
 
     })
@@ -20,10 +37,18 @@ function idleStateChanged(e) {
 }
 
 
-chrome.browserAction.onClicked.addListener(function(tab) {
+function onBrowserAction(activeTab) {
+  console.log(activeTab)
 
-  chrome.tabs.update({
-    url: 'https://passti.me'
+  var url = 'https://passti.me'
+
+  chrome.tabs.create({
+    url: url
   });
 
-});
+}
+
+
+
+
+

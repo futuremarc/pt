@@ -19,16 +19,15 @@ $("body").on('submit', '#pt-auth-form', function(e) {
     subs.push(sub)
   });
 
+
   if (action === 'settings') {
 
     errorMessage.html('&nbsp;')
-
     var data = {
       subscriptions: subs
     }
 
     putCharacter(data, function(data) {
-
       console.log(data)
 
       errorMessage.html(data.message + ' settings!')

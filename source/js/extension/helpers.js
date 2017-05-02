@@ -99,6 +99,15 @@ function changeSubmitButton(disable, replaceText, id) {
   btn.attr('disabled', disable)
 }
 
+function addDomListeners(){
+
+  document.addEventListener('keydown', onKeyDown, false);
+  document.addEventListener('keyup', onKeyUp, false);
+  window.addEventListener('visibilitychange', onVisibilityChange, false);
+  window.addEventListener('mousemove', detectHover, false);
+
+}
+
 
 function detectHover(e) {
 
@@ -123,5 +132,45 @@ function detectHover(e) {
     }
 
   }
+
+}
+
+
+function signInFromExtension(data){
+  
+  var errorMessage = $(".error-message h3")
+
+  var my = data
+
+  var data = {
+    email: my.email,
+    password: my.password,
+    name: my.name,
+    position: my.position,
+    rotation: my.rotation
+  }
+
+  $.ajax({
+    method: 'POST',
+    url: 'http://localhost:8080/api/login',
+    data: data,
+    success: function(data) {
+      console.log(data)
+      if (data.status === 'success') {
+
+        errorMessage.html(data.message + ' <strong>' + data.data.name + '</strong>!')
+      
+        setTimeout(function() {
+          location.href = '/'
+        }, 500)
+
+      } else {
+        errorMessage.html(data.message)
+      }
+    },
+    error: function(err) {
+      console.log(err)
+    }
+  })
 
 }

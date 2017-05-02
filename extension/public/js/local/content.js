@@ -1,4 +1,4 @@
-var socket = io('https://passti.me', {
+var socket = io('http://localhost:5050', {
   path: '/socket'
 })
 
@@ -16,7 +16,7 @@ function animate() {
       else character.position.x -= .05
     }
   }
-  
+
   requestAnimationFrame(animate);
   render();
 
@@ -37,11 +37,17 @@ function initPt() {
   $('<div id="pt-canvas" class="pt-override-page"></div>').appendTo('body');
 
   chrome.storage.sync.get('pt-user', function(data) {
+
+    var signedIntoSite = $('#name-tag').html() === ''
+
+    console.log(data['pt-user'], signedIntoSite)
+
+    if (data['pt-user'] && signedIntoSite) signInFromExtension(data['pt-user'])
     initScene(data['pt-user'])
+
   })
 
 }
-
 
 
 
@@ -89,6 +95,8 @@ function initScene(data) {
 
   createMyCharacter(data, putCharacter)
 
+  addDomListeners()
+
 }
 
 
@@ -129,7 +137,7 @@ function createMyCharacter(data) {
 
         myCharacter.data.isLive = true
 
-        putCharacter(null, function() {
+        putCharacter(function() {
 
           var liveFriends = getLiveFriends()
 
@@ -261,6 +269,8 @@ function createCharacter(data, cB) {
 
 function updateCharacter(data, request, cB) {
 
+  console.log('update char')
+
   var pos, rot
 
   if (request === 'getLocal') {
@@ -285,11 +295,10 @@ function updateCharacter(data, request, cB) {
 
     $.ajax({
       method: 'PUT',
-      url: 'https://passti.me/api/user/' + name,
+      url: 'http://localhost:8080/api/user/' + name,
       data: data,
       success: function(data) {
         console.log(data)
-
         if (cB) cB(data)
       },
       error: function(err) {
@@ -416,8 +425,6 @@ var controls = {
 
 
 
-
-
 /*************DOCUMENT LISTENERS*************/
 
 
@@ -467,14 +474,6 @@ function onKeyUp(e) {
 function onVisibilityChange() {
   if (document.visibilityState === 'visible') updateCharacter(null, 'getLocal')
 }
-
-document.addEventListener('keydown', onKeyDown, false);
-document.addEventListener('keyup', onKeyUp, false);
-window.addEventListener('visibilitychange', onVisibilityChange, false);
-window.addEventListener('mousemove', detectHover, false);
-
-
-
 
 
 

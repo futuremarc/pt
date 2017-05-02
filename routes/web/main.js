@@ -60,7 +60,10 @@ module.exports = function() {
   router.get('/friend', function(req, res, next) {
 
     if (!req.user) return res.render('auth/login.pug')
-    res.render('auth/friend.pug')
+    res.render('auth/friend.pug', {
+        loggedIn: true,
+        userName: req.user.name
+      })
 
   })
 
