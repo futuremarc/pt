@@ -159,7 +159,7 @@ function signInFromExtension(data) {
 
   $.ajax({
     method: 'POST',
-    url: 'https://passti.me/api/login',
+    url: 'http://localhost:8080/api/login',
     data: data,
     success: function(data) {
       console.log(data)

@@ -30,7 +30,7 @@
 
     {
       "matches": ["<all_urls>"],
-      "js": ["public/js/lib/jquery.min.js","public/js/lib/three.min.js","public/js/lib/socket.io.min.js","public/js/lib/handlebars.runtime.min.js","public/js/local/templates/templates.js","public/js/local/helpers.js","public/js/local/content.js","public/js/local/auth.js","public/js/local/sockets.js"],
+      "js": ["public/js/lib/jquery.min.js","public/js/lib/three.min.js","public/js/lib/socket.io.min.js","public/js/lib/handlebars.runtime.min.js","public/js/local/templates/templates.js","public/js/local/sockets.js","public/js/local/helpers.js","public/js/local/content.js","public/js/local/auth.js"],
       "css": ["public/css/local/extension.css"]
     }
 

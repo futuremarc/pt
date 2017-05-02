@@ -10,18 +10,10 @@ var socketEvents = {
   },
 
   'join': function(data) {
-
-    var friend = myCharacter.data.friends[friend].user
-    friend.isAlive = true
-    getLiveFriends()
     createCharacter(data)
   },
 
   'leave': function(data) {
-
-    var friend = myCharacter.data.friends[friend].user
-    friend.isAlive = false
-    getLiveFriends()
     removeCharacter()
   },
 

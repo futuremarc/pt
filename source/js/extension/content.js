@@ -40,9 +40,9 @@ function initPt() {
     if (data['pt-user'] && data['pt-user']._id) var signedIntoExtension = true
     else var signedIntoExtension = false
 
-    if (signedIntoExtension && signedIntoSite) updateCharacter(null, 'getRemote', function(){
+    if (signedIntoExtension && signedIntoSite) updateCharacter(data['pt-user'], 'getRemote', function() {
       signInFromExtension(data['pt-user'])
-    }) 
+    })
 
     initScene(data['pt-user'])
 
@@ -211,11 +211,7 @@ function createCharacter(data, cB) {
 
       from.enabled = true;
       to.enabled = true;
-
-      if (to.loop === THREE.LoopOnce) {
-        to.reset();
-      }
-
+      if (to.loop === THREE.LoopOnce) to.reset();
       from.crossFadeTo(to, 0.3);
       this.activeState = name;
 
@@ -270,81 +266,85 @@ function updateCharacter(data, request, cB) {
 
   var pos, rot
 
-  if (request === 'getLocal') {
+  switch (request) {
 
-    chrome.storage.sync.get('pt-user', function(data) {
+    case 'getLocal':
+      chrome.storage.sync.get('pt-user', function(data) {
 
-      var data = data['pt-user']
-      pos = data.position
-      rot = data.rotation
+        var data = data['pt-user']
+        pos = data.position
+        rot = data.rotation
 
-      myCharacter.position.set(pos.x, pos.y, pos.z)
-      myCharacter.rotation.set(rot.x, rot.y, rot.z)
-      myCharacter.data = data
-
-      if (cB) cB(data)
-
-    })
-
-  } else if (request === 'putRemote') {
-
-    var name = myCharacter.data.name
-
-    $.ajax({
-      method: 'PUT',
-      url: 'http://localhost:8080/api/user/' + name,
-      data: data,
-      success: function(data) {
-        console.log(data)
+        myCharacter.position.set(pos.x, pos.y, pos.z)
+        myCharacter.rotation.set(rot.x, rot.y, rot.z)
+        myCharacter.data = data
         if (cB) cB(data)
-      },
-      error: function(err) {
-        console.log(err)
-      },
-    })
+      })
 
-  } else if (request === 'putLocal') {
+      break
 
-    var pos = getCharacterPos()
-    var rot = getCharacterRot()
+    case 'putRemote':
 
-    myCharacter.data.position = pos
-    myCharacter.data.rotation = rot
+      var name = data.name || myCharacter.data.name
 
-    chrome.storage.sync.set({
-      'pt-user': data
-    }, function() {
-      if (cB) cB(data)
-    })
+      $.ajax({
+        method: 'PUT',
+        url: 'http://localhost:8080/api/user/' + name,
+        data: data,
+        success: function(data) {
+          console.log(data)
+          if (cB) cB(data)
+        },
+        error: function(err) {
+          console.log(err)
+        },
+      })
 
-  } else if (request === 'getRemote') {
+      break
 
-    var name = myCharacter.data.name
+    case 'putLocal':
+      var pos = getCharacterPos()
+      var rot = getCharacterRot()
+
+      myCharacter.data.position = pos
+      myCharacter.data.rotation = rot
+
+      chrome.storage.sync.set({
+        'pt-user': data
+      }, function() {
+        if (cB) cB(data)
+      })
+
+      break
+
+    case 'getRemote':
+      var name = data.name || myCharacter.data.name
+      var errorMessage = $('.error-message h3')
 
       $.ajax({
         method: 'GET',
         url: 'http://localhost:8080/api/user/' + name,
         success: function(data) {
           console.log(data)
-          if (data.status === 'success') {
 
+          if (data.status === 'success') {
             chrome.storage.sync.set({
               'pt-user': data
+
             }, function() {
-              
-               myCharacter.data = data
-               if (cB) cB(data)
+              if (isRegistered()) myCharacter.data = data
+              if (cB) cB(data)
             })
 
-          } else {
-            errorMessage.html(data.message)
-          }
+          } else errorMessage.html(data.message)
+
         },
         error: function(err) {
           console.log(err)
         }
       })
 
+      break
   }
 
 }
@@ -554,23 +554,19 @@ function onIdleState(data) {
   }
 
 }
+
 function onMessage(data, sender, sendResponse) {
   console.log(data, sender)
 
-  switch (data) {
+  switch (data.type) {
 
-    case idleState:
+    case 'idleState':
       onIdleState(data)
       break;
-    case isSocket:
+    case 'socket':
       onSocket(data)
       break;
-    case 3:
-      day = "Wednesday";
-      break;
-    case 4:
-      day = "Thursday";
-      break;
+
   }
 
 }

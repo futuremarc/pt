@@ -1,18 +1,9 @@
-var socket = io('http://localhost:5050', {
-  path: '/socket'
-})
-
-initSockets()
-
-
 
 function emitMsgToClient(data) {
-  console.log('emitmsg', data)
   chrome.runtime.sendMessage(data);
 }
 
 function emitMsgToServer(event, data) {
-  console.log('emitsocket', event, data)
   socket.emit(event, data)
 }
 
@@ -20,11 +11,12 @@ function initSockets() {
 
   var events = ['message', 'post', 'action']
 
-  events.forEach(function(event) { //add identicle socket events
+  events.forEach(function(event) { //broadcast most events
     socket.on(event, function(data) {
 
-      console.log(event, data)
+      data.type = 'socket'
       emitMsgToClient(data)
+
     })
   })
 
@@ -52,7 +44,8 @@ function idleStateChange(data) {
 
     tabs.forEach(function(tab) {
       chrome.tabs.sendMessage(tab.id, {
-        idleState: data
+        data: data,
+        type: 'idleState'
       });
 
     })
@@ -67,14 +60,16 @@ function onBrowserAction(activeTab) {
 
   var url = 'https://passti.me'
 
+
   chrome.tabs.create({
     url: url
   });
 
 }
 
-var isFirstJoin = true
 
+
+var isFirstJoin = true
 
 function onJoin(data) {
 
@@ -94,9 +89,9 @@ function onMessage(data, sender, sendResponse) {
 
   var isSocketMessage = data.event
   if (isSocketMessage) {
-
+    
     var event = data.event
-
+    
     switch (event) {
 
       case 'join':
@@ -111,7 +106,6 @@ function onMessage(data, sender, sendResponse) {
 
   }
 
-
 }
 
 
@@ -119,3 +113,12 @@ chrome.idle.onStateChanged.addListener(idleStateChange);
 chrome.runtime.onInstalled.addListener(onInstall);
 chrome.browserAction.onClicked.addListener(onBrowserAction);
 chrome.runtime.onMessage.addListener(onMessage);
+
+
+var socket = io('http://localhost:5050', {
+  path: '/socket'
+})
+
+initSockets()
+
+
