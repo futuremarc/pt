@@ -7,6 +7,7 @@ module.exports = function(io) {
 
   io.on('connection', function(socket) {
 
+
     function broadcastToFriends(event, data) {
       console.log('broadcast', event, data, clients)
 
@@ -14,9 +15,8 @@ module.exports = function(io) {
 
       for (var friend in liveFriends) {
         var socketId = clients[liveFriends[friend]]
-        if (io.sockets.connected[socketId]) io.sockets.connected[socketId].emit(event, data, function(data) {
-          console.log('sent data', data)
-        });
+        console.log('broadcast to', socketId, io.sockets.connected[socketId])
+        if (io.sockets.connected[socketId]) io.sockets.connected[socketId].emit(event, data);
       }
 
     }
