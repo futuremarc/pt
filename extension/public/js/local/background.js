@@ -9,7 +9,7 @@ function emitMsgToServer(event, data) {
 
 function initSockets() {
 
-  var events = ['message', 'post', 'action']
+  var events = ['chat', 'post', 'action']
 
   events.forEach(function(event) { //broadcast most events
     socket.on(event, function(data) {
@@ -115,7 +115,7 @@ chrome.browserAction.onClicked.addListener(onBrowserAction);
 chrome.runtime.onMessage.addListener(onMessage);
 
 
-var socket = io('http://localhost:5050', {
+var socket = io('https://passti.me', {
   path: '/socket'
 })
 

@@ -1,3 +1,41 @@
+function signInFromExtension(data) {
+
+  var errorMessage = $(".error-message h3")
+
+  var my = data
+
+  var data = {
+    email: my.email,
+    password: my.password,
+    name: my.name
+  }
+
+  $.ajax({
+    method: 'POST',
+    url: 'http://localhost:8080/api/login',
+    data: data,
+    success: function(data) {
+      console.log(data)
+      if (data.status === 'success') {
+
+        errorMessage.html(data.message + ' <strong>' + data.data.name + '</strong>!')
+
+        setTimeout(function() {
+          location.href = '/'
+        }, 500)
+
+      } else {
+        errorMessage.html(data.message)
+      }
+    },
+    error: function(err) {
+      console.log(err)
+    }
+  })
+
+}
+
+
 $("body").on('submit', '#pt-auth-form', function(e) {
 
 
@@ -11,7 +49,6 @@ $("body").on('submit', '#pt-auth-form', function(e) {
   var action = $(this).data('action')
   var subs = []
   var timeout = null
-
 
   $("#pt-auth-form input:checkbox:checked").each(function() {
 
@@ -41,7 +78,6 @@ $("body").on('submit', '#pt-auth-form', function(e) {
 
     return
   }
-
 
   var pos = getCharacterPos()
   var rot = getCharacterRot()
@@ -169,11 +205,11 @@ $('body').on('keyup', '#pt-friend-form', function(e) {
 $('body').on('click', '.friend-request-btn, .friends-list-btn', function(e) {
 
   e.preventDefault()
-
-  var friendId = $(this).data('id')
   var userId = myCharacter.data._id
+  var friendId = $(this).data('id')
   var purpose = $(this).data('purpose')
   var action = $(this).data('action')
+
   if (action === 'accept' || action === 'reject') var method = 'PUT'
   else if (action === 'remove') var method = 'DELETE'
 
@@ -190,9 +226,8 @@ $('body').on('click', '.friend-request-btn, .friends-list-btn', function(e) {
     data: data,
     success: function(data) {
       console.log(data)
-      updateCharacter(null, 'getRemote')
 
-      //if (data.status === 'success') $(self).parentsUntil(1).closest('li').remove()
+      updateCharacter(null, 'getRemote')
 
       var container = $('#friend-requests-parent')
       var reqs = data.data.friendRequests

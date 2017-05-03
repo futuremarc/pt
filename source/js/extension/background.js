@@ -9,7 +9,7 @@ function emitMsgToServer(event, data) {
 
 function initSockets() {
 
-  var events = ['message', 'post', 'action']
+  var events = ['chat', 'post', 'action']
 
   events.forEach(function(event) { //broadcast most events
     socket.on(event, function(data) {

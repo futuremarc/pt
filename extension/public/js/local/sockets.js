@@ -1,7 +1,7 @@
 
 var socketEvents = {
 
-  'message': function(data) {
+  'chat': function(data) {
     console.log(data)
   },
 
@@ -18,7 +18,7 @@ var socketEvents = {
   },
 
   'action': function(data) {
-
+    
     var friend = sceneCharacters[data._id]
     friend[data.action](data)
 

@@ -7,11 +7,12 @@ $('document').ready(function() {
 
     $.ajax({
       method: 'GET',
-      url: 'http://localhost:8080/api/user/' + name,
+      url: 'https://passti.me/api/user/' + name,
       success: function(data) {
         console.log(data)
-        if (data.status === 'success') {
 
+        if (data.status === 'success') {
+          
           var container = $('#friend-requests-parent')
           var reqs = data.data.friendRequests
           var html = Templates.auth.addFriendRequests(reqs)

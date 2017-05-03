@@ -14,19 +14,20 @@ function onSocket(data) {
 }
 
 
-function isQuickGesture(keyCode) {
-  return (keyCode === 38) //wave
+function isQuickGesture(keyCode) { //wave
+  return (keyCode === 38)
 }
 
 
-function isGesture(keyCode) {
-  //wave, pose
+function isGesture(keyCode) { //wave, pose
   return keyCode === 38 || keyCode === 40
 }
 
 
 
-function isRegistered() {
+function isRegistered() { //data could be empty {} here for unregistered users
+  if (!myCharacter) return false
+  if (!myCharacter.data) return false
   return myCharacter.data._id
 }
 
@@ -71,13 +72,34 @@ function getLiveFriends() {
 
     var friend = friend.user
     if (friend.isLive) liveFriends[friend._id] = friend._id
-
   })
 
   return liveFriends
 
 }
 
+function setCameraZoom(data) {
+
+  var pos = data.position || {
+    x: 0,
+    y: -1,
+    z: 0
+  }
+
+  sceneCharacters.position.set(-pos.x, pos.y, pos.z);
+
+  var box = new THREE.Box3().setFromObject(sceneCharacters);
+  box.center(sceneCharacters.position);
+  sceneCharacters.localToWorld(box);
+  sceneCharacters.position.multiplyScalar(-1);
+
+  camera.zoom = Math.min(container.offsetWidth / (box.max.x - box.min.x),
+    container.offsetHeight / (box.max.y - box.min.y)) * .8;
+
+  camera.updateProjectionMatrix();
+  camera.updateMatrix();
+
+}
 
 function toScreenPosition(obj, camera) {
 
@@ -108,76 +130,10 @@ function changeSubmitButton(disable, replaceText, id) {
   btn.attr('disabled', disable)
 }
 
-function addDomListeners() {
-
-  document.addEventListener('keydown', onKeyDown, false);
-  document.addEventListener('keyup', onKeyUp, false);
-  window.addEventListener('visibilitychange', onVisibilityChange, false);
-  window.addEventListener('mousemove', detectHover, false);
-
+function hideCanvas(){
+  $('#pt-canvas').hide()
 }
 
-
-function detectHover(e) {
-
-  var x = (e.clientX / window.innerWidth) * 2 - 1;
-  var y = -(e.clientY / window.innerHeight) * 2 + 1;
-
-  var raycaster = new THREE.Raycaster();
-  raycaster.setFromCamera(new THREE.Vector2(x, y), camera);
-
-  var intersects = raycaster.intersectObjects(scene.children, true);
-
-  if (intersects.length > 0) {
-    if (!hoveredCharacter) {
-      hoveredCharacter = intersects[0].object;
-      $('body').addClass('pt-hovering')
-    }
-
-  } else {
-    if (hoveredCharacter) {
-      hoveredCharacter = undefined;
-      $('body').removeClass('pt-hovering')
-    }
-
-  }
-
-}
-
-
-function signInFromExtension(data) {
-
-  var errorMessage = $(".error-message h3")
-
-  var my = data
-
-  var data = {
-    email: my.email,
-    password: my.password,
-    name: my.name
-  }
-
-  $.ajax({
-    method: 'POST',
-    url: 'http://localhost:8080/api/login',
-    data: data,
-    success: function(data) {
-      console.log(data)
-      if (data.status === 'success') {
-
-        errorMessage.html(data.message + ' <strong>' + data.data.name + '</strong>!')
-
-        setTimeout(function() {
-          location.href = '/'
-        }, 500)
-
-      } else {
-        errorMessage.html(data.message)
-      }
-    },
-    error: function(err) {
-      console.log(err)
-    }
-  })
-
+function showCanvas(){
+  $('#pt-canvas').show()
 }

@@ -35,16 +35,19 @@ function initPt() {
 
   chrome.storage.sync.get('pt-user', function(data) {
 
-    var signedIntoSite = $('#name-tag').html() === ''
+    var name = $('#name-tag').html()
+    var signedIntoSite = name === ''
 
-    if (data['pt-user'] && data['pt-user']._id) var signedIntoExtension = true
+    var user = data['pt-user'] 
+
+    if (user && user._id) var signedIntoExtension = user
     else var signedIntoExtension = false
 
-    if (signedIntoExtension && signedIntoSite) updateCharacter(data['pt-user'], 'getRemote', function() {
-      signInFromExtension(data['pt-user'])
+    if (signedIntoExtension && signedIntoSite) updateCharacter(user, 'getRemote', function() {
+      signInFromExtension(user)
     })
 
-    initScene(data['pt-user'])
+    initScene(user)
 
   })
 
@@ -95,7 +98,6 @@ function initScene(data) {
   scene.add(sceneCharacters);
 
   createMyCharacter(data, putCharacter)
-
   addDomListeners()
 
 }
@@ -110,25 +112,7 @@ function createMyCharacter(data) {
   createCharacter(data, function(character) {
 
     myCharacter = character
-
-    var pos = data.position || {
-      x: 0,
-      y: -1,
-      z: 0
-    }
-
-    sceneCharacters.position.set(-pos.x, pos.y, pos.z);
-
-    var box = new THREE.Box3().setFromObject(sceneCharacters);
-    box.center(sceneCharacters.position);
-    sceneCharacters.localToWorld(box);
-    sceneCharacters.position.multiplyScalar(-1);
-
-    camera.zoom = Math.min(container.offsetWidth / (box.max.x - box.min.x),
-      container.offsetHeight / (box.max.y - box.min.y)) * .8;
-
-    camera.updateProjectionMatrix();
-    camera.updateMatrix();
+    setCameraZoom(data)
 
     var id = isRegistered()
 
@@ -217,7 +201,6 @@ function createCharacter(data, cB) {
 
     }
 
-
     actions = character.actions
     mixer = character.mixer
 
@@ -229,7 +212,7 @@ function createCharacter(data, cB) {
 
     for (var action in actions) {
       actions[action].setEffectiveWeight(1);
-      actions.hello.enabled = true;
+      actions[action].enabled = true;
     }
 
     actions.hello.setLoop(THREE.LoopOnce, 0);
@@ -254,7 +237,6 @@ function createCharacter(data, cB) {
     character.position.set(pos.x, pos.y, pos.z);
     character.rotation.set(rot.x, rot.y, rot.z);
 
-
     if (cB) cB(character)
 
   });
@@ -271,9 +253,9 @@ function updateCharacter(data, request, cB) {
     case 'getLocal':
       chrome.storage.sync.get('pt-user', function(data) {
 
-        var data = data['pt-user']
-        pos = data.position
-        rot = data.rotation
+        var user = data['pt-user']
+        pos = user.position
+        rot = user.rotation
 
         myCharacter.position.set(pos.x, pos.y, pos.z)
         myCharacter.rotation.set(rot.x, rot.y, rot.z)
@@ -289,7 +271,7 @@ function updateCharacter(data, request, cB) {
 
       $.ajax({
         method: 'PUT',
-        url: 'http://localhost:8080/api/user/' + name,
+        url: 'https://passti.me/api/user/' + name,
         data: data,
         success: function(data) {
           console.log(data)
@@ -323,7 +305,7 @@ function updateCharacter(data, request, cB) {
 
       $.ajax({
         method: 'GET',
-        url: 'http://localhost:8080/api/user/' + name,
+        url: 'https://passti.me/api/user/' + name,
         success: function(data) {
           console.log(data)
 
@@ -514,6 +496,43 @@ function onVisibilityChange() {
 }
 
 
+function detectHover(e) {
+
+  var x = (e.clientX / window.innerWidth) * 2 - 1;
+  var y = -(e.clientY / window.innerHeight) * 2 + 1;
+
+  var raycaster = new THREE.Raycaster();
+  raycaster.setFromCamera(new THREE.Vector2(x, y), camera);
+
+  var intersects = raycaster.intersectObjects(scene.children, true);
+
+  if (intersects.length > 0) {
+    if (!hoveredCharacter) {
+      hoveredCharacter = intersects[0].object;
+      $('body').addClass('pt-hovering')
+    }
+
+  } else {
+    if (hoveredCharacter) {
+      hoveredCharacter = undefined;
+      $('body').removeClass('pt-hovering')
+    }
+
+  }
+
+}
+
+
+function addDomListeners() {
+
+  document.addEventListener('keydown', onKeyDown, false);
+  document.addEventListener('keyup', onKeyUp, false);
+  window.addEventListener('visibilitychange', onVisibilityChange, false);
+  window.addEventListener('mousemove', detectHover, false);
+
+}
+
+
 
 /*************FROM BACKGROUND*************/
 
@@ -530,13 +549,8 @@ function onIdleState(data) {
 
       myCharacter.data.isLive = false
       putCharacter()
-
-      var liveFriends = getLiveFriends()
-      console.log('leave')
     }
-
-    $('#pt-canvas').hide()
-
+    hideCanvas()
 
   } else {
 
@@ -544,12 +558,8 @@ function onIdleState(data) {
 
       myCharacter.data.isLive = true
       updateCharacter(null, 'getLocal')
-
-      var liveFriends = getLiveFriends()
-      console.log('join')
     }
-
-    $('#pt-canvas').show()
+    showCanvas()
 
   }
 

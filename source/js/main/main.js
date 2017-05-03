@@ -10,8 +10,9 @@ $('document').ready(function() {
       url: 'http://localhost:8080/api/user/' + name,
       success: function(data) {
         console.log(data)
-        if (data.status === 'success') {
 
+        if (data.status === 'success') {
+          
           var container = $('#friend-requests-parent')
           var reqs = data.data.friendRequests
           var html = Templates.auth.addFriendRequests(reqs)
