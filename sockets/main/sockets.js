@@ -4,21 +4,22 @@ var clients = {}
 module.exports = function(io) {
 
 
-  function broadcastToFriends(event, data) {
-    console.log('broadcast', event, data, clients)
-
-    var liveFriends = data.liveFriends
-
-    for (var friend in liveFriends) {
-      var socketId = clients[liveFriends[friend]]
-      if (io.sockets.connected[socketId]) io.sockets.connected[socketId].emit(event, data);
-    }
-
-  }
-
 
   io.on('connection', function(socket) {
 
+    function broadcastToFriends(event, data) {
+      console.log('broadcast', event, data, clients)
+
+      var liveFriends = data.liveFriends
+
+      for (var friend in liveFriends) {
+        var socketId = clients[liveFriends[friend]]
+        if (io.sockets.connected[socketId]) io.sockets.connected[socketId].emit(event, data, function(data) {
+          console.log('sent data', data)
+        });
+      }
+
+    }
 
     socket.on('join', function(data) { //add socket.id to clients and liveFriends {}
       var id = data._id;

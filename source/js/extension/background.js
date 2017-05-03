@@ -12,11 +12,10 @@ function initSockets() {
   var events = ['chat', 'post', 'action']
 
   events.forEach(function(event) { //broadcast most events
-    socket.on(event, function(data) {
 
+    socket.on(event, function(data) {
       data.type = 'socket'
       emitMsgToClient(data)
-
     })
   })
 
