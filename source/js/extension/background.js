@@ -1,20 +1,43 @@
+var socket = io('http://localhost:5050', {
+  path: '/socket'
+})
+
 
 function emitMsgToClient(data) {
-  chrome.runtime.sendMessage(data);
+
+  chrome.tabs.query({}, function(tabs) {
+
+    tabs.forEach(function(tab) {
+      chrome.tabs.sendMessage(tab.id, data);
+    })
+
+  });
 }
 
 function emitMsgToServer(event, data) {
+
+  console.log('emit', event, data)
   socket.emit(event, data)
+  
 }
 
 function initSockets() {
 
-  var events = ['chat', 'post', 'action']
+  var events = ['chat', 'post', 'action', 'disconnect', 'socketId']
 
   events.forEach(function(event) { //broadcast most events
 
     socket.on(event, function(data) {
+
+      if (data === 'transport close') {
+        var data = {
+          event: event
+        }
+      }
+      
       data.type = 'socket'
+
+
       emitMsgToClient(data)
     })
   })
@@ -27,7 +50,8 @@ function onInstall(data) {
   if (data.reason == "install") { //new install
 
     var url = 'https://passti.me'
-    chrome.tabs.create({
+
+    chrome.tabs.update({
       url: url
     });
 
@@ -55,12 +79,10 @@ function idleStateChange(data) {
 
 
 function onBrowserAction(activeTab) {
-  console.log(activeTab)
 
   var url = 'https://passti.me'
 
-
-  chrome.tabs.create({
+  chrome.tabs.update({
     url: url
   });
 
@@ -68,16 +90,16 @@ function onBrowserAction(activeTab) {
 
 
 
-var isFirstJoin = true
+// var isFirstJoin = true
 
 function onJoin(data) {
 
-  if (isFirstJoin) {
+  // if (isFirstJoin) {
 
-    console.log('isFirstJoin', isFirstJoin)
-    isFirstJoin = false
+    // console.log('isFirstJoin', isFirstJoin, data)
+    // isFirstJoin = false
     emitMsgToServer('join', data)
-  }
+  // }
 
 }
 
@@ -88,9 +110,9 @@ function onMessage(data, sender, sendResponse) {
 
   var isSocketMessage = data.event
   if (isSocketMessage) {
-    
+
     var event = data.event
-    
+
     switch (event) {
 
       case 'join':
@@ -113,11 +135,4 @@ chrome.runtime.onInstalled.addListener(onInstall);
 chrome.browserAction.onClicked.addListener(onBrowserAction);
 chrome.runtime.onMessage.addListener(onMessage);
 
-
-var socket = io('http://localhost:5050', {
-  path: '/socket'
-})
-
 initSockets()
-
-

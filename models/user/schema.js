@@ -70,17 +70,14 @@ var userSchema = new Schema({
     type: Schema.Types.ObjectId,
     ref: 'Subscription'
   }],
-
   isLive: {
     type: Boolean,
     default: false
   },
-
   favoritePosts: [{
     type: Schema.Types.ObjectId,
     ref: 'Post'
   }],
-
   resetPasswordToken: String,
   resetPasswordExpires: Date
 })

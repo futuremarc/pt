@@ -1,16 +1,36 @@
-function putCharacter(cB) {
-
-  updateCharacter(myCharacter.data, 'putLocal')
-  if (isRegistered()) updateCharacter(myCharacter.data, 'putRemote', cB)
-}
-
-function emitMessage(data) {
+function emitMessageToBg(data) {
   chrome.runtime.sendMessage(data);
 }
 
 function onSocket(data) {
   var event = data.event
   socketEvents[event](data)
+}
+
+function emitJoinMsg() {
+
+  myCharacter.data.isLive = true
+
+  putCharacter(function() {
+
+    var liveFriends = getLiveFriends()
+    var pos = myCharacter.data.position
+    var rot = myCharacter.data.rotation
+    var id = myCharacter.data._id
+
+    console.log('emitJoinMsg')
+
+    var data = {
+      event: 'join',
+      _id: id,
+      position: pos,
+      rotation: rot,
+      liveFriends: liveFriends
+    }
+    emitMessageToBg(data)
+
+  })
+
 }
 
 
@@ -25,11 +45,18 @@ function isGesture(keyCode) { //wave, pose
 
 
 
-function isRegistered() { //data could be empty {} here for unregistered users
+function isRegistered() {
   if (!myCharacter) return false
   if (!myCharacter.data) return false
   return myCharacter.data._id
 }
+
+function putCharacter(cB) {
+
+  updateCharacter(myCharacter.data, 'putLocal')
+  if (isRegistered()) updateCharacter(myCharacter.data, 'putRemote', cB)
+}
+
 
 function getCharacterPos() {
 
@@ -41,6 +68,15 @@ function getCharacterPos() {
 
   return pos
 
+}
+
+function addLiveCharacters() {
+
+  myCharacter.data.friends.forEach(function(friend) {
+
+    var friend = friend.user
+    if (friend.isLive) createCharacter(friend)
+  })
 }
 
 
@@ -80,16 +116,16 @@ function getLiveFriends() {
 
 function setCameraZoom(data) {
 
-  var pos = data.position || {
+  var pos = {
     x: 0,
-    y: -1,
+    y: 0,
     z: 0
   }
 
-  sceneCharacters.position.set(-pos.x, pos.y, pos.z);
+  sceneCharacters.position.set(pos.x, pos.y, pos.z);
 
-  var box = new THREE.Box3().setFromObject(sceneCharacters);
-  box.center(sceneCharacters.position);
+  var box = new THREE.Box3().setFromObject(scene);
+  box.center(pos);
   sceneCharacters.localToWorld(box);
   sceneCharacters.position.multiplyScalar(-1);
 
@@ -130,10 +166,10 @@ function changeSubmitButton(disable, replaceText, id) {
   btn.attr('disabled', disable)
 }
 
-function hideCanvas(){
+function hideCanvas() {
   $('#pt-canvas').hide()
 }
 
-function showCanvas(){
+function showCanvas() {
   $('#pt-canvas').show()
 }

@@ -97,7 +97,7 @@ function initScene(data) {
   sceneCharacters = new THREE.Object3D();
   scene.add(sceneCharacters);
 
-  createMyCharacter(data, putCharacter)
+  createMyCharacter(data)
   addDomListeners()
 
 }
@@ -114,34 +114,11 @@ function createMyCharacter(data) {
     myCharacter = character
     setCameraZoom(data)
 
-    var id = isRegistered()
-
-    if (id) {
-
-      myCharacter.data.isLive = true
-
-      putCharacter(function() {
-
-        var liveFriends = getLiveFriends()
-
-        var pos = myCharacter.data.position
-        var rot = myCharacter.data.rotation
-
-        console.log('join')
-
-        var data = {
-          event: 'join',
-          _id: id,
-          position: pos,
-          rotation: rot,
-          liveFriends: liveFriends
-        }
-
-        emitMessage(data)
-
-      })
-
+    if (isRegistered()){
+      addLiveCharacters()
+      emitJoinMsg()
     }
+
     animate()
 
   })
@@ -150,7 +127,7 @@ function createMyCharacter(data) {
 
 function createCharacter(data, cB) {
 
-  loader.load(chrome.extension.getURL('./models/eva-animated.json'), function(geometry, materials) {
+  loader.load(chrome.extension.getURL('public/models/eva-animated.json'), function(geometry, materials) {
 
     materials.forEach(function(material) {
       material.skinning = true;
@@ -165,7 +142,8 @@ function createCharacter(data, cB) {
     character.animations = ['idle', 'walk', 'run', 'hello', 'pose'];
     character.activeState = 'idle';
 
-    character.walk = function(direction) {
+    character.walk = function(data) {
+      var direction = data.direction
 
       if (direction === 'right') var dir = 1
       else var dir = -1
@@ -246,7 +224,7 @@ function createCharacter(data, cB) {
 
 function updateCharacter(data, request, cB) {
 
-  var pos, rot
+  var pos, rot, data = data || {}
 
   switch (request) {
 
@@ -254,12 +232,15 @@ function updateCharacter(data, request, cB) {
       chrome.storage.sync.get('pt-user', function(data) {
 
         var user = data['pt-user']
+        
         pos = user.position
         rot = user.rotation
 
+        console.log('GET LOCAL', user)
+
         myCharacter.position.set(pos.x, pos.y, pos.z)
         myCharacter.rotation.set(rot.x, rot.y, rot.z)
-        myCharacter.data = data
+        myCharacter.data = user
         if (cB) cB(data)
       })
 
@@ -267,7 +248,9 @@ function updateCharacter(data, request, cB) {
 
     case 'putRemote':
 
-      var name = data.name || myCharacter.data.name
+      var name = data.name
+
+      console.log('PUT REMOTE', name, data)
 
       $.ajax({
         method: 'PUT',
@@ -285,14 +268,17 @@ function updateCharacter(data, request, cB) {
       break
 
     case 'putLocal':
+
       var pos = getCharacterPos()
       var rot = getCharacterRot()
 
       myCharacter.data.position = pos
       myCharacter.data.rotation = rot
 
+      console.log('PUT LOCAL', myCharacter.data)
+
       chrome.storage.sync.set({
-        'pt-user': data
+        'pt-user': myCharacter.data
       }, function() {
         if (cB) cB(data)
       })
@@ -307,15 +293,15 @@ function updateCharacter(data, request, cB) {
         method: 'GET',
         url: 'http://localhost:8080/api/user/' + name,
         success: function(data) {
-          console.log(data)
+          console.log('GET REMOTE', data)
 
           if (data.status === 'success') {
             chrome.storage.sync.set({
-              'pt-user': data
+              'pt-user': data.data
 
             }, function() {
-              if (isRegistered()) myCharacter.data = data
-              if (cB) cB(data)
+              if (isRegistered()) myCharacter.data = data.data
+              if (cB) cB(data.data)
             })
 
           } else errorMessage.html(data.message)
@@ -352,22 +338,23 @@ var controls = {
       if (isRegistered()) {
 
         data.liveFriends = getLiveFriends()
-        emitMessage(data)
+        emitMessageToBg(data)
       }
 
     } else {
 
       if (!key.left) {
 
+        data.event = 'action'
         data.action = 'walk'
         data.direction = 'left'
 
-        myCharacter[data.action](data.direction)
+        myCharacter[data.action](data)
 
         if (data._id) {
 
           data.liveFriends = getLiveFriends()
-          emitMessage(data)
+          emitMessageToBg(data)
         }
       }
 
@@ -384,7 +371,7 @@ var controls = {
 
     if (isRegistered()) {
       data.liveFriends = getLiveFriends()
-      emitMessage(data)
+      emitMessageToBg(data)
     }
 
   },
@@ -401,24 +388,24 @@ var controls = {
 
       if (isRegistered()) {
         data.liveFriends = getLiveFriends()
-        emitMessage(data)
+        emitMessageToBg(data)
       }
 
     } else {
 
       if (!key.right) {
 
+        data.event = 'action'
         data.action = 'walk'
         data.direction = 'right'
-        data.event = 'action'
 
-        myCharacter[data.action](data.direction)
+        myCharacter[data.action](data)
 
         if (isRegistered()) {
 
           putCharacter()
           data.liveFriends = getLiveFriends()
-          emitMessage(data)
+          emitMessageToBg(data)
         }
       }
 
@@ -436,7 +423,7 @@ var controls = {
 
     if (isRegistered()) {
       data.liveFriends = getLiveFriends()
-      emitMessage(data)
+      emitMessageToBg(data)
     }
 
   }
@@ -458,12 +445,10 @@ function onKeyDown(e) {
   var pos = myCharacter.data.position
   var rot = myCharacter.data.rotation
 
-
-
   var data = {
     _id: id,
-    pos: pos,
-    rot: rot
+    position: pos,
+    rotation: rot
   }
 
   controls[keyCode](data)
@@ -483,8 +468,8 @@ function onKeyUp(e) {
 
   var data = {
     _id: id,
-    pos: pos,
-    rot: rot
+    position: pos,
+    rotation: rot
   }
 
   if (!isGesture(keyCode)) controls[keyCode](data, true)
@@ -547,8 +532,11 @@ function onIdleState(data) {
 
     if (id) {
 
-      myCharacter.data.isLive = false
-      putCharacter()
+      // var liveFriends = getLiveFriends()
+      
+      // myCharacter.data.isLive = false
+      // putCharacter()
+
     }
     hideCanvas()
 
@@ -556,8 +544,8 @@ function onIdleState(data) {
 
     if (id) {
 
-      myCharacter.data.isLive = true
-      updateCharacter(null, 'getLocal')
+      // myCharacter.data.isLive = true
+      // updateCharacter(null, 'getLocal')
     }
     showCanvas()
 
@@ -565,8 +553,8 @@ function onIdleState(data) {
 
 }
 
-function onMessage(data, sender, sendResponse) {
-  console.log(data, sender)
+function onBgMessage(data, sender, sendResponse) {
+  console.log(data)
 
   switch (data.type) {
 
@@ -581,7 +569,7 @@ function onMessage(data, sender, sendResponse) {
 
 }
 
-chrome.runtime.onMessage.addListener(onMessage);
+chrome.runtime.onMessage.addListener(onBgMessage);
 initPt()
 
 //wait for bg

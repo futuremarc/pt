@@ -60,7 +60,7 @@ module.exports = function(passport) {
           if (err) {
             return res.json({
               status: "error",
-              data: null,
+              data: err,
               message: "Error deleting friend request"
             })
           }
@@ -85,12 +85,13 @@ module.exports = function(passport) {
             }, {
               new: true
             })
+            .populate('friendRequests')
             .exec(function(err, user) {
-              
+
               if (err) {
                 return res.json({
                   status: "error",
-                  data: null,
+                  data: err,
                   message: "Error adding friend to user"
                 })
               }
@@ -111,7 +112,7 @@ module.exports = function(passport) {
                   if (err) {
                     return res.json({
                       status: "error",
-                      data: null,
+                      data: err,
                       message: "Error adding user to friend"
                     })
                   }
@@ -121,7 +122,7 @@ module.exports = function(passport) {
                   async.forEach(user.friends, function(friend, callback) {
                     User.populate(
                       friend, {
-                        path: "user"
+                        path: 'user'
                       },
                       function(err, friend) {
 
@@ -322,10 +323,46 @@ module.exports = function(passport) {
               })
             }
 
-            return res.json({
-              status: "success",
-              data: user,
-              message: "Updated user"
+            if (!user) {
+              return res.json({
+                status: "not found",
+                data: user,
+                message: "Couldn't find user"
+              })
+
+            }
+
+            var friends = []
+
+            async.forEach(user.friends, function(friend, callback) {
+              User.populate(
+                friend, {
+                  path: "user"
+                },
+                function(err, friend) {
+
+                  friends.push(friend)
+                  if (err) throw err;
+                  callback();
+                }
+              );
+            }, function(err) {
+
+              if (err) return res.json({
+                status: "error",
+                data: null,
+                message: "Couldn't find friends of user"
+              })
+
+              user.friends = friends
+
+
+              return res.json({
+                status: "success",
+                data: user,
+                message: "Updated user"
+              })
+
             })
           })
         })

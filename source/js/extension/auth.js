@@ -178,6 +178,8 @@ $('body').on('keyup', '#pt-friend-form', function(e) {
     url: 'http://localhost:8080/api/user/' + name,
     success: function(data) {
       console.log(data)
+      clearTimeout(timeout)
+      
       if (data.status === 'success') {
 
         if (data.data) errorMessage.html(data.message + ' <strong>' + data.data.name + '</strong>!')
@@ -186,9 +188,9 @@ $('body').on('keyup', '#pt-friend-form', function(e) {
 
       } else if (data.status === 'not found') {
         changeSubmitButton(true)
-        timeout = setTimeout(function() {
-          errorMessage.html('&nbsp;')
-        }, 2000)
+        // timeout = setTimeout(function() {
+        //   errorMessage.html('&nbsp;')
+        // }, 2000)
       } else if (data.status === 'error') {
         errorMessage.html(data.message)
         changeSubmitButton(true)
@@ -217,6 +219,8 @@ $('body').on('click', '.friend-request-btn, .friends-list-btn', function(e) {
     friendId: friendId,
     userId: userId
   }
+
+  console.log('add/remove friend', data)
 
   var self = this
 

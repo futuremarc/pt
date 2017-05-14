@@ -1,0 +1,340 @@
+* {
+  box-sizing: border-box; }
+
+html, body {
+  min-height: 100%;
+  font: 18px 'open',Verdana,sans-serif;
+  color:#999;
+  line-height: 26px;
+}
+
+@font-face {
+  font-family: 'openbold';
+  src: url("fonts/OpenSans-Bold-webfont.eot");
+  src: url("fonts/OpenSans-Bold-webfont.eot?#iefix") format("embedded-opentype"), url("fonts/OpenSans-Bold-webfont.woff") format("woff"), url("fonts/OpenSans-Bold-webfont.ttf") format("truetype"), url("fonts/OpenSans-Bold-webfont.svg#maven_proregular") format("svg");
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'open';
+  src: url("fonts/OpenSans-Light-webfont.eot");
+  src: url("fonts/OpenSans-Light-webfont.eot?#iefix") format("embedded-opentype"), url("fonts/OpenSans-Light-webfont.woff") format("woff"), url("fonts/OpenSans-Light-webfont.ttf") format("truetype"), url("fonts/OpenSans-Light-webfont.svg#maven_proregular") format("svg");
+  font-weight: normal;
+  font-style: normal;
+}
+a{
+  font-family: 'openbold',Verdana,sans-serif;
+  color: #555555;
+}
+a:hover{
+  text-decoration: none;
+}
+
+strong{
+  font-family: 'openbold',Verdana,sans-serif;
+}
+
+/*----------------*/
+.through {
+  text-decoration:line-through;
+}
+
+.bandacabeceraIns{
+  background-color: #0c0d12;
+}
+
+.bandacabecera .contenedor,
+.bandacabeceraIns .contenedor{
+  width: 1200px;
+  margin: 0 auto;
+}
+.bandacabecera .contenedor img.cabecera,
+.bandacabeceraIns .contenedor img.cabecera,
+
+.main img{
+  width: 100%;
+  vertical-align: bottom;
+}
+
+iframe{
+    width: 100%;
+    vertical-align: bottom;
+    height: 400px;
+    border: 0;
+}
+.header{
+  margin-bottom: 20px;
+  width: 1200px;
+  margin: 20px auto 0;
+  position: relative;
+}
+.header .titulo{
+  overflow: hidden;
+  margin-bottom: 30px;
+  }
+.header .titulo h1{
+  font: 36px 'openbold',Verdana,sans-serif;
+  color: #444;
+}
+
+.header .titulo h1 span{
+  white-space:nowrap;
+}
+
+.header .titulo .logoCab{
+  width: 200px;
+  float: left;
+  text-align: right;
+  padding: 20px 20px 0 0;
+}
+.header .titulo .txt{
+  float: left;
+  padding-top: 10px;
+}
+.header .titulo .txt p,
+.header .titulo .txt h1{
+  margin: 2px auto;
+}
+
+.header .titulo .txt .date{
+  position: absolute;
+  top: 15px;
+  right: 10px;
+  font-size: 12px;
+}
+
+/*----------------*/
+
+.main {
+  width: 800px;
+  margin: 0 auto;
+}
+.main h2{
+  font: 24px 'openbold',Verdana,sans-serif;
+  color: #444;
+  margin-top: 40px;
+}
+
+.main h3{
+  font: 18px 'openbold',Verdana,sans-serif;
+  color: #999;
+  margin-top: 20px;
+}
+
+.main p{
+  margin: 30px auto;
+}
+.main .pie{
+  font-size: 14px;
+}
+.main .datos p{
+  margin: 5px auto;
+}
+.main .datos p.empresa{
+  font-family: 'openbold',Verdana,sans-serif;
+  margin-top: 20px;
+}
+
+.special {
+    background-color: #fbd34b;
+    margin-top: 20px;
+    padding: 20px;
+}
+.special a{
+  color: #111;
+}
+
+.special p{
+  font-size: 16px;
+  color:#333;
+  line-height: 24px;
+  padding: 5px;
+  margin: 0;
+}
+
+.linkSite {
+    background-color: #ccc;
+    margin-top: 20px;
+    padding: 20px;
+}
+.linkSite a{
+  color: #fff;
+}
+
+.linkSite p{
+  font-size: 20px;
+  color:#fff;
+  line-height: 24px;
+  padding: 5px;
+  margin: 0;
+  text-align: center;
+}
+
+/*----------------*/
+
+.footer{
+  width: 100%;
+  background-color: #444;
+  color: white;
+  overflow: hidden;
+  padding-bottom: 100px;
+  font-size: 14px;
+  margin-top: 60px;
+}
+.footer .content{
+  width: 800px;
+  margin: 0 auto;
+  padding-top: 30px;
+}
+.footer .content .logo{
+  float: left;
+}
+.footer .content .link{
+  float: right;
+}
+.footer .content .logo span{
+  display: block;
+  padding-bottom: 10px;
+
+}
+.footer .content .logo .claim{
+  margin-top: -5px;
+}
+
+.footer .content .link a{
+  color: white;
+}
+
+li{
+  margin-bottom: 10px;
+  width: 90%;
+}
+
+.highlights ul{
+  padding: 0;
+  list-style: none;
+}
+.highlights li{
+  display: inline-block;
+  width: 260px;
+}
+.highlights li img{
+  width: 250px;
+  display: block;
+}
+
+.highlights li a{
+  font-size: 12px;
+  line-height: normal;
+}
+
+/*--------RESPONSIVE--------*/
+
+
+  @media screen and (max-width:1200px){
+     .header{
+        width: 100%;
+      }
+      .bandacabecera .contenedor,
+      .bandacabeceraIns .contenedor{
+        width: 100%;
+      }
+  }
+
+  @media screen and (max-width:1000px){
+     .header .titulo{
+       width: 800px;
+       margin: 0 auto 30px;
+      }
+      .header .titulo .logoCab{
+        width: 82px;
+        float: left;
+        text-align: left;
+        padding: 20px 20px 0 0;
+      }
+  }
+
+  @media screen and (max-width:800px){
+
+      .main {
+        width: 100%;
+      }
+      .main h2,
+      .main h3,
+      .main p,
+      .main .pie,
+      .main .datos p,
+      .header .titulo .txt p,
+      .header .titulo .txt h1{
+        margin-right: 20px;
+        margin-left: 20px;
+      }
+      .footer .content{
+        width: 100%;
+      }
+      .footer .content .logo{
+        margin-left: 20px;
+      }
+      .footer .content .link{
+        margin-right: 20px;
+      }
+      .header{
+        margin-top:0;
+      }
+      .header .titulo{
+        width: 100%;
+      }
+      .header .titulo .logoCab{
+        float: none;
+        display: block;
+        margin: 0 auto;
+      }
+      .header .titulo .txt{
+        float: none;
+        text-align: center;
+      }
+
+      .highlights li{
+        display: inline-block;
+        width: 32%;
+        text-align: center;
+      }
+      .highlights li img{
+        width: 165px;
+        margin-left: auto;
+        margin-right: auto;
+        display: block;
+      }
+
+      .highlights li a{
+        font-size: 10px;
+        line-height: normal;
+      }
+  }
+
+   @media screen and (max-width:500px){
+      .footer .content .logo,
+      .footer .content .link{
+        float: none;
+        width: 160px;
+        margin: 0 auto;
+        text-align: center;
+      }
+
+      .highlights li{
+        width: 100%;
+        padding-bottom: 20px;
+        text-align: center;
+        display: block;
+      }
+
+      .highlights li img{
+        display: block;
+        width: 100%
+      }
+
+      .highlights li a{
+        font-size: 12px;
+      }
+   }

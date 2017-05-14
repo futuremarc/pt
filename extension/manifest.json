@@ -1,7 +1,7 @@
 {
   "manifest_version": 2,
   "name": "Passtime",
-  "short_name":"Passtime",
+  "short_name": "Passtime",
   "version": "0.9",
   "permissions": [
     "storage",
@@ -9,14 +9,14 @@
     "tabs",
     "idle",
     "unlimitedStorage",
-    "background",
     "activeTab",
     "<all_urls>",
     "contextMenus"
-  ],"icons": {
-          "16": "public/img/brand/favicon-16.png",
-          "48": "public/img/brand/favicon-48.png",
-          "128": "public/img/brand/favicon-128.png"
+  ],
+  "icons": {
+    "16": "public/img/brand/favicon-16.png",
+    "48": "public/img/brand/favicon-48.png",
+    "128": "public/img/brand/favicon-128.png"
   },
 
   "browser_action": {
@@ -24,13 +24,13 @@
     "default_title": "Passtime"
   },
   "background": {
-    "scripts": ["public/js/lib/socket.io.min.js","public/js/local/background.js"]
+    "page": "background.html"
   },
   "content_scripts": [
 
     {
       "matches": ["<all_urls>"],
-      "js": ["public/js/lib/jquery.min.js","public/js/lib/three.min.js","public/js/lib/socket.io.min.js","public/js/lib/handlebars.runtime.min.js","public/js/local/templates/templates.js","public/js/local/sockets.js","public/js/local/helpers.js","public/js/local/content.js","public/js/local/auth.js"],
+      "js": ["public/js/lib/jquery.min.js", "public/js/lib/three.min.js", "public/js/lib/socket.io.min.js", "public/js/lib/handlebars.runtime.min.js", "public/js/local/templates/templates.js", "public/js/local/sockets.js", "public/js/local/helpers.js", "public/js/local/content.js", "public/js/local/auth.js"],
       "css": ["public/css/local/extension.css"]
     }
 

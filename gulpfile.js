@@ -35,6 +35,7 @@ gulp.task('watch', function(){
   //extension
   gulp.watch('source/scss/extension.scss', ['extension-build-css'])
   gulp.watch('source/js/extension/*.js', ['extension-scripts'])
+ic
 
 })
 
