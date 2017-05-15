@@ -1,7 +1,7 @@
 function animate() {
 
-  if (key.right) myCharacter.position.x += .05
-  if (key.left && myCharacter.position.x > .7) myCharacter.position.x -= .05
+  if (key.right && activeKey === 39) myCharacter.position.x += .05
+  if (key.left && myCharacter.position.x > .7 && activeKey === 37) myCharacter.position.x -= .05
   else if (myCharacter.position.x < .7 && sceneCharacters.visible) {
     sceneCharacters.visible = false
     mesh.position.set(.5, .05, 0)
@@ -145,43 +145,26 @@ function createMyCharacter(data) {
 
 function showNameTags() {
 
-  console.log('showNameTags')
-
   $('.pt-name-tag').show()
 
   for (var character in characters) {
 
     var user = characters[character]
-    user.nameTag.show()
-
     var pos = worldToScreen(user.position)
+
     user.nameTag.css('left', pos.x - 15)
-
-    $('.pt-name-tag').show()
   }
-
   isNameDisplayed = true
 
 }
 
 function hideNameTags() {
 
-  console.log('hideNameTags')
-
   $('.pt-name-tag').hide()
-
-  for (var character in characters) {
-
-    var user = characters[character]
-    user.nameTag.hide()
-
-  }
-
-  $('.pt-name-tag').hide()
-
   isNameDisplayed = false
 
 }
+
 var renderOrder = 1
 
 function createCharacter(data, cB) {
@@ -507,19 +490,14 @@ var controls = {
 
 /*************DOCUMENT LISTENERS*************/
 
-var isKeyDown = false
-var activeKey = null
+var activeKey = 0
+var lastKeyUp = 0
 
 function onKeyDown(e) {
-  
-  if (isKeyDown) return
 
   var keyCode = e.keyCode;
 
   activeKey = keyCode
-  isKeyDown = true
-
-
 
   if (keyCode !== 37 && keyCode !== 38 && keyCode !== 39 && keyCode !== 40) return
 
@@ -540,8 +518,6 @@ function onKeyDown(e) {
 function onKeyUp(e) {
 
   var keyCode = e.keyCode;
-
-  if (activeKey === keyCode) isKeyDown = false
 
   if (keyCode !== 37 && keyCode !== 38 && keyCode !== 39 && keyCode !== 40) return
 
@@ -714,4 +690,4 @@ function onBgMessage(data, sender, sendResponse) {
 chrome.runtime.onMessage.addListener(onBgMessage);
 initPt()
 
-//wait for bg
+
