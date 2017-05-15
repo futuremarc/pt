@@ -203,7 +203,7 @@ function createCharacter(data, cB) {
     sceneCharacters.add(character)
 
     var pos = data.position || {
-        x: 0,
+        x: 10,
         y: -1,
         z: 0
       },
@@ -236,6 +236,8 @@ function updateCharacter(data, request, cB) {
 
         pos = user.position
         rot = user.rotation
+
+        if (!pos && !rot) return
 
         console.log('GET LOCAL', user)
 

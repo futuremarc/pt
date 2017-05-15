@@ -32,18 +32,22 @@ var socketEvents = {
 
       createCharacter(data, function() {
 
+        friend.position.set(pos.x, pos.y, pos.z);
+        friend.rotation.set(rot.x, rot.y, rot.z);
+
         var friend = characters[data._id]
         friend[data.action](data)
 
-        friend.position.set(pos.x, pos.y, pos.z);
-        friend.rotation.set(rot.x, rot.y, rot.z);
+        
       })
 
     }else{
 
-        friend[data.action](data)
         friend.position.set(pos.x, pos.y, pos.z);
         friend.rotation.set(rot.x, rot.y, rot.z);
+
+        friend[data.action](data)
+        
     }
     
 
