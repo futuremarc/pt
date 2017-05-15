@@ -95,9 +95,7 @@ function onBrowserAction(activeTab) {
 
 
 function onJoin(data) {
-
   emitMsgToServer('join', data)
-
 }
 
 

@@ -142,6 +142,16 @@ function showNameTags(){
 
 }
 
+function hideNameTags(){
+
+  for (var character in characters){
+
+    var user = characters[character]
+    user.nameTag.hide()
+
+  }
+
+}
 var characterDepthLevel = .00
 
 function createCharacter(data, cB) {
@@ -157,7 +167,7 @@ function createCharacter(data, cB) {
 
     var name = data.name
     character.name = name
-    character.nameTag = $('<div class="pt-nametag">' + name + '</div>')
+    character.nameTag = $('<div class="pt-name">' + name + '</div>')
 
     var nameTag = character.nameTag
     $('body').append(nameTag)
@@ -513,7 +523,12 @@ function onVisibilityChange() {
 }
 
 
+var namesDisplayed = false
+
 function detectHover(e) {
+
+  if (e.clientY > window.innerHeight - 85) showNameTags()
+  else hideNameTags()
 
   var x = (e.clientX / window.innerWidth) * 2 - 1;
   var y = -(e.clientY / window.innerHeight) * 2 + 1;
@@ -525,16 +540,13 @@ function detectHover(e) {
 
   if (intersects.length > 0) {
     if (!hoveredMesh) {
+
       hoveredMesh = intersects[0].object;
       $('body').addClass('pt-hovering')
     }
 
   } else {
     if (hoveredMesh) {
-
-      if (hoveredMesh.purpose === 'box'){
-        showNameTags()
-      }
 
       hoveredMesh = undefined;
       $('body').removeClass('pt-hovering')

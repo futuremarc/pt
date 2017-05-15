@@ -174,16 +174,31 @@ function screenToWorld(screenPos) {
 function worldToScreen(worldPos) {
 
   var halfConWidth = container.offsetWidth / 2
-  var halfConHeight = container.offsetHeight / 2
+  var halfConHeight = container.offsetHeight * 4.4
   var screenPos = worldPos.clone();
 
   projector.projectVector(screenPos, camera);
-  screenPos.x = (screenPos.x + 1) * halfConWidth;
-  screenPos.y = (-screenPos.y + 1) * halfConHeight;
+  screenPos.x = (screenPos.x) * halfConWidth - 20;
+  screenPos.y = (-screenPos.y) * halfConHeight;
 
   return screenPos;
 }
 
+function toScreenPosition(worldPos) {
+
+  var width = renderer.domElement.width
+  var height = renderer.domElement.height
+  var pos = worldPos
+
+  var p = new THREE.Vector3(pos.x, pos.y, pos.z);
+  var vector = p.project(camera);
+
+  vector.x = ((vector.x + 1) / 2 * width) / 2;
+  vector.y = -(vector.y - 1) / 2 * height;
+
+  return vector;
+
+};
 
 
 function changeSubmitButton(disable, replaceText, id) {
