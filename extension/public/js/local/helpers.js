@@ -1,4 +1,4 @@
-function emitMessageToBg(data) {
+function emitMsgToBg(data) {
   chrome.runtime.sendMessage(data);
 }
 
@@ -18,8 +18,6 @@ function emitJoinMsg() {
     var rot = myCharacter.data.rotation
     var id = myCharacter.data._id
 
-    console.log('emitJoinMsg')
-
     var data = {
       event: 'join',
       _id: id,
@@ -27,7 +25,9 @@ function emitJoinMsg() {
       rotation: rot,
       liveFriends: liveFriends
     }
-    emitMessageToBg(data)
+
+        console.log('emitJoinMsg', data)
+    emitMsgToBg(data)
 
   })
 
@@ -72,11 +72,17 @@ function getCharacterPos() {
 
 function addLiveCharacters() {
 
-  myCharacter.data.friends.forEach(function(friend) {
+  updateCharacter(null, 'getRemote', function(character) {
 
-    var friend = friend.user
-    if (friend.isLive) createCharacter(friend)
+    character.friends.forEach(function(friend) {
+
+      var friend = friend.user
+      if (friend.isLive) createCharacter(friend)
+    })
+
   })
+
+
 }
 
 
@@ -117,7 +123,7 @@ function getLiveFriends() {
 function setCameraZoom(data) {
 
 
-  var box = new THREE.BoxGeometry(1, 2, 0)
+  var box = new THREE.BoxGeometry(1, 2, 1)
   mesh = new THREE.Mesh(box, new THREE.MeshBasicMaterial({
     'color': 0x7ec0ee
   }))
@@ -138,13 +144,17 @@ function setCameraZoom(data) {
   camera.updateMatrix();
 
   setScreenOffset()
+  mesh.position.set(.5, .95, 0)
+  mesh.position.set(.5, 0, 0)
 
 }
 
 function setScreenOffset() {
+
   var newOrigin = new THREE.Vector3(0, window.innerHeight, 0)
   var screenOffset = screenToWorld(newOrigin)
   scene.position.set(screenOffset.x, 0, 0)
+
 }
 
 

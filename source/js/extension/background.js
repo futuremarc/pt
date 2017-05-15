@@ -1,5 +1,6 @@
 var socket = io('http://localhost:5050', {
-  path: '/socket'
+  'path': '/socket',
+  'forceNew': true
 })
 
 
@@ -16,28 +17,29 @@ function emitMsgToClient(data) {
 
 function emitMsgToServer(event, data) {
 
-  console.log('emit', event, data)
   socket.emit(event, data)
-  
+
 }
 
 function initSockets() {
 
-  var events = ['chat', 'post', 'action', 'disconnect', 'socketId']
+  var events = ['chat', 'post', 'action', 'disconnect', 'join','reconnect','leave']
 
-  events.forEach(function(event) { //broadcast most events
+  events.forEach(function(event) {
 
     socket.on(event, function(data) {
+
+      var data = data || {}
 
       if (data === 'transport close') {
         var data = {
           event: event
         }
       }
-      
+
       data.type = 'socket'
 
-
+      console.log(data)
       emitMsgToClient(data)
     })
   })
@@ -47,7 +49,7 @@ function initSockets() {
 function onInstall(data) {
   console.log(data)
 
-  if (data.reason == "install") { //new install
+  if (data.reason == "install") {
 
     var url = 'https://passti.me'
 
@@ -55,7 +57,7 @@ function onInstall(data) {
       url: url
     });
 
-  } else if (data.reason == "update") {} //send msg notifying of updates
+  } else if (data.reason == "update") {}
 
 }
 
@@ -89,23 +91,15 @@ function onBrowserAction(activeTab) {
 }
 
 
-
-// var isFirstJoin = true
-
 function onJoin(data) {
 
-  // if (isFirstJoin) {
-
-    // console.log('isFirstJoin', isFirstJoin, data)
-    // isFirstJoin = false
-    emitMsgToServer('join', data)
-  // }
+  emitMsgToServer('join', data)
 
 }
 
 
 
-function onMessage(data, sender, sendResponse) {
+function onContentMessage(data, sender, sendResponse) {
   console.log(data)
 
   var isSocketMessage = data.event
@@ -133,6 +127,6 @@ function onMessage(data, sender, sendResponse) {
 chrome.idle.onStateChanged.addListener(idleStateChange);
 chrome.runtime.onInstalled.addListener(onInstall);
 chrome.browserAction.onClicked.addListener(onBrowserAction);
-chrome.runtime.onMessage.addListener(onMessage);
+chrome.runtime.onMessage.addListener(onContentMessage);
 
 initSockets()

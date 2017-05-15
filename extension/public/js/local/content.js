@@ -126,12 +126,15 @@ function createMyCharacter(data) {
 
 }
 
+var characterDepthLevel = .00
+
 function createCharacter(data, cB) {
 
   loader.load(chrome.extension.getURL('public/models/eva-animated.json'), function(geometry, materials) {
 
     materials.forEach(function(material) {
       material.skinning = true;
+      material.depthTest = false;
     });
 
     var character = new THREE.SkinnedMesh(geometry, new THREE.MeshFaceMaterial(materials));
@@ -202,10 +205,12 @@ function createCharacter(data, cB) {
     characters[data._id] = character
     sceneCharacters.add(character)
 
+    characterDepthLevel -= .01
+
     var pos = data.position || {
         x: 10,
         y: -1,
-        z: 0
+        z: characterDepthLevel
       },
       rot = data.rotation || {
         x: 0,
@@ -341,7 +346,7 @@ var controls = {
       if (isRegistered()) {
 
         data.liveFriends = getLiveFriends()
-        emitMessageToBg(data)
+        emitMsgToBg(data)
       }
 
     } else {
@@ -357,7 +362,7 @@ var controls = {
         if (data._id) {
 
           data.liveFriends = getLiveFriends()
-          emitMessageToBg(data)
+          emitMsgToBg(data)
         }
       }
 
@@ -374,7 +379,7 @@ var controls = {
 
     if (isRegistered()) {
       data.liveFriends = getLiveFriends()
-      emitMessageToBg(data)
+      emitMsgToBg(data)
     }
 
   },
@@ -391,7 +396,7 @@ var controls = {
 
       if (isRegistered()) {
         data.liveFriends = getLiveFriends()
-        emitMessageToBg(data)
+        emitMsgToBg(data)
       }
 
     } else {
@@ -408,7 +413,7 @@ var controls = {
 
           putCharacter()
           data.liveFriends = getLiveFriends()
-          emitMessageToBg(data)
+          emitMsgToBg(data)
         }
       }
 
@@ -426,7 +431,7 @@ var controls = {
 
     if (isRegistered()) {
       data.liveFriends = getLiveFriends()
-      emitMessageToBg(data)
+      emitMsgToBg(data)
     }
 
   }
@@ -550,10 +555,15 @@ function onIdleState(data) {
 
     if (id) {
 
-      // var liveFriends = getLiveFriends()
+      var liveFriends = getLiveFriends()
+      myCharacter.data.isLive = false
+      putCharacter()
 
-      // myCharacter.data.isLive = false
-      // putCharacter()
+      var data = {
+        'event': 'leave'
+      }
+
+      emitMessagetoBg(data)
 
     }
     hideCanvas()
@@ -562,8 +572,13 @@ function onIdleState(data) {
 
     if (id) {
 
-      // myCharacter.data.isLive = true
-      // updateCharacter(null, 'getLocal')
+      myCharacter.data.isLive = true
+      putCharacter()
+
+      var data = {
+        'event': 'join'
+      }
+      emitMessagetoBg(data)
     }
     showCanvas()
 
