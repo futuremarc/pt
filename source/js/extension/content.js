@@ -38,7 +38,7 @@ function initPt() {
     var name = $('#name-tag').html()
     var signedIntoSite = name === ''
 
-    var user = data['pt-user'] 
+    var user = data['pt-user']
 
     if (user && user._id) var signedIntoExtension = user
     else var signedIntoExtension = false
@@ -61,6 +61,7 @@ var textureLoader = new THREE.TextureLoader();
 var loader = new THREE.JSONLoader();
 var clock, container, camera, scene, light, renderer, controls = {};
 var myCharacter, hoveredCharacter = undefined
+var projector = new THREE.Projector()
 
 var sceneCharacters //mesh
 var characters = {}; //data
@@ -114,7 +115,7 @@ function createMyCharacter(data) {
     myCharacter = character
     setCameraZoom(data)
 
-    if (isRegistered()){
+    if (isRegistered()) {
       addLiveCharacters()
       emitJoinMsg()
     }
@@ -232,7 +233,7 @@ function updateCharacter(data, request, cB) {
       chrome.storage.sync.get('pt-user', function(data) {
 
         var user = data['pt-user']
-        
+
         pos = user.position
         rot = user.rotation
 
@@ -514,6 +515,7 @@ function addDomListeners() {
   document.addEventListener('keyup', onKeyUp, false);
   window.addEventListener('visibilitychange', onVisibilityChange, false);
   window.addEventListener('mousemove', detectHover, false);
+  window.addEventListener('resize', onWindowResize, false)
 
 }
 
@@ -521,6 +523,20 @@ function addDomListeners() {
 
 /*************FROM BACKGROUND*************/
 
+function onWindowResize() {
+
+  camera.left = container.offsetWidth / -2
+  camera.right = container.offsetWidth / 2
+  camera.top = container.offsetHeight / 2
+  camera.bottom = container.offsetHeight / -2
+  camera.near = .1
+  camera.far = 1000;
+  camera.updateProjectionMatrix();
+  renderer.setSize(container.offsetWidth, container.offsetHeight);
+
+  setScreenOffset()
+
+}
 
 
 function onIdleState(data) {
@@ -533,7 +549,7 @@ function onIdleState(data) {
     if (id) {
 
       // var liveFriends = getLiveFriends()
-      
+
       // myCharacter.data.isLive = false
       // putCharacter()
 

@@ -116,18 +116,20 @@ function getLiveFriends() {
 
 function setCameraZoom(data) {
 
-  var pos = {
-    x: 0,
-    y: 0,
-    z: 0
-  }
 
-  sceneCharacters.position.set(pos.x, pos.y, pos.z);
+  var box = new THREE.BoxGeometry(1, 2, 0)
+  mesh = new THREE.Mesh(box, new THREE.MeshBasicMaterial({
+    'color': 0x7ec0ee
+  }))
+  mesh.position.set(0, -2, 0)
 
-  var box = new THREE.Box3().setFromObject(scene);
-  box.center(pos);
-  sceneCharacters.localToWorld(box);
-  sceneCharacters.position.multiplyScalar(-1);
+  scene.add(mesh)
+  sceneCharacters.position.set(0, 1, 0);
+
+  var box = new THREE.Box3().setFromObject(mesh);
+  box.center(mesh.position);
+  mesh.localToWorld(box);
+  mesh.position.multiplyScalar(-1);
 
   camera.zoom = Math.min(container.offsetWidth / (box.max.x - box.min.x),
     container.offsetHeight / (box.max.y - box.min.y)) * .8;
@@ -135,23 +137,43 @@ function setCameraZoom(data) {
   camera.updateProjectionMatrix();
   camera.updateMatrix();
 
+  setScreenOffset()
+
 }
 
-function toScreenPosition(obj, camera) {
+function setScreenOffset() {
+  var newOrigin = new THREE.Vector3(0, window.innerHeight, 0)
+  var screenOffset = screenToWorld(newOrigin)
+  scene.position.set(screenOffset.x, 0, 0)
+}
 
-  var width = renderer.domElement.width
-  var height = renderer.domElement.height
-  var pos = obj.position
 
-  var p = new THREE.Vector3(pos.x, pos.y, pos.z);
-  var vector = p.project(camera);
+function screenToWorld(screenPos) {
 
-  vector.x = ((vector.x + 1) / 2 * width) / 2;
-  vector.y = -(vector.y - 1) / 2 * height;
+  var halfConWidth = container.offsetWidth / 2
+  var halfConHeight = container.offsetHeight / 2
+  var worldPos = screenPos.clone();
 
-  return vector;
+  worldPos.x = worldPos.x / halfConWidth - 1;
+  worldPos.y = -worldPos.y / halfConHeight + 1;
+  projector.unprojectVector(worldPos, camera);
 
-};
+  return worldPos;
+}
+
+function worldToScreen(worldPos) {
+
+  var halfConWidth = container.offsetWidth / 2
+  var halfConHeight = container.offsetHeight / 2
+  var screenPos = worldPos.clone();
+
+  projector.projectVector(screenPos, camera);
+  screenPos.x = (screenPos.x + 1) * halfConWidth;
+  screenPos.y = (-screenPos.y + 1) * halfConHeight;
+
+  return screenPos;
+}
+
 
 
 function changeSubmitButton(disable, replaceText, id) {
