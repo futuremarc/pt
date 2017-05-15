@@ -264,7 +264,7 @@ function updateCharacter(data, request, cB) {
 
       $.ajax({
         method: 'PUT',
-        url: 'http://localhost:8080/api/user/' + name,
+        url: 'https://passti.me/api/user/' + name,
         data: data,
         success: function(data) {
           console.log(data)
@@ -301,7 +301,7 @@ function updateCharacter(data, request, cB) {
 
       $.ajax({
         method: 'GET',
-        url: 'http://localhost:8080/api/user/' + name,
+        url: 'https://passti.me/api/user/' + name,
         success: function(data) {
           console.log('GET REMOTE', data)
 
