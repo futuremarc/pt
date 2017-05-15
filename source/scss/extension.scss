@@ -1,6 +1,6 @@
 .pt-override-page{
 
-	height:115px !important;
+	height:85px !important;
 	width:100% !important;
 	top:auto !important;
 	position:fixed !important;
@@ -16,5 +16,13 @@
 }
 
 .pt-hovering{
-	cursor: pointer;
+	cursor: pointer  !important;
+}
+
+.pt-nametag{
+	background:white  !important;
+	font-family: "Helvetica Neue", Helvetica, Arial, sans-serif  !important;
+	position:fixed  !important;
+	z-index:2147483647 !important;
+	display:none;
 }

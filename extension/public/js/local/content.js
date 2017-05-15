@@ -11,7 +11,7 @@ function animate() {
 
     if (character.isWalking && character.data._id !== myCharacter.data._id) {
       if (character.isWalking === 'right') character.position.x += .05
-      else if ( character.position.x > 0) character.position.x -= .05
+      else if (character.position.x > 0) character.position.x -= .05
     }
   }
 
@@ -23,6 +23,7 @@ function animate() {
 function render() {
 
   var delta = clock.getDelta();
+
   for (var character in characters) {
     characters[character].mixer.update(delta);
   }
@@ -62,7 +63,7 @@ function initPt() {
 var textureLoader = new THREE.TextureLoader();
 var loader = new THREE.JSONLoader();
 var clock, container, camera, scene, light, renderer, controls = {};
-var myCharacter, hoveredCharacter = undefined
+var myCharacter, hoveredMesh = undefined
 var projector = new THREE.Projector()
 
 var sceneCharacters //mesh
@@ -128,6 +129,19 @@ function createMyCharacter(data) {
 
 }
 
+function showNameTags(){
+
+  for (var character in characters){
+
+    var user = characters[character]
+    user.nameTag.show()
+
+    var pos = worldToScreen(user.position)
+    user.nameTag.css({'top' : pos.y, 'left' : pos.x})
+  }
+
+}
+
 var characterDepthLevel = .00
 
 function createCharacter(data, cB) {
@@ -141,6 +155,14 @@ function createCharacter(data, cB) {
 
     var character = new THREE.SkinnedMesh(geometry, new THREE.MeshFaceMaterial(materials));
 
+    var name = data.name
+    character.name = name
+    character.nameTag = $('<div class="pt-nametag">' + name + '</div>')
+
+    var nameTag = character.nameTag
+    $('body').append(nameTag)
+
+    character.purpose = 'character' //associate purpose for all meshes
     character.data = data
     character.mixer = new THREE.AnimationMixer(character);
     character.actions = {};
@@ -207,7 +229,7 @@ function createCharacter(data, cB) {
     characters[data._id] = character
     sceneCharacters.add(character)
 
-    characterDepthLevel -= .01
+    characterDepthLevel += .01
 
     var pos = data.position || {
         x: 10,
@@ -264,7 +286,7 @@ function updateCharacter(data, request, cB) {
 
       $.ajax({
         method: 'PUT',
-        url: 'https://passti.me/api/user/' + name,
+        url: 'http://localhost:8080/api/user/' + name,
         data: data,
         success: function(data) {
           console.log(data)
@@ -301,7 +323,7 @@ function updateCharacter(data, request, cB) {
 
       $.ajax({
         method: 'GET',
-        url: 'https://passti.me/api/user/' + name,
+        url: 'http://localhost:8080/api/user/' + name,
         success: function(data) {
           console.log('GET REMOTE', data)
 
@@ -502,15 +524,21 @@ function detectHover(e) {
   var intersects = raycaster.intersectObjects(scene.children, true);
 
   if (intersects.length > 0) {
-    if (!hoveredCharacter) {
-      hoveredCharacter = intersects[0].object;
+    if (!hoveredMesh) {
+      hoveredMesh = intersects[0].object;
       $('body').addClass('pt-hovering')
     }
 
   } else {
-    if (hoveredCharacter) {
-      hoveredCharacter = undefined;
+    if (hoveredMesh) {
+
+      if (hoveredMesh.purpose === 'box'){
+        showNameTags()
+      }
+
+      hoveredMesh = undefined;
       $('body').removeClass('pt-hovering')
+
     }
 
   }

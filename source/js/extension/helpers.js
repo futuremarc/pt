@@ -127,6 +127,7 @@ function setCameraZoom(data) {
   mesh = new THREE.Mesh(box, new THREE.MeshBasicMaterial({
     'color': 0x7ec0ee
   }))
+  mesh.purpose = 'box' //associate purpose for all meshes
   mesh.position.set(0, -2, 0)
 
   scene.add(mesh)

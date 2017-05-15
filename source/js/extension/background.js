@@ -31,12 +31,12 @@ function initSockets() {
 
       var data = data || {}
 
-      if (data === 'transport close' || event === 'reconnect' ) {
+      if (data === 'transport close' || event === 'reconnect') {
         var data = {
           event: event,
           data: data
         }
-      } 
+      }
 
       data.event = event
       data.type = 'socket'
@@ -54,7 +54,7 @@ function onInstall(data) {
 
   if (data.reason == "install") {
 
-    var url = 'https://passti.me'
+    var url = 'https://passti.me/signup'
 
     chrome.tabs.update({
       url: url
@@ -99,6 +99,28 @@ function onJoin(data) {
   emitMsgToServer('join', data)
 
 }
+
+
+var options = {
+  type: "list",
+  title: 'Welcome!',
+  message: 'Welcome!',
+  items: [{
+    title: " ",
+    message: " "
+  },
+  {
+    title: "MOVE AROUND",
+    message: "with the arrow keys."
+  },{
+    title: "LOG OUT",
+    message: "by walking to the left exit."
+  }, ],
+  iconUrl: "public/img/brand/favicon-128.png",
+  requireInteraction: true,
+}
+
+chrome.notifications.create('', options);
 
 
 
