@@ -23,7 +23,7 @@ function emitMsgToServer(event, data) {
 
 function initSockets() {
 
-  var events = ['chat', 'post', 'action', 'disconnect', 'join','reconnect','leave']
+  var events = ['chat', 'post', 'action', 'disconnect', 'join', 'connect', 'reconnect', 'leave']
 
   events.forEach(function(event) {
 
@@ -31,16 +31,19 @@ function initSockets() {
 
       var data = data || {}
 
-      if (data === 'transport close') {
+      if (data === 'transport close' || event === 'reconnect' ) {
         var data = {
-          event: event
+          event: event,
+          data: data
         }
-      }
+      } 
 
+      data.event = event
       data.type = 'socket'
 
       console.log(data)
       emitMsgToClient(data)
+
     })
   })
 
@@ -100,12 +103,15 @@ function onJoin(data) {
 
 
 function onContentMessage(data, sender, sendResponse) {
-  console.log(data)
 
   var isSocketMessage = data.event
+
   if (isSocketMessage) {
 
     var event = data.event
+    data.type = 'socket'
+
+    console.log(data)
 
     switch (event) {
 

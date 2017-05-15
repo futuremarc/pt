@@ -145,7 +145,6 @@ function setCameraZoom(data) {
 
   setScreenOffset()
   mesh.position.set(.5, .95, 0)
-  mesh.position.set(.5, 0, 0)
 
 }
 

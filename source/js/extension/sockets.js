@@ -1,14 +1,15 @@
 function socketUpdateCharacter(data) {
 
+  console.log(data)
+
   var friend = characters[data._id]
   var pos = data.position
   var rot = data.rotation
 
 
-  console.log(data, friend)
-
-
   if (!friend) {
+
+    characters[data._id] = {} //dont let PT create same character before character is finished creating
 
     createCharacter(data, function() {
 
@@ -18,7 +19,6 @@ function socketUpdateCharacter(data) {
       var friend = characters[data._id]
 
       if (data.action) friend[data.action](data)
-
 
     })
 
@@ -51,6 +51,7 @@ var socketEvents = {
 
     emitMsgToBg(data)
   },
+
   'reconnect': function() {
     emitJoinMsg()
   },

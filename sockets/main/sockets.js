@@ -13,9 +13,6 @@ module.exports = function(io) {
 
       for (var friend in liveFriends) {
         var socketId = clients[liveFriends[friend]]
-
-        console.log('LIVEFRIENDS:::',liveFriends,'FRIEND:::', liveFriends[friend],'SOCKETID:::',socketId,'EVENT:::', event, 'DATA:::',data)
-
         if (io.sockets.connected[socketId]) io.sockets.connected[socketId].emit(event, data);
 
 

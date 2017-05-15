@@ -1,7 +1,9 @@
 function animate() {
 
   if (key.right) myCharacter.position.x += .05
-  if (key.left) myCharacter.position.x -= .05
+  if (key.left && myCharacter.position.x > 0) myCharacter.position.x -= .05
+  else if (myCharacter.position.x < 0) sceneCharacters.visible = false
+  else if (myCharacter.position.x > 0) sceneCharacters.visible = true
 
   for (var character in characters) {
 
@@ -9,7 +11,7 @@ function animate() {
 
     if (character.isWalking && character.data._id !== myCharacter.data._id) {
       if (character.isWalking === 'right') character.position.x += .05
-      else character.position.x -= .05
+      else if ( character.position.x > 0) character.position.x -= .05
     }
   }
 
@@ -258,7 +260,7 @@ function updateCharacter(data, request, cB) {
 
       var name = data.name
 
-      console.log('PUT REMOTE', name, data)
+      console.log('PUT REMOTE', data)
 
       $.ajax({
         method: 'PUT',
