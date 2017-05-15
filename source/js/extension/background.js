@@ -111,9 +111,9 @@ var options = {
     title: "MOVE AROUND",
     message: "with the arrow keys."
   },{
-    title: "LOG OUT",
-    message: "by walking to the left exit."
-  }, ],
+    title: "SIGN OFF",
+    message: "by walking out left."
+  }],
   iconUrl: "public/img/brand/favicon-128.png",
   requireInteraction: true,
 }

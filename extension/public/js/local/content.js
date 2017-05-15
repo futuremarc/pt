@@ -1,9 +1,17 @@
 function animate() {
 
   if (key.right) myCharacter.position.x += .05
-  if (key.left && myCharacter.position.x > 0) myCharacter.position.x -= .05
-  else if (myCharacter.position.x < 0) sceneCharacters.visible = false
-  else if (myCharacter.position.x > 0) sceneCharacters.visible = true
+  if (key.left && myCharacter.position.x > .7) myCharacter.position.x -= .05
+  else if (myCharacter.position.x < .7 && sceneCharacters.visible) {
+    sceneCharacters.visible = false
+    mesh.position.set(.5, .05, 0)
+  } else if (myCharacter.position.x > .7 && !sceneCharacters.visible) {
+    sceneCharacters.visible = true
+    mesh.position.set(.5, .85, 0)
+  }
+
+  if (myCharacter.isWalking && isNameDisplayed && isMouseHovering) hideNameTags()
+  else if (!myCharacter.isWalking && !isNameDisplayed  && isMouseHovering && sceneCharacters.visible) showNameTags()
 
   for (var character in characters) {
 
@@ -12,7 +20,13 @@ function animate() {
     if (character.isWalking && character.data._id !== myCharacter.data._id) {
       if (character.isWalking === 'right') character.position.x += .05
       else if (character.position.x > 0) character.position.x -= .05
+
+
     }
+
+    if (character.isWalking && isNameDisplayed  && isMouseHovering) hideNameTags()
+    else if (!character.isWalking && !isNameDisplayed && isMouseHovering && sceneCharacters.visible) showNameTags()
+
   }
 
   requestAnimationFrame(animate);
@@ -93,7 +107,7 @@ function initScene(data) {
   $(renderer.domElement).addClass('pt-override-page')
 
   camera = new THREE.OrthographicCamera(container.offsetWidth / -2, container.offsetWidth / 2, container.offsetHeight / 2, container.offsetHeight / -2, .1, 1000);
-  camera.position.set(0, 1.2, 2)
+  camera.position.set(0, 1.25, 2)
 
   light = new THREE.AmbientLight(0xffffff, 1);
   scene.add(light);
@@ -129,30 +143,46 @@ function createMyCharacter(data) {
 
 }
 
-function showNameTags(){
+function showNameTags() {
 
-  for (var character in characters){
+  console.log('showNameTags')
+
+  $('.pt-name-tag').show()
+
+  for (var character in characters) {
 
     var user = characters[character]
     user.nameTag.show()
 
     var pos = worldToScreen(user.position)
-    user.nameTag.css({'top' : pos.y, 'left' : pos.x})
+    user.nameTag.css('left', pos.x - 15)
+
+    $('.pt-name-tag').show()
   }
+
+  isNameDisplayed = true
 
 }
 
-function hideNameTags(){
+function hideNameTags() {
 
-  for (var character in characters){
+  console.log('hideNameTags')
+
+  $('.pt-name-tag').hide()
+
+  for (var character in characters) {
 
     var user = characters[character]
     user.nameTag.hide()
 
   }
 
+  $('.pt-name-tag').hide()
+
+  isNameDisplayed = false
+
 }
-var characterDepthLevel = .00
+var renderOrder = 1
 
 function createCharacter(data, cB) {
 
@@ -167,10 +197,10 @@ function createCharacter(data, cB) {
 
     var name = data.name
     character.name = name
-    character.nameTag = $('<div class="pt-name">' + name + '</div>')
+    character.nameTag = $('<div class="pt-name-tag">' + name + '</div>')
 
     var nameTag = character.nameTag
-    $('body').append(nameTag)
+    $('body').prepend(nameTag)
 
     character.purpose = 'character' //associate purpose for all meshes
     character.data = data
@@ -239,12 +269,13 @@ function createCharacter(data, cB) {
     characters[data._id] = character
     sceneCharacters.add(character)
 
-    characterDepthLevel += .01
+    renderOrder -= 1
+    character.renderOrder = renderOrder
 
     var pos = data.position || {
         x: 10,
         y: -1,
-        z: characterDepthLevel
+        z: 0
       },
       rot = data.rotation || {
         x: 0,
@@ -476,10 +507,19 @@ var controls = {
 
 /*************DOCUMENT LISTENERS*************/
 
+var isKeyDown = false
+var activeKey = null
 
 function onKeyDown(e) {
+  
+  if (isKeyDown) return
 
   var keyCode = e.keyCode;
+
+  activeKey = keyCode
+  isKeyDown = true
+
+
 
   if (keyCode !== 37 && keyCode !== 38 && keyCode !== 39 && keyCode !== 40) return
 
@@ -498,7 +538,10 @@ function onKeyDown(e) {
 }
 
 function onKeyUp(e) {
+
   var keyCode = e.keyCode;
+
+  if (activeKey === keyCode) isKeyDown = false
 
   if (keyCode !== 37 && keyCode !== 38 && keyCode !== 39 && keyCode !== 40) return
 
@@ -523,15 +566,17 @@ function onVisibilityChange() {
 }
 
 
-var namesDisplayed = false
 
-function detectHover(e) {
+var isNameDisplayed = false
 
-  if (e.clientY > window.innerHeight - 85) showNameTags()
-  else hideNameTags()
+var mouseX = 0
+var mouseY = 0
 
-  var x = (e.clientX / window.innerWidth) * 2 - 1;
-  var y = -(e.clientY / window.innerHeight) * 2 + 1;
+function detectMeshHover(e) {
+
+  
+  var x = (mouseX / window.innerWidth) * 2 - 1;
+  var y = -(mouseY / window.innerHeight) * 2 + 1;
 
   var raycaster = new THREE.Raycaster();
   raycaster.setFromCamera(new THREE.Vector2(x, y), camera);
@@ -558,12 +603,34 @@ function detectHover(e) {
 }
 
 
+function onCanvasHover(e) {
+
+  if (isMouseHovering && !isNameDisplayed  && sceneCharacters.visible) showNameTags()
+  else if (!isMouseHovering && isNameDisplayed) hideNameTags()
+
+}
+
+
+var isMouseHovering = false
+
+function onMouseMove(e) {
+
+  mouseX = e.clientX
+  mouseY = e.clientY
+
+  isMouseHovering =  (mouseY > window.innerHeight - 85)
+
+  detectMeshHover()
+  onCanvasHover()
+}
+
+
 function addDomListeners() {
 
   document.addEventListener('keydown', onKeyDown, false);
   document.addEventListener('keyup', onKeyUp, false);
   window.addEventListener('visibilitychange', onVisibilityChange, false);
-  window.addEventListener('mousemove', detectHover, false);
+  window.addEventListener('mousemove', onMouseMove, false);
   window.addEventListener('resize', onWindowResize, false)
 
 }

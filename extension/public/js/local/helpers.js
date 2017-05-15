@@ -26,7 +26,7 @@ function emitJoinMsg() {
       liveFriends: liveFriends
     }
 
-        console.log('emitJoinMsg', data)
+    console.log('emitJoinMsg', data)
     emitMsgToBg(data)
 
   })
@@ -120,6 +120,15 @@ function getLiveFriends() {
 
 }
 
+function createMenu(){
+
+  var src = chrome.extension.getURL('menu.html');
+  var iFrame = $('<iframe frameborder="0" class="pt-iframe" src=" ' + src + '"></iframe>');
+
+  $('body').append(iFrame);
+
+}
+
 function setCameraZoom(data) {
 
 
@@ -127,9 +136,12 @@ function setCameraZoom(data) {
   mesh = new THREE.Mesh(box, new THREE.MeshBasicMaterial({
     'color': 0x7ec0ee
   }))
+
   mesh.purpose = 'box' //associate purpose for all meshes
   mesh.position.set(0, -2, 0)
+  mesh.renderOrder = 1
 
+  //$('body').append('<div class="pt-box-info">exit</div>')
   scene.add(mesh)
   sceneCharacters.position.set(0, 1, 0);
 
@@ -145,7 +157,7 @@ function setCameraZoom(data) {
   camera.updateMatrix();
 
   setScreenOffset()
-  mesh.position.set(.5, .95, 0)
+  mesh.position.set(.5, .85, 0)
 
 }
 
@@ -174,11 +186,11 @@ function screenToWorld(screenPos) {
 function worldToScreen(worldPos) {
 
   var halfConWidth = container.offsetWidth / 2
-  var halfConHeight = container.offsetHeight * 4.4
+  var halfConHeight = window.innerHeight / 2
   var screenPos = worldPos.clone();
 
   projector.projectVector(screenPos, camera);
-  screenPos.x = (screenPos.x) * halfConWidth - 20;
+  screenPos.x = (screenPos.x) * halfConWidth;
   screenPos.y = (-screenPos.y) * halfConHeight;
 
   return screenPos;
@@ -212,6 +224,7 @@ function changeSubmitButton(disable, replaceText, id) {
 
   btn.attr('disabled', disable)
 }
+
 
 function hideCanvas() {
   $('#pt-canvas').hide()

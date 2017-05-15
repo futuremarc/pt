@@ -1,6 +1,6 @@
 .pt-override-page{
 
-	height:85px !important;
+	height:75px !important;
 	width:100% !important;
 	top:auto !important;
 	position:fixed !important;
@@ -19,10 +19,28 @@
 	cursor: pointer  !important;
 }
 
-.pt-name{
+.pt-name-tag{
 	background:white  !important;
 	font-family: "Helvetica Neue", Helvetica, Arial, sans-serif  !important;
 	position:fixed  !important;
 	z-index:2147483647 !important;
 	display:none;
+	color:black !important;
+	bottom:55px !important;
+	font-size:11px !important;
+	padding: 0px 3px 0px 3px;
+}
+
+.pt-box-info{
+	position: fixed !important;
+	font-size:12px !important;
+	bottom: 40px !important;
+	color:white !important;
+	z-index:2147483647 !important;
+	left:5px !important;
+}
+
+.pt-iframe{
+	width:1000px;
+	height:1000px;
 }
