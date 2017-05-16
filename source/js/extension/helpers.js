@@ -2,15 +2,23 @@ function emitMsgToBg(data) {
   chrome.runtime.sendMessage(data);
 }
 
+
+//
+
+
 function onSocket(data) {
+  console.log(data)
   var event = data.event
   socketEvents[event](data)
 }
 
+
+//
+
+
 function emitJoinMsg() {
 
   myCharacter.data.isLive = true
-
   putCharacter(function() {
 
     var liveFriends = getLiveFriends()
@@ -34,15 +42,23 @@ function emitJoinMsg() {
 }
 
 
+//
+
+
 function isQuickGesture(keyCode) { //wave
   return (keyCode === 38)
 }
+
+
+//
 
 
 function isGesture(keyCode) { //wave, pose
   return keyCode === 38 || keyCode === 40
 }
 
+
+//
 
 
 function isRegistered() {
@@ -51,24 +67,9 @@ function isRegistered() {
   return myCharacter.data._id
 }
 
-function putCharacter(cB) {
 
-  updateCharacter(myCharacter.data, 'putLocal')
-  if (isRegistered()) updateCharacter(myCharacter.data, 'putRemote', cB)
-}
+//
 
-
-function getCharacterPos() {
-
-  var pos = {
-    x: myCharacter.position.x,
-    y: myCharacter.position.y,
-    z: myCharacter.position.z
-  }
-
-  return pos
-
-}
 
 function addLiveCharacters() {
 
@@ -81,30 +82,22 @@ function addLiveCharacters() {
     })
 
   })
-
-
 }
 
 
-function getCharacterRot() {
+//
 
-  var rot = {
-    x: myCharacter.rotation.x,
-    y: myCharacter.rotation.y,
-    z: myCharacter.rotation.z
-  }
-
-  return rot
-
-}
 
 function removeCharacter(data) {
 
   scene.remove(sceneCharacters[data._id])
   delete sceneCharacters[data._id]
   delete characters[data._id]
-
 }
+
+
+//
+
 
 function getLiveFriends() {
 
@@ -117,57 +110,21 @@ function getLiveFriends() {
   })
 
   return liveFriends
-
 }
 
-function createMenu(){
+
+//
+
+
+function createMenu() {
 
   var src = chrome.extension.getURL('menu.html');
   var iFrame = $('<iframe frameborder="0" class="pt-iframe" src=" ' + src + '"></iframe>');
-
   $('body').append(iFrame);
-
 }
 
-function setCameraZoom(data) {
 
-
-  var box = new THREE.BoxGeometry(1, 2, 1)
-  mesh = new THREE.Mesh(box, new THREE.MeshBasicMaterial({
-    'color': 0x7ec0ee
-  }))
-
-  mesh.purpose = 'box' //associate purpose for all meshes
-  mesh.position.set(0, -2, 0)
-  mesh.renderOrder = 1
-
-  //$('body').append('<div class="pt-box-info">exit</div>')
-  scene.add(mesh)
-  sceneCharacters.position.set(0, 1, 0);
-
-  var box = new THREE.Box3().setFromObject(mesh);
-  box.center(mesh.position);
-  mesh.localToWorld(box);
-  mesh.position.multiplyScalar(-1);
-
-  camera.zoom = Math.min(container.offsetWidth / (box.max.x - box.min.x),
-    container.offsetHeight / (box.max.y - box.min.y)) * .8;
-
-  camera.updateProjectionMatrix();
-  camera.updateMatrix();
-
-  setScreenOffset()
-  mesh.position.set(.5, .85, 0)
-
-}
-
-function setScreenOffset() {
-
-  var newOrigin = new THREE.Vector3(0, window.innerHeight, 0)
-  var screenOffset = screenToWorld(newOrigin)
-  scene.position.set(screenOffset.x, 0, 0)
-
-}
+//
 
 
 function screenToWorld(screenPos) {
@@ -183,6 +140,10 @@ function screenToWorld(screenPos) {
   return worldPos;
 }
 
+
+//
+
+
 function worldToScreen(worldPos) {
 
   var halfConWidth = container.offsetWidth / 2
@@ -196,21 +157,53 @@ function worldToScreen(worldPos) {
   return screenPos;
 }
 
-function toScreenPosition(worldPos) {
 
-  var width = renderer.domElement.width
-  var height = renderer.domElement.height
-  var pos = worldPos
+//
 
-  var p = new THREE.Vector3(pos.x, pos.y, pos.z);
-  var vector = p.project(camera);
 
-  vector.x = ((vector.x + 1) / 2 * width) / 2;
-  vector.y = -(vector.y - 1) / 2 * height;
+function showSceneBg() {
+  renderer.setClearColor(0xdddddd, .5);
+}
 
-  return vector;
 
-};
+//
+
+
+function hideSceneBg() {
+  renderer.setClearColor(0xffffff, 0);
+}
+
+
+//
+
+
+function showNameTags() {
+
+  $('.pt-name-tag').show()
+
+  for (var character in characters) {
+
+    var user = characters[character]
+    var pos = worldToScreen(user.position)
+
+    user.nameTag.css('left', pos.x - 15) //TO DO: calculate centering nameTag
+  }
+
+  isNameDisplayed = true
+}
+
+
+//
+
+
+function hideNameTags() {
+
+  $('.pt-name-tag').hide()
+  isNameDisplayed = false
+}
+
+
+//
 
 
 function changeSubmitButton(disable, replaceText, id) {
@@ -226,9 +219,16 @@ function changeSubmitButton(disable, replaceText, id) {
 }
 
 
+//
+
+
 function hideCanvas() {
   $('#pt-canvas').hide()
 }
+
+
+//
+
 
 function showCanvas() {
   $('#pt-canvas').show()

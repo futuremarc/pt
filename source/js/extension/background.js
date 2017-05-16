@@ -4,26 +4,12 @@ var socket = io('http://localhost:5050', {
 })
 
 
-function emitMsgToClient(data) {
+//
 
-  chrome.tabs.query({}, function(tabs) {
-
-    tabs.forEach(function(tab) {
-      chrome.tabs.sendMessage(tab.id, data);
-    })
-
-  });
-}
-
-function emitMsgToServer(event, data) {
-
-  socket.emit(event, data)
-
-}
 
 function initSockets() {
 
-  var events = ['chat', 'post', 'action', 'disconnect', 'join', 'connect', 'reconnect', 'leave']
+  var events = ['chat', 'post', 'action', 'join', 'leave', 'connect', 'reconnect', 'disconnect']
 
   events.forEach(function(event) {
 
@@ -31,7 +17,7 @@ function initSockets() {
 
       var data = data || {}
 
-      if (data === 'transport close' || event === 'reconnect') {
+      if (data === 'transport close' || event === 'reconnect') { //customize disconnect/reconnect messages
         var data = {
           event: event,
           data: data
@@ -40,14 +26,15 @@ function initSockets() {
 
       data.event = event
       data.type = 'socket'
-
       console.log(data)
       emitMsgToClient(data)
-
     })
   })
-
 }
+
+
+//
+
 
 function onInstall(data) {
   console.log(data)
@@ -60,9 +47,32 @@ function onInstall(data) {
       url: url
     });
 
-  } else if (data.reason == "update") {}
 
+    var options = {
+      type: "list",
+      title: 'Welcome!',
+      message: 'Welcome!',
+      items: [{
+        title: " ",
+        message: " "
+      }, {
+        title: "MOVE",
+        message: "using the arrow keys."
+      }, {
+        title: "SIGN OFF",
+        message: "by walking out left."
+      }],
+      iconUrl: "public/img/brand/favicon-128.png",
+      requireInteraction: true,
+    }
+
+    chrome.notifications.create('', options);
+
+  } else if (data.reason == "update") {}
 }
+
+
+//
 
 
 function idleStateChange(data) {
@@ -75,12 +85,12 @@ function idleStateChange(data) {
         data: data,
         type: 'idleState'
       });
-
     })
-
   });
-
 }
+
+
+//
 
 
 function onBrowserAction(activeTab) {
@@ -90,8 +100,10 @@ function onBrowserAction(activeTab) {
   chrome.tabs.update({
     url: url
   });
-
 }
+
+
+//
 
 
 function onJoin(data) {
@@ -99,27 +111,7 @@ function onJoin(data) {
 }
 
 
-var options = {
-  type: "list",
-  title: 'Welcome!',
-  message: 'Welcome!',
-  items: [{
-    title: " ",
-    message: " "
-  },
-  {
-    title: "MOVE AROUND",
-    message: "with the arrow keys."
-  },{
-    title: "SIGN OFF",
-    message: "by walking out left."
-  }],
-  iconUrl: "public/img/brand/favicon-128.png",
-  requireInteraction: true,
-}
-
-chrome.notifications.create('', options);
-
+//
 
 
 function onContentMessage(data, sender, sendResponse) {
@@ -141,18 +133,39 @@ function onContentMessage(data, sender, sendResponse) {
 
       default:
         emitMsgToServer(event, data)
-
     }
-
-
   }
-
 }
+
+
+//
+
+
+function emitMsgToClient(data) {
+
+  chrome.tabs.query({}, function(tabs) {
+
+    tabs.forEach(function(tab) {
+      chrome.tabs.sendMessage(tab.id, data);
+    })
+  });
+}
+
+
+//
+
+
+function emitMsgToServer(event, data) {
+  socket.emit(event, data)
+}
+
+
+//
 
 
 chrome.idle.onStateChanged.addListener(idleStateChange);
 chrome.runtime.onInstalled.addListener(onInstall);
 chrome.browserAction.onClicked.addListener(onBrowserAction);
 chrome.runtime.onMessage.addListener(onContentMessage);
-
 initSockets()
+

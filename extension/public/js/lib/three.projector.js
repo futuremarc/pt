@@ -129,23 +129,17 @@ THREE.Projector = function () {
 	//
 
 	this.projectVector = function ( vector, camera ) {
-
-		console.warn( 'THREE.Projector: .projectVector() is now vector.project().' );
+		// console.warn( 'THREE.Projector: .projectVector() is now vector.project().' );
 		vector.project( camera );
-
 	};
 
 	this.unprojectVector = function ( vector, camera ) {
-
-		console.warn( 'THREE.Projector: .unprojectVector() is now vector.unproject().' );
+		// console.warn( 'THREE.Projector: .unprojectVector() is now vector.unproject().' );
 		vector.unproject( camera );
-
 	};
 
 	this.pickingRay = function () {
-
-		console.error( 'THREE.Projector: .pickingRay() is now raycaster.setFromCamera().' );
-
+		// console.error( 'THREE.Projector: .pickingRay() is now raycaster.setFromCamera().' );
 	};
 
 	//
