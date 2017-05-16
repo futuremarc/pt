@@ -3,7 +3,6 @@ var isNameDisplayed = false,
   mouseY = 0,
   isMouseHovering = false
 
-
 //
 
 
@@ -45,7 +44,7 @@ function animate() {
     // other characters nametags
     if (character.isWalking && isNameDisplayed && isMouseHovering) hideNameTags()
     else if (!character.isWalking && !isNameDisplayed && isMouseHovering && sceneCharacters.visible) showNameTags()
-      
+
   }
   requestAnimationFrame(animate);
   render();

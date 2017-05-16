@@ -1,9 +1,7 @@
 function signInFromExtension(data) {
 
   var errorMessage = $(".error-message h3")
-
   var my = data
-
   var data = {
     email: my.email,
     password: my.password,
@@ -32,17 +30,17 @@ function signInFromExtension(data) {
       console.log(err)
     }
   })
-
 }
+
+
+//
 
 
 $("body").on('submit', '#pt-auth-form', function(e) {
 
-
   e.preventDefault();
 
   var errorMessage = $(".error-message h3")
-
   var email = $('.auth-email').val();
   var pass = $('.auth-password').val();
   var name = $('.auth-name').val();
@@ -55,7 +53,6 @@ $("body").on('submit', '#pt-auth-form', function(e) {
     var sub = $(this).data('id')
     subs.push(sub)
   });
-
 
   if (action === 'settings') {
 
@@ -81,7 +78,6 @@ $("body").on('submit', '#pt-auth-form', function(e) {
 
   var pos = getCharacterPos()
   var rot = getCharacterRot()
-
   var data = {
     email: email,
     password: pass,
@@ -90,7 +86,6 @@ $("body").on('submit', '#pt-auth-form', function(e) {
     rotation: rot,
     subscriptions: subs
   }
-
 
   $.ajax({
     method: 'POST',
@@ -120,12 +115,14 @@ $("body").on('submit', '#pt-auth-form', function(e) {
 })
 
 
+//
+
+
 $("body").on('submit', '#pt-friend-form', function(e) {
 
   e.preventDefault();
 
   var errorMessage = $(".error-message h3")
-
   var name = $('.auth-name').val();
   var userId = myCharacter.data._id
   var friendId = $(this).data('id')
@@ -158,15 +155,16 @@ $("body").on('submit', '#pt-friend-form', function(e) {
 })
 
 
+//
+
 
 $('body').on('keyup', '#pt-friend-form', function(e) {
-
-  var timeout = null
 
   if (e.keyCode === 13) return
 
   var errorMessage = $(".error-message h3")
   var name = $(this).find('input').val()
+  var timeout = null
 
   clearTimeout(timeout)
   errorMessage.html('searching...')
@@ -200,9 +198,11 @@ $('body').on('keyup', '#pt-friend-form', function(e) {
       console.log(err)
     }
   })
-
-
 })
+
+
+//
+
 
 $('body').on('click', '.friend-request-btn, .friends-list-btn', function(e) {
 
@@ -251,10 +251,16 @@ $('body').on('click', '.friend-request-btn, .friends-list-btn', function(e) {
 })
 
 
+//
+
+
 $('body').on('click', '#logout', function() {
+
   chrome.storage.sync.set({
     'pt-user': {}
   }, function() {
     window.location.href = 'http://localhost:8080/logout'
   })
+  
 })
+

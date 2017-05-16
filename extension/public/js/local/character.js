@@ -1,6 +1,5 @@
 var sceneCharacters, characters = {}; //meshes, data
 
-
 //
 
 
@@ -15,7 +14,6 @@ function createMyCharacter(data) {
       addLiveCharacters()
       emitJoinMsg()
     }
-
     animate()
   })
 }
@@ -34,8 +32,8 @@ function createCharacter(data, cB) {
     });
 
     var character = new THREE.SkinnedMesh(geometry, new THREE.MeshFaceMaterial(materials));
-
     var name = data.name
+
     character.name = name
     character.nameTag = $('<div class="pt-name-tag">' + name + '</div>')
 
