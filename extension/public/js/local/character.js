@@ -33,7 +33,7 @@ function createCharacter(data, cB) {
     });
 
     var character = new THREE.SkinnedMesh(geometry, new THREE.MeshFaceMaterial(materials));
-    var name = data.name
+    var name = data.name || ''
 
     character.name = name
     character.nameTag = $('<div class="pt-name-tag">' + name + '</div>')
@@ -73,7 +73,7 @@ function createCharacter(data, cB) {
       this.fadeAction(this.animations[4])
     }
 
-    character.idle = function() {
+    character.sleep = function() {
       this.data.isLive = false
       this.material.materials[0].transparent = true
       this.material.materials[0].opacity = .5
@@ -177,7 +177,7 @@ function updateCharacter(data, request, cB) {
 
       $.ajax({
         method: 'PUT',
-        url: 'https://passti.me/api/user/' + name,
+        url: 'http://localhost:8080/api/user/' + name,
         data: data,
         success: function(data) {
           console.log(data)
@@ -212,9 +212,9 @@ function updateCharacter(data, request, cB) {
 
       $.ajax({
         method: 'GET',
-        url: 'https://passti.me/api/user/' + name,
+        url: 'http://localhost:8080/api/user/' + name,
         success: function(data) {
-          console.log('GET REMOTE', data)
+          console.log(data)
 
           if (data.status === 'success') {
             chrome.storage.sync.set({

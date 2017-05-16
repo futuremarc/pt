@@ -210,7 +210,8 @@ function onIdleState(data) {
 
   if (state === 'idle') {
 
-    myCharacter.idle()
+    state = 'sleep'
+    myCharacter.sleep()
 
     if (id) {
 
@@ -222,7 +223,7 @@ function onIdleState(data) {
         'rotation':info.rotation,
         'liveFriends': info.liveFriends,
         'event': 'action',
-        'action': 'idle'
+        'action': state
       }
 
       emitMsgToBg(data)
@@ -231,11 +232,13 @@ function onIdleState(data) {
 
   } else if (state === 'active'){
 
+    state = 'awake'
     myCharacter.awake()
 
     if (id) {
 
       var info = getCharacterInfo()
+      
 
       var data = {
         '_id': info._id,
@@ -243,7 +246,7 @@ function onIdleState(data) {
         'rotation':info.rotation,
         'liveFriends': info.liveFriends,
         'event': 'action',
-        'action': 'awake'
+        'action': state
       }
 
       emitMsgToBg(data)
@@ -251,8 +254,8 @@ function onIdleState(data) {
     
 
   } else{ //if locked
-
-     myCharacter.idle()
+    
+     myCharacter.sleep()
 
     if (id) {
 

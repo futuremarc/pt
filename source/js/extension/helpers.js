@@ -23,7 +23,6 @@ function emitJoinMsg() {
     var info = getCharacterInfo()
 
     var data = {
-      'type': 'socket',
       event: 'join',
       _id: info._id,
       position: info.pos,
@@ -31,7 +30,6 @@ function emitJoinMsg() {
       liveFriends: info.liveFriends
     }
 
-    console.log('emitJoinMsg', data)
     emitMsgToBg(data)
 
   })

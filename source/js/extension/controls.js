@@ -123,8 +123,9 @@ var controls = {
 
 function onKeyDown(e) {
 
-  var keyCode = e.keyCode;
+  if (activeKey === e.keyCode) return
 
+  var keyCode = e.keyCode;
   activeKey = keyCode
 
   if (keyCode !== 37 && keyCode !== 38 && keyCode !== 39 && keyCode !== 40) return
@@ -150,6 +151,7 @@ function onKeyDown(e) {
 function onKeyUp(e) {
 
   var keyCode = e.keyCode;
+  activeKey = 0
 
   if (keyCode !== 37 && keyCode !== 38 && keyCode !== 39 && keyCode !== 40) return
 
