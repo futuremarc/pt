@@ -8,44 +8,8 @@ var isNameDisplayed = false,
 
 function animate() {
 
-  // mycharacter movement
-  if (key.right && (activeKey === 39 || activeKey === 40 || activeKey === 38)) myCharacter.position.x += .05
-  if (key.left && myCharacter.position.x > .7 && (activeKey === 37 || activeKey === 40 || activeKey === 38)) myCharacter.position.x -= .05
-
-  else if (myCharacter.position.x < .7 && sceneCharacters.visible) {
-
-    sceneCharacters.visible = false
-    mesh.position.set(.5, .05, 0)
-
-  } else if (myCharacter.position.x > .7 && !sceneCharacters.visible) {
-
-    sceneCharacters.visible = true
-    mesh.position.set(.5, .85, 0)
-
-  }
-
-  // nametags
-  if (myCharacter.isWalking && isNameDisplayed && isMouseHovering) hideNameTags()
-  else if (!myCharacter.isWalking && !isNameDisplayed && isMouseHovering && sceneCharacters.visible) showNameTags()
-
-
-  //other characters movements
-  for (var character in characters) {
-
-    var character = characters[character]
-
-    if (character.isWalking && character.data._id !== myCharacter.data._id) {
-
-      if (character.isWalking === 'right') character.position.x += .05
-      else if (character.position.x > 0) character.position.x -= .05
-
-    }
-
-    // other characters nametags
-    if (character.isWalking && isNameDisplayed && isMouseHovering) hideNameTags()
-    else if (!character.isWalking && !isNameDisplayed && isMouseHovering && sceneCharacters.visible) showNameTags()
-
-  }
+  animateMyChar()
+  animateOtherChars()
   requestAnimationFrame(animate);
   render();
 }
@@ -62,6 +26,52 @@ function render() {
     characters[character].mixer.update(delta);
   }
   renderer.render(scene, camera);
+}
+
+
+//
+
+
+function animateMyChar() {
+
+  if (key.right && (activeKey === 39 || activeKey === 40 || activeKey === 38)) myCharacter.position.x += .05
+  if (key.left && myCharacter.position.x > .7 && (activeKey === 37 || activeKey === 40 || activeKey === 38)) myCharacter.position.x -= .05
+
+  else if (myCharacter.position.x < .7 && sceneCharacters.visible) {
+
+    sceneCharacters.visible = false
+    mesh.position.set(.5, .05, 0)
+
+  } else if (myCharacter.position.x > .7 && !sceneCharacters.visible) {
+
+    sceneCharacters.visible = true
+    mesh.position.set(.5, .85, 0)
+  }
+
+  if (myCharacter.isWalking && isNameDisplayed && isMouseHovering) hideNameTags()
+  else if (!myCharacter.isWalking && !isNameDisplayed && isMouseHovering && sceneCharacters.visible) showNameTags()
+}
+
+
+//
+
+
+function animateOtherChars() {
+
+  for (var character in characters) {
+
+    var character = characters[character]
+
+    if (character.isWalking && character.data._id !== myCharacter.data._id) {
+
+      if (character.isWalking === 'right') character.position.x += .05
+      else if (character.position.x > 0) character.position.x -= .05
+    }
+
+    if (character.isWalking && isNameDisplayed && isMouseHovering) hideNameTags()
+    else if (!character.isWalking && !isNameDisplayed && isMouseHovering && sceneCharacters.visible) showNameTags()
+
+  }
 }
 
 
@@ -90,7 +100,7 @@ function initPt() {
 }
 
 
-//
+/*************global listeners*************/
 
 
 function detectMeshHover(e) {
@@ -190,41 +200,76 @@ function addDomListeners() {
 }
 
 
-/*************FROM BACKGROUND*************/
+/*************from background*************/
 
 
 function onIdleState(data) {
 
-  var state = data.idleState
+  var state = data.data
   var id = isRegistered()
 
-  if (state === 'idle' || state === 'locked') {
+  if (state === 'idle') {
+
+    myCharacter.idle()
 
     if (id) {
 
-      var liveFriends = getLiveFriends()
-      myCharacter.data.isLive = false
-      putCharacter()
+      var info = getCharacterInfo()
 
       var data = {
+        '_id': info._id,
+        'position': info.position,
+        'rotation':info.rotation,
+        'liveFriends': info.liveFriends,
+        'event': 'action',
+        'action': 'idle'
+      }
+
+      emitMsgToBg(data)
+    }
+    
+
+  } else if (state === 'active'){
+
+    myCharacter.awake()
+
+    if (id) {
+
+      var info = getCharacterInfo()
+
+      var data = {
+        '_id': info._id,
+        'position': info.position,
+        'rotation':info.rotation,
+        'liveFriends': info.liveFriends,
+        'event': 'action',
+        'action': 'awake'
+      }
+
+      emitMsgToBg(data)
+    }
+    
+
+  } else{ //if locked
+
+     myCharacter.idle()
+
+    if (id) {
+
+      var info = getCharacterInfo()
+
+      var data = {
+        '_id': info._id,
+        'position': info.position,
+        'rotation':info.rotation,
+        'liveFriends': info.liveFriends,
         'event': 'leave'
       }
 
       emitMsgToBg(data)
     }
-    hideCanvas()
+    
 
-  } else {
-
-    if (id) {
-
-      myCharacter.data.isLive = true
-      putCharacter()
-      emitMsgToBg({
-        'event': 'join'
-      })
-    }
-    showCanvas()
   }
 }
 

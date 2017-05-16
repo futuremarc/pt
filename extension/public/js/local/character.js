@@ -8,6 +8,7 @@ function createMyCharacter(data) {
   createCharacter(data, function(character) {
 
     myCharacter = character
+    myCharacter.awake()
     setCameraZoom(data)
 
     if (isRegistered()) {
@@ -73,11 +74,13 @@ function createCharacter(data, cB) {
     }
 
     character.idle = function() {
+      this.data.isLive = false
       this.material.materials[0].transparent = true
-      this.material.materials[0].opacity = .3
+      this.material.materials[0].opacity = .5
     }
 
-    character.awaken = function() {
+    character.awake = function() {
+      this.data.isLive = true
       this.material.materials[0].transparent = false
       this.material.materials[0].opacity = 1
     }
@@ -160,8 +163,6 @@ function updateCharacter(data, request, cB) {
 
         if (!pos && !rot) return
 
-        console.log('GET LOCAL', user)
-
         myCharacter.position.set(pos.x, pos.y, pos.z)
         myCharacter.rotation.set(rot.x, rot.y, rot.z)
         myCharacter.data = user
@@ -174,11 +175,9 @@ function updateCharacter(data, request, cB) {
 
       var name = data.name
 
-      console.log('PUT REMOTE', data)
-
       $.ajax({
         method: 'PUT',
-        url: 'http://localhost:8080/api/user/' + name,
+        url: 'https://passti.me/api/user/' + name,
         data: data,
         success: function(data) {
           console.log(data)
@@ -199,8 +198,6 @@ function updateCharacter(data, request, cB) {
       myCharacter.data.position = pos
       myCharacter.data.rotation = rot
 
-      console.log('PUT LOCAL', myCharacter.data)
-
       chrome.storage.sync.set({
         'pt-user': myCharacter.data
       }, function() {
@@ -215,7 +212,7 @@ function updateCharacter(data, request, cB) {
 
       $.ajax({
         method: 'GET',
-        url: 'http://localhost:8080/api/user/' + name,
+        url: 'https://passti.me/api/user/' + name,
         success: function(data) {
           console.log('GET REMOTE', data)
 
@@ -255,15 +252,66 @@ function putCharacter(cB) {
 //
 
 
-function getCharacterPos() {
+function getCharacterInfo() {
 
-  var pos = {
-    x: myCharacter.position.x,
-    y: myCharacter.position.y,
-    z: myCharacter.position.z
+  var liveFriends = getLiveFriends()
+  var pos = myCharacter.data.position
+  var rot = myCharacter.data.rotation
+  var id = myCharacter.data._id
+
+  var info = {
+    'liveFriends': liveFriends,
+    'position': pos,
+    'rotation': rot,
+    '_id': id
   }
 
-  return pos
+  return info
+}
+
+
+//
+
+
+function addLiveCharacters() {
+
+  updateCharacter(null, 'getRemote', function(character) {
+
+    character.friends.forEach(function(friend) {
+
+      var friend = friend.user
+      if (friend.isLive) createCharacter(friend)
+    })
+
+  })
+}
+
+
+//
+
+
+function removeCharacter(data) {
+
+  scene.remove(sceneCharacters[data._id])
+  delete sceneCharacters[data._id]
+  delete characters[data._id]
+}
+
+
+//
+
+
+function getLiveFriends() {
+
+  var liveFriends = {}
+
+  myCharacter.data.friends.forEach(function(friend) {
+
+    var friend = friend.user
+    if (friend.isLive) liveFriends[friend._id] = friend._id
+  })
+
+  return liveFriends
 }
 
 
@@ -273,10 +321,26 @@ function getCharacterPos() {
 function getCharacterRot() {
 
   var rot = {
-    x: myCharacter.rotation.x,
-    y: myCharacter.rotation.y,
-    z: myCharacter.rotation.z
+    'x': myCharacter.rotation.x,
+    'y': myCharacter.rotation.y,
+    'z': myCharacter.rotation.z
   }
 
   return rot
 }
+
+
+//
+
+
+function getCharacterPos() {
+
+  var pos = {
+    'x': myCharacter.position.x,
+    'y': myCharacter.position.y,
+    'z': myCharacter.position.z
+  }
+
+  return pos
+}
+

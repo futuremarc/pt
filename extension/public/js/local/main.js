@@ -32,7 +32,7 @@ function render() {
 //
 
 
-function animateMyChar(){
+function animateMyChar() {
 
   if (key.right && (activeKey === 39 || activeKey === 40 || activeKey === 38)) myCharacter.position.x += .05
   if (key.left && myCharacter.position.x > .7 && (activeKey === 37 || activeKey === 40 || activeKey === 38)) myCharacter.position.x -= .05
@@ -56,7 +56,7 @@ function animateMyChar(){
 //
 
 
-function animateOtherChars(){
+function animateOtherChars() {
 
   for (var character in characters) {
 
@@ -205,36 +205,71 @@ function addDomListeners() {
 
 function onIdleState(data) {
 
-  var state = data.idleState
+  var state = data.data
   var id = isRegistered()
 
-  if (state === 'idle' || state === 'locked') {
+  if (state === 'idle') {
+
+    myCharacter.idle()
 
     if (id) {
 
-      var liveFriends = getLiveFriends()
-      myCharacter.data.isLive = false
-      putCharacter()
+      var info = getCharacterInfo()
 
       var data = {
+        '_id': info._id,
+        'position': info.position,
+        'rotation':info.rotation,
+        'liveFriends': info.liveFriends,
+        'event': 'action',
+        'action': 'idle'
+      }
+
+      emitMsgToBg(data)
+    }
+    
+
+  } else if (state === 'active'){
+
+    myCharacter.awake()
+
+    if (id) {
+
+      var info = getCharacterInfo()
+
+      var data = {
+        '_id': info._id,
+        'position': info.position,
+        'rotation':info.rotation,
+        'liveFriends': info.liveFriends,
+        'event': 'action',
+        'action': 'awake'
+      }
+
+      emitMsgToBg(data)
+    }
+    
+
+  } else{ //if locked
+
+     myCharacter.idle()
+
+    if (id) {
+
+      var info = getCharacterInfo()
+
+      var data = {
+        '_id': info._id,
+        'position': info.position,
+        'rotation':info.rotation,
+        'liveFriends': info.liveFriends,
         'event': 'leave'
       }
 
       emitMsgToBg(data)
     }
-    hideCanvas()
+    
 
-  } else {
-
-    if (id) {
-
-      myCharacter.data.isLive = true
-      putCharacter()
-      emitMsgToBg({
-        'event': 'join'
-      })
-    }
-    showCanvas()
   }
 }
 

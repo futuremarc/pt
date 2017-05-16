@@ -18,20 +18,17 @@ function onSocket(data) {
 
 function emitJoinMsg() {
 
-  myCharacter.data.isLive = true
   putCharacter(function() {
 
-    var liveFriends = getLiveFriends()
-    var pos = myCharacter.data.position
-    var rot = myCharacter.data.rotation
-    var id = myCharacter.data._id
+    var info = getCharacterInfo()
 
     var data = {
+      'type': 'socket',
       event: 'join',
-      _id: id,
-      position: pos,
-      rotation: rot,
-      liveFriends: liveFriends
+      _id: info._id,
+      position: info.pos,
+      rotation: info.rot,
+      liveFriends: info.liveFriends
     }
 
     console.log('emitJoinMsg', data)
@@ -65,51 +62,6 @@ function isRegistered() {
   if (!myCharacter) return false
   if (!myCharacter.data) return false
   return myCharacter.data._id
-}
-
-
-//
-
-
-function addLiveCharacters() {
-
-  updateCharacter(null, 'getRemote', function(character) {
-
-    character.friends.forEach(function(friend) {
-
-      var friend = friend.user
-      if (friend.isLive) createCharacter(friend)
-    })
-
-  })
-}
-
-
-//
-
-
-function removeCharacter(data) {
-
-  scene.remove(sceneCharacters[data._id])
-  delete sceneCharacters[data._id]
-  delete characters[data._id]
-}
-
-
-//
-
-
-function getLiveFriends() {
-
-  var liveFriends = {}
-
-  myCharacter.data.friends.forEach(function(friend) {
-
-    var friend = friend.user
-    if (friend.isLive) liveFriends[friend._id] = friend._id
-  })
-
-  return liveFriends
 }
 
 
