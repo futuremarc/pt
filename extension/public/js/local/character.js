@@ -263,8 +263,8 @@ function putCharacter(cB) {
 function getCharacterInfo() {
 
   var liveFriends = getLiveFriends()
-  var pos = myCharacter.data.position
-  var rot = myCharacter.data.rotation
+  var pos = getCharacterPos()
+  var rot = getCharacterRot()
   var id = myCharacter.data._id
 
   var info = {

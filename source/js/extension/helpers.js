@@ -7,7 +7,6 @@ function emitMsgToBg(data) {
 
 
 function onSocket(data) {
-  console.log(data)
   var event = data.event
   socketEvents[event](data)
 }
@@ -25,15 +24,13 @@ function emitJoinMsg() {
     var data = {
       event: 'join',
       _id: info._id,
-      position: info.pos,
-      rotation: info.rot,
+      position: info.position,
+      rotation: info.rotation,
       liveFriends: info.liveFriends
     }
 
     emitMsgToBg(data)
-
   })
-
 }
 
 
@@ -134,9 +131,15 @@ function showNameTags() {
   for (var character in characters) {
 
     var user = characters[character]
-    var pos = worldToScreen(user.position)
 
-    user.nameTag.css('left', pos.x - 15) //TO DO: calculate centering nameTag
+    if (user.visible) {
+
+      var pos = worldToScreen(user.position)
+      user.nameTag.css('left', pos.x - 15) //TO DO: calculate centering nameTag
+
+    }else{
+      user.nameTag.hide()
+    }
   }
 
   isNameDisplayed = true

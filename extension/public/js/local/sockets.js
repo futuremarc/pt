@@ -33,7 +33,6 @@ var socketEvents = {
 
 
 function socketUpdateCharacter(data) {
-  console.log(data)
 
   var friend = characters[data._id]
   var pos = data.position
@@ -55,10 +54,11 @@ function socketUpdateCharacter(data) {
 
   } else {
 
+    if (data.action) friend[data.action](data)
+
     friend.position.set(pos.x, pos.y, pos.z);
     friend.rotation.set(rot.x, rot.y, rot.z);
 
-    if (data.action) friend[data.action](data)
   }
 }
 

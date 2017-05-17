@@ -75,7 +75,7 @@ function setCameraZoom(data) {
   camera.updateMatrix();
 
   setSceneOffset()
-  mesh.position.set(.5, .85, 0)
+  mesh.position.set(.25, .85, 0)
 
 }
 

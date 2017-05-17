@@ -40,12 +40,12 @@ function animateMyChar() {
   else if (myCharacter.position.x < .7 && sceneCharacters.visible) {
 
     sceneCharacters.visible = false
-    mesh.position.set(.5, .05, 0)
+    mesh.position.set(.25, -.1, 0)
 
   } else if (myCharacter.position.x > .7 && !sceneCharacters.visible) {
 
     sceneCharacters.visible = true
-    mesh.position.set(.5, .85, 0)
+    mesh.position.set(.25, .85, 0)
   }
 
   if (myCharacter.isWalking && isNameDisplayed && isMouseHovering) hideNameTags()
@@ -66,9 +66,13 @@ function animateOtherChars() {
 
       if (character.isWalking === 'right') character.position.x += .05
       else if (character.position.x > 0) character.position.x -= .05
+
     }
 
-    if (character.isWalking && isNameDisplayed && isMouseHovering) hideNameTags()
+    if (character.position.x < 1 && character.visible) character.visible = false
+    else if (character.position.x > 1 && !character.visible) character.visible = true
+      
+    else if (character.isWalking && isNameDisplayed && isMouseHovering) hideNameTags()
     else if (!character.isWalking && !isNameDisplayed && isMouseHovering && sceneCharacters.visible) showNameTags()
 
   }
@@ -220,7 +224,7 @@ function onIdleState(data) {
       var data = {
         '_id': info._id,
         'position': info.position,
-        'rotation':info.rotation,
+        'rotation': info.rotation,
         'liveFriends': info.liveFriends,
         'event': 'action',
         'action': state
@@ -228,9 +232,9 @@ function onIdleState(data) {
 
       emitMsgToBg(data)
     }
-    
 
-  } else if (state === 'active'){
+
+  } else if (state === 'active') {
 
     state = 'awake'
     myCharacter.awake()
@@ -238,12 +242,12 @@ function onIdleState(data) {
     if (id) {
 
       var info = getCharacterInfo()
-      
+
 
       var data = {
         '_id': info._id,
         'position': info.position,
-        'rotation':info.rotation,
+        'rotation': info.rotation,
         'liveFriends': info.liveFriends,
         'event': 'action',
         'action': state
@@ -251,11 +255,11 @@ function onIdleState(data) {
 
       emitMsgToBg(data)
     }
-    
 
-  } else{ //if locked
-    
-     myCharacter.sleep()
+
+  } else { //if locked
+
+    myCharacter.sleep()
 
     if (id) {
 
@@ -264,14 +268,14 @@ function onIdleState(data) {
       var data = {
         '_id': info._id,
         'position': info.position,
-        'rotation':info.rotation,
+        'rotation': info.rotation,
         'liveFriends': info.liveFriends,
         'event': 'leave'
       }
 
       emitMsgToBg(data)
     }
-    
+
 
   }
 }
