@@ -13,46 +13,59 @@ var controls = {
 
   37: function(data, keyUp) { //left arrow
 
-    if (keyUp) {
+    if (!isAltKeyDown) {
 
-      data.action = 'stopWalk'
-      data.event = 'action'
+      if (keyUp) {
 
-      if (key.left) myCharacter[data.action]()
-      key.left = false;
-
-      if (isRegistered()) {
-
-        data.liveFriends = getLiveFriends()
-        emitMsgToBg(data)
-      }
-
-    } else {
-
-      if (!key.left) {
-
+        data.action = 'stopWalk'
         data.event = 'action'
-        data.action = 'walk'
-        data.direction = 'left'
 
-        myCharacter[data.action](data)
+        if (key.left) myCharacter[data.action]()
+        key.left = false;
 
-        if (data._id) {
+        if (isRegistered()) {
 
           data.liveFriends = getLiveFriends()
           emitMsgToBg(data)
         }
-      }
 
-      key.left = true;
+      } else {
+
+        if (!key.left) {
+
+          data.event = 'action'
+          data.action = 'walk'
+          data.direction = 'left'
+
+          myCharacter[data.action](data)
+
+          if (data._id) {
+
+            data.liveFriends = getLiveFriends()
+            emitMsgToBg(data)
+          }
+        }
+
+        key.left = true;
+
+      }
 
     }
   },
 
   38: function(data) { //up arrow
 
-    data.action = 'wave'
-    data.event = 'action'
+    if (!isAltKeyDown) {
+
+      data.action = 'faceBackward'
+      data.event = 'action'
+
+    } else {
+
+      data.action = 'wave'
+      data.event = 'action'
+
+    }
 
     myCharacter[data.action]()
 
@@ -60,51 +73,64 @@ var controls = {
       data.liveFriends = getLiveFriends()
       emitMsgToBg(data)
     }
-
   },
 
   39: function(data, keyUp) { //right arrow
 
-    if (keyUp) {
 
-      data.action = 'stopWalk'
-      data.event = 'action'
+    if (!isAltKeyDown) {
 
-      if (key.right) myCharacter[data.action]()
-      key.right = false;
+      if (keyUp) {
 
-      if (isRegistered()) {
-        data.liveFriends = getLiveFriends()
-        emitMsgToBg(data)
-      }
-
-    } else {
-
-      if (!key.right) {
-
+        data.action = 'stopWalk'
         data.event = 'action'
-        data.action = 'walk'
-        data.direction = 'right'
 
-        myCharacter[data.action](data)
+        if (key.right) myCharacter[data.action]()
+        key.right = false;
 
         if (isRegistered()) {
-
-          putCharacter()
           data.liveFriends = getLiveFriends()
           emitMsgToBg(data)
         }
+
+      } else {
+
+        if (!key.right) {
+
+          data.event = 'action'
+          data.action = 'walk'
+          data.direction = 'right'
+
+          myCharacter[data.action](data)
+
+          if (isRegistered()) {
+
+            putCharacter()
+            data.liveFriends = getLiveFriends()
+            emitMsgToBg(data)
+          }
+        }
+
+        key.right = true;
       }
 
-      key.right = true;
     }
 
   },
 
-  40: function(data) {
+  40: function(data) { //down arrow
 
-    data.action = 'pose'
-    data.event = 'action'
+    if (!isAltKeyDown) {
+
+      data.action = 'faceForward'
+      data.event = 'action'
+
+    } else {
+
+      data.action = 'pose'
+      data.event = 'action'
+
+    }
 
     myCharacter[data.action]()
 
@@ -112,14 +138,15 @@ var controls = {
       data.liveFriends = getLiveFriends()
       emitMsgToBg(data)
     }
-
   }
-
 }
 
 
 //
 
+
+
+isAltKeyDown = false
 
 function onKeyDown(e) {
 
@@ -127,6 +154,8 @@ function onKeyDown(e) {
 
   var keyCode = e.keyCode;
   activeKey = keyCode
+
+  if (activeKey === 18) isAltKeyDown = true
 
   if (keyCode !== 37 && keyCode !== 38 && keyCode !== 39 && keyCode !== 40) return
 
@@ -152,6 +181,8 @@ function onKeyUp(e) {
 
   var keyCode = e.keyCode;
   activeKey = 0
+
+  if (keyCode === 18) isAltKeyDown = false
 
   if (keyCode !== 37 && keyCode !== 38 && keyCode !== 39 && keyCode !== 40) return
 

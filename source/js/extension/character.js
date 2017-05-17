@@ -85,6 +85,14 @@ function createCharacter(data, cB) {
       this.material.materials[0].opacity = 1
     }
 
+    character.faceForward = function(){
+      this.rotation.set(0,Math.PI * 2,0)
+    }
+
+    character.faceBackward= function(){
+      this.rotation.set(0,Math.PI,0)
+    }
+
     character.fadeAction = function(name) {
 
       var from = this.actions[this.activeState].play();

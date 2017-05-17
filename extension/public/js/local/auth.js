@@ -10,7 +10,7 @@ function signInFromExtension(data) {
 
   $.ajax({
     method: 'POST',
-    url: 'https://passti.me/api/login',
+    url: 'http://localhost:8080/api/login',
     data: data,
     success: function(data) {
       console.log(data)
@@ -89,7 +89,7 @@ $("body").on('submit', '#pt-auth-form', function(e) {
 
   $.ajax({
     method: 'POST',
-    url: 'https://passti.me/api/' + action,
+    url: 'http://localhost:8080/api/' + action,
     data: data,
     success: function(data) {
       console.log(data)
@@ -135,7 +135,7 @@ $("body").on('submit', '#pt-friend-form', function(e) {
 
   $.ajax({
     method: 'POST',
-    url: 'https://passti.me/api/user/friend/' + action,
+    url: 'http://localhost:8080/api/user/friend/' + action,
     data: data,
     success: function(data) {
       console.log(data)
@@ -173,7 +173,7 @@ $('body').on('keyup', '#pt-friend-form', function(e) {
 
   $.ajax({
     method: 'GET',
-    url: 'https://passti.me/api/user/' + name,
+    url: 'http://localhost:8080/api/user/' + name,
     success: function(data) {
       console.log(data)
       clearTimeout(timeout)
@@ -226,7 +226,7 @@ $('body').on('click', '.friend-request-btn, .friends-list-btn', function(e) {
 
   $.ajax({
     method: method,
-    url: 'https://passti.me/api/user/friend/' + action,
+    url: 'http://localhost:8080/api/user/friend/' + action,
     data: data,
     success: function(data) {
       console.log(data)
@@ -259,7 +259,7 @@ $('body').on('click', '#logout', function() {
   chrome.storage.sync.set({
     'pt-user': {}
   }, function() {
-    window.location.href = 'https://passti.me/logout'
+    window.location.href = 'http://localhost:8080/logout'
   })
   
 })
