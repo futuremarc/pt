@@ -3,6 +3,8 @@ var socket = io('http://localhost:5050', {
   'forceNew': true
 })
 
+var myCharacter = {}
+
 
 //
 
@@ -107,6 +109,7 @@ function onBrowserAction(activeTab) {
 
 
 function onJoin(data) {
+  myCharacter.data = data
   emitMsgToServer('join', data)
 }
 
@@ -158,6 +161,16 @@ function emitMsgToClient(data) {
 function emitMsgToServer(event, data) {
   socket.emit(event, data)
 }
+
+
+//
+
+
+chrome.windows.onRemoved.addListener(function(windowid) {
+
+  var data = myCharacter.data
+  emitMsgToServer('leave',data)
+})
 
 
 //

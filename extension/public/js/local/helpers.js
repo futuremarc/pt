@@ -26,6 +26,7 @@ function emitJoinMsg() {
       _id: info._id,
       position: info.position,
       rotation: info.rotation,
+      name: info.name,
       liveFriends: info.liveFriends
     }
 

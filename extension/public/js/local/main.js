@@ -9,7 +9,7 @@ var isNameDisplayed = false,
 function animate() {
 
   animateMyChar()
-  animateOtherChars()
+  if (isRegistered()) animateOtherChars()
   requestAnimationFrame(animate);
   render();
 }
@@ -23,7 +23,7 @@ function render() {
   var delta = clock.getDelta();
 
   for (var character in characters) {
-    characters[character].mixer.update(delta);
+    if (characters[character].mixer) characters[character].mixer.update(delta); //sometimes render is in middle of iterating when character is removed
   }
   renderer.render(scene, camera);
 }
@@ -62,18 +62,26 @@ function animateOtherChars() {
 
     var character = characters[character]
 
-    if (character.isWalking && character.data._id !== myCharacter.data._id) {
+    var hasData = character.data
 
-      if (character.isWalking === 'right') character.position.x += .05
-      else if (character.position.x > 0) character.position.x -= .05
+    if (hasData && character.data._id !== myCharacter.data._id) {
+
+      if (character.isWalking) {
+
+        if (character.isWalking === 'right') character.position.x += .05
+        else if (character.position.x > 0) character.position.x -= .05
+
+      }
+
+      if (character.position.x < .8 && character.visible) character.visible = false
+      else if (character.position.x > .8 && !character.visible) character.visible = true
+
+      else if (character.isWalking && isNameDisplayed && isMouseHovering) hideNameTags()
+      else if (!character.isWalking && !isNameDisplayed && isMouseHovering && sceneCharacters.visible) showNameTags()
+
 
     }
 
-    if (character.position.x < 1 && character.visible) character.visible = false
-    else if (character.position.x > 1 && !character.visible) character.visible = true
-      
-    else if (character.isWalking && isNameDisplayed && isMouseHovering) hideNameTags()
-    else if (!character.isWalking && !isNameDisplayed && isMouseHovering && sceneCharacters.visible) showNameTags()
 
   }
 }
@@ -293,6 +301,9 @@ function onBgMessage(data, sender, sendResponse) {
       onIdleState(data)
       break;
     case 'socket':
+      onSocket(data)
+      break;
+    case 'browserClose':
       onSocket(data)
       break;
   }

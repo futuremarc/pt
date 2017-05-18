@@ -7,16 +7,23 @@ var socketEvents = {
     console.log(data)
   },
   'disconnect': function(data) {
+
+    var info = getCharacterInfo()
+
     var data = {
+      '_id': info._id,
+      'position': info.position,
+      'rotation': info.rotation,
+      'liveFriends': info.liveFriends,
       'event': 'leave'
     }
+
     emitMsgToBg(data)
   },
   'reconnect': function() {
     emitJoinMsg()
   },
-  'connect': function() {
-  },
+  'connect': function() {},
   'join': function(data) {
     socketUpdateCharacter(data)
   },
@@ -44,10 +51,10 @@ function socketUpdateCharacter(data) {
 
     createCharacter(data, function() {
 
+      var friend = characters[data._id]
+
       friend.position.set(pos.x, pos.y, pos.z);
       friend.rotation.set(rot.x, rot.y, rot.z);
-
-      var friend = characters[data._id]
 
       if (data.action) friend[data.action](data)
     })
@@ -61,4 +68,3 @@ function socketUpdateCharacter(data) {
 
   }
 }
-

@@ -39,7 +39,7 @@ var controls = {
 
           myCharacter[data.action](data)
 
-          if (data._id) {
+          if (isRegistered()) {
 
             data.liveFriends = getLiveFriends()
             emitMsgToBg(data)
@@ -47,9 +47,7 @@ var controls = {
         }
 
         key.left = true;
-
       }
-
     }
   },
 
@@ -113,9 +111,7 @@ var controls = {
 
         key.right = true;
       }
-
     }
-
   },
 
   40: function(data) { //down arrow

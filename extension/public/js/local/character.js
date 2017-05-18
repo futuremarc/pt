@@ -125,9 +125,6 @@ function createCharacter(data, cB) {
 
     actions.idle.play();
 
-    characters[data._id] = character
-    sceneCharacters.add(character)
-
     renderOrder -= 1
     character.renderOrder = renderOrder
 
@@ -145,6 +142,9 @@ function createCharacter(data, cB) {
     character.position.set(pos.x, pos.y, pos.z);
     character.rotation.set(rot.x, rot.y, rot.z);
 
+    sceneCharacters.add(character)
+    characters[data._id] = character
+    
     if (cB) cB(character)
 
   });
@@ -266,11 +266,13 @@ function getCharacterInfo() {
   var pos = getCharacterPos()
   var rot = getCharacterRot()
   var id = myCharacter.data._id
+  var name = myCharacter.data.name
 
   var info = {
     'liveFriends': liveFriends,
     'position': pos,
     'rotation': rot,
+    'name': name,
     '_id': id
   }
 
@@ -299,9 +301,9 @@ function addLiveCharacters() {
 
 
 function removeCharacter(data) {
+  characters[data._id].nameTag.remove()
 
-  scene.remove(sceneCharacters[data._id])
-  delete sceneCharacters[data._id]
+  sceneCharacters.remove(characters[data._id])
   delete characters[data._id]
 }
 
