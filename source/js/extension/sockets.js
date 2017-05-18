@@ -7,23 +7,14 @@ var socketEvents = {
     console.log(data)
   },
   'disconnect': function(data) {
-
-    var info = getCharacterInfo()
-
-    var data = {
-      '_id': info._id,
-      'position': info.position,
-      'rotation': info.rotation,
-      'liveFriends': info.liveFriends,
-      'event': 'leave'
-    }
-
-    emitMsgToBg(data)
+    emitLeaveMsg()
   },
   'reconnect': function() {
     emitJoinMsg()
   },
-  'connect': function() {},
+  'connect': function(data) {
+    console.log(data)
+  },
   'join': function(data) {
     socketUpdateCharacter(data)
   },

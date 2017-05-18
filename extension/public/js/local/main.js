@@ -35,14 +35,14 @@ function render() {
 function animateMyChar() {
 
   if (key.right && (activeKey === 39 || activeKey === 40 || activeKey === 38)) myCharacter.position.x += .05
-  if (key.left && myCharacter.position.x > .7 && (activeKey === 37 || activeKey === 40 || activeKey === 38)) myCharacter.position.x -= .05
+  if (key.left && myCharacter.position.x > .2 && (activeKey === 37 || activeKey === 40 || activeKey === 38)) myCharacter.position.x -= .05
 
-  else if (myCharacter.position.x < .7 && sceneCharacters.visible) {
+  else if (myCharacter.position.x < .4 && sceneCharacters.visible) {
 
     sceneCharacters.visible = false
     mesh.position.set(.25, -.1, 0)
 
-  } else if (myCharacter.position.x > .7 && !sceneCharacters.visible) {
+  } else if (myCharacter.position.x > .4 && !sceneCharacters.visible) {
 
     sceneCharacters.visible = true
     mesh.position.set(.25, .85, 0)
@@ -73,8 +73,8 @@ function animateOtherChars() {
 
       }
 
-      if (character.position.x < .8 && character.visible) character.visible = false
-      else if (character.position.x > .8 && !character.visible) character.visible = true
+      if (character.position.x < .4 && character.visible) character.visible = false
+      else if (character.position.x > .4 && !character.visible) character.visible = true
 
       else if (character.isWalking && isNameDisplayed && isMouseHovering) hideNameTags()
       else if (!character.isWalking && !isNameDisplayed && isMouseHovering && sceneCharacters.visible) showNameTags()
@@ -218,17 +218,15 @@ function addDomListeners() {
 function onIdleState(data) {
 
   var state = data.data
-  var id = isRegistered()
 
   if (state === 'idle') {
 
     state = 'sleep'
-    myCharacter.sleep()
+    myCharacter[state]()
 
-    if (id) {
+    if (isRegistered()) {
 
       var info = getCharacterInfo()
-
       var data = {
         '_id': info._id,
         'position': info.position,
@@ -245,46 +243,15 @@ function onIdleState(data) {
   } else if (state === 'active') {
 
     state = 'awake'
-    myCharacter.awake()
+    myCharacter[state]()
 
-    if (id) {
-
-      var info = getCharacterInfo()
-
-
-      var data = {
-        '_id': info._id,
-        'position': info.position,
-        'rotation': info.rotation,
-        'liveFriends': info.liveFriends,
-        'event': 'action',
-        'action': state
-      }
-
-      emitMsgToBg(data)
-    }
-
+    if (isRegistered()) emitJoinMsg()
 
   } else { //if locked
+    state = 'sleep'
 
-    myCharacter.sleep()
-
-    if (id) {
-
-      var info = getCharacterInfo()
-
-      var data = {
-        '_id': info._id,
-        'position': info.position,
-        'rotation': info.rotation,
-        'liveFriends': info.liveFriends,
-        'event': 'leave'
-      }
-
-      emitMsgToBg(data)
-    }
-
-
+    myCharacter[state]()
+    if (isRegistered()) emitLeaveMsg()
   }
 }
 
@@ -293,7 +260,7 @@ function onIdleState(data) {
 
 
 function onBgMessage(data, sender, sendResponse) {
-  console.log(data)
+  console.log('recieved',data)
 
   switch (data.type) {
 
@@ -301,9 +268,6 @@ function onBgMessage(data, sender, sendResponse) {
       onIdleState(data)
       break;
     case 'socket':
-      onSocket(data)
-      break;
-    case 'browserClose':
       onSocket(data)
       break;
   }

@@ -52,7 +52,9 @@ function setCameraZoom(data) {
 
   var box = new THREE.BoxGeometry(1, 2, 1)
   mesh = new THREE.Mesh(box, new THREE.MeshBasicMaterial({
-    'color': 0x7ec0ee
+    'color': 0x7ec0ee,
+    'transparent':true,
+    'opacity':.7
   }))
 
   mesh.purpose = 'box'

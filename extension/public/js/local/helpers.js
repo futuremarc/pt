@@ -1,4 +1,5 @@
 function emitMsgToBg(data) {
+  console.log('emit',data)
   chrome.runtime.sendMessage(data);
 }
 
@@ -22,12 +23,33 @@ function emitJoinMsg() {
     var info = getCharacterInfo()
 
     var data = {
-      event: 'join',
-      _id: info._id,
-      position: info.position,
-      rotation: info.rotation,
-      name: info.name,
-      liveFriends: info.liveFriends
+      'event': 'join',
+      '_id': info._id,
+      'position': info.position,
+      'rotation': info.rotation,
+      'name': info.name,
+      'action': 'awake',
+      'liveFriends': info.liveFriends
+    }
+
+    emitMsgToBg(data)
+  })
+}
+
+
+function emitLeaveMsg() {
+
+  putCharacter(function() {
+
+    var info = getCharacterInfo()
+
+    var data = {
+      'event': 'leave',
+      '_id': info._id,
+      'position': info.position,
+      'rotation': info.rotation,
+      'name': info.name,
+      'liveFriends': info.liveFriends
     }
 
     emitMsgToBg(data)

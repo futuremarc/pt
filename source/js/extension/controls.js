@@ -23,11 +23,7 @@ var controls = {
         if (key.left) myCharacter[data.action]()
         key.left = false;
 
-        if (isRegistered()) {
-
-          data.liveFriends = getLiveFriends()
-          emitMsgToBg(data)
-        }
+        if (isRegistered()) emitMsgToBg(data)
 
       } else {
 
@@ -39,11 +35,7 @@ var controls = {
 
           myCharacter[data.action](data)
 
-          if (isRegistered()) {
-
-            data.liveFriends = getLiveFriends()
-            emitMsgToBg(data)
-          }
+          if (isRegistered()) emitMsgToBg(data)
         }
 
         key.left = true;
@@ -62,15 +54,11 @@ var controls = {
 
       data.action = 'wave'
       data.event = 'action'
-
     }
 
     myCharacter[data.action]()
 
-    if (isRegistered()) {
-      data.liveFriends = getLiveFriends()
-      emitMsgToBg(data)
-    }
+    if (isRegistered()) emitMsgToBg(data)
   },
 
   39: function(data, keyUp) { //right arrow
@@ -86,11 +74,7 @@ var controls = {
         if (key.right) myCharacter[data.action]()
         key.right = false;
 
-        if (isRegistered()) {
-          data.liveFriends = getLiveFriends()
-          emitMsgToBg(data)
-        }
-
+        if (isRegistered()) emitMsgToBg(data)
       } else {
 
         if (!key.right) {
@@ -104,7 +88,6 @@ var controls = {
           if (isRegistered()) {
 
             putCharacter()
-            data.liveFriends = getLiveFriends()
             emitMsgToBg(data)
           }
         }
@@ -125,15 +108,11 @@ var controls = {
 
       data.action = 'pose'
       data.event = 'action'
-
     }
 
     myCharacter[data.action]()
 
-    if (isRegistered()) {
-      data.liveFriends = getLiveFriends()
-      emitMsgToBg(data)
-    }
+    if (isRegistered()) emitMsgToBg(data)
   }
 }
 
@@ -155,14 +134,19 @@ function onKeyDown(e) {
 
   if (keyCode !== 37 && keyCode !== 38 && keyCode !== 39 && keyCode !== 40) return
 
-  var id = myCharacter.data._id
-  var pos = myCharacter.data.position
-  var rot = myCharacter.data.rotation
+  var data = {}
 
-  var data = {
-    _id: id,
-    position: pos,
-    rotation: rot
+  if (isRegistered()) {
+
+    var info = getCharacterInfo()
+
+    data = {
+      _id: info._id,
+      position: info.position,
+      rotation: info.rotation,
+      name: info.name,
+      liveFriends: info.liveFriends
+    }
   }
 
   controls[keyCode](data)
@@ -184,14 +168,19 @@ function onKeyUp(e) {
 
   if (!isQuickGesture(keyCode)) putCharacter()
 
-  var id = myCharacter.data._id
-  var pos = myCharacter.data.position
-  var rot = myCharacter.data.rotation
+  var data = {}
 
-  var data = {
-    _id: id,
-    position: pos,
-    rotation: rot
+  if (isRegistered()) {
+
+    var info = getCharacterInfo()
+
+    data = {
+      _id: info._id,
+      position: info.position,
+      rotation: info.rotation,
+      name: info.name,
+      liveFriends: info.liveFriends
+    }
   }
 
   if (!isGesture(keyCode)) controls[keyCode](data, true)

@@ -76,7 +76,7 @@ function createCharacter(data, cB) {
     character.sleep = function() {
       this.data.isLive = false
       this.material.materials[0].transparent = true
-      this.material.materials[0].opacity = .5
+      this.material.materials[0].opacity = .35
     }
 
     character.awake = function() {
@@ -135,7 +135,7 @@ function createCharacter(data, cB) {
       },
       rot = data.rotation || {
         x: 0,
-        y: Math.PI / 2,
+        y: Math.PI * 2,
         z: 0
       }
 

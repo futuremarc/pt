@@ -256,6 +256,8 @@ $('body').on('click', '.friend-request-btn, .friends-list-btn', function(e) {
 
 $('body').on('click', '#logout', function() {
 
+  if (isRegistered()) emitLeaveMsg()
+
   chrome.storage.sync.set({
     'pt-user': {}
   }, function() {
