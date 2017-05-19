@@ -27,7 +27,7 @@ gulp.task('default', ['watch']);
 gulp.task('watch', function(){
 
   gulp.watch('source/scss/*.scss', ['build-css'])
-  gulp.watch('views/handlebars/*/*.handlebars', ['precompile'])
+  gulp.watch('views/handlebars/**/*.handlebars', ['precompile'])
   gulp.watch('source/js/auth/*.js',['auth-scripts'])
   gulp.watch('source/js/main/*.js', ['main-scripts'])
   gulp.watch('source/js/mobile/*.js', ['mobile-scripts'])
@@ -80,7 +80,7 @@ gulp.task('mobile-scripts', function(){
 
 gulp.task('precompile', function(){
 
-    gulp.src('views/handlebars/auth/[^_]*.handlebars')
+    gulp.src('views/handlebars/**/[^_]*.handlebars')
     .pipe(handlebars({
       handlebars: require('handlebars')
     }))

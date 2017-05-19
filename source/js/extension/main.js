@@ -92,7 +92,8 @@ function animateOtherChars() {
 
 function initPt() {
 
-  $('<div id="pt-canvas" class="pt-override-page"></div>').appendTo('body');
+  addCanvasToPage()
+  addMenuToPage()
 
   chrome.storage.sync.get('pt-user', function(data) {
 
@@ -130,6 +131,8 @@ function detectMeshHover(e) {
 
       hoveredMesh = intersects[0].object;
       $('body').addClass('pt-hovering')
+
+      if (hoveredMesh.purpose === 'menu') triggerMenu()
     }
 
   } else {
@@ -260,7 +263,7 @@ function onIdleState(data) {
 
 
 function onBgMessage(data, sender, sendResponse) {
-  console.log('recieved',data)
+  console.log('recieved', data)
 
   switch (data.type) {
 

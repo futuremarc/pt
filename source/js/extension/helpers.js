@@ -182,6 +182,36 @@ function hideNameTags() {
 //
 
 
+function addCanvasToPage(){
+  $('<div id="pt-canvas" class="pt-override-page"></div>').appendTo('body');
+}
+
+//
+
+
+function addMenuToPage() {
+
+  var container = $('<div id="pt-menu-container"></div>')
+  var html = Templates.extension.addMenu()
+
+  $('body').append(container)
+  container.html(html)
+  container.on('mouseleave', triggerMenu)
+}
+
+
+
+//
+
+
+function triggerMenu() {
+  $("#pt-menu-container").toggle();
+}
+
+
+//
+
+
 function changeSubmitButton(disable, replaceText, id) {
   if (!id) var btn = $("input[type='submit']")
   else var btn = $(id)
@@ -198,6 +228,14 @@ function changeSubmitButton(disable, replaceText, id) {
 //
 
 
+function showCanvas() {
+  $('#pt-canvas').show()
+}
+
+
+//
+
+
 function hideCanvas() {
   $('#pt-canvas').hide()
 }
@@ -206,6 +244,15 @@ function hideCanvas() {
 //
 
 
-function showCanvas() {
-  $('#pt-canvas').show()
+function isWebGL() {
+    try {
+        var canvas = document.createElement("canvas");
+        return !!
+            window.WebGLRenderingContext &&
+            (canvas.getContext("webgl") ||
+                canvas.getContext("experimental-webgl"));
+    } catch (e) {
+        return false;
+    }
 }
+

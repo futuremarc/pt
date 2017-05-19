@@ -16,10 +16,12 @@ function initScene(data) {
   clock = new THREE.Clock();
   scene = new THREE.Scene();
 
-  renderer = new THREE.WebGLRenderer({
+  var options = {
     antialias: true,
     alpha: true
-  });
+  }
+
+  renderer = isWebGL() ? new THREE.WebGLRenderer(options) : new THREE.CanvasRenderer(options);
 
   container = document.getElementById('pt-canvas');
 
@@ -57,7 +59,7 @@ function setCameraZoom(data) {
     'opacity':.7
   }))
 
-  mesh.purpose = 'box'
+  mesh.purpose = 'menu'
   mesh.position.set(0, -2, 0)
   mesh.renderOrder = 1
 
