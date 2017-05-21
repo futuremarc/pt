@@ -1,5 +1,5 @@
 function emitMsgToBg(data) {
-  console.log('emit',data)
+  console.log('emit', data)
   chrome.runtime.sendMessage(data);
 }
 
@@ -86,17 +86,6 @@ function isRegistered() {
 //
 
 
-function createMenu() {
-
-  var src = chrome.extension.getURL('menu.html');
-  var iFrame = $('<iframe frameborder="0" class="pt-iframe" src=" ' + src + '"></iframe>');
-  $('body').append(iFrame);
-}
-
-
-//
-
-
 function screenToWorld(screenPos) {
 
   var halfConWidth = container.offsetWidth / 2
@@ -160,7 +149,7 @@ function showNameTags() {
       var pos = worldToScreen(user.position)
       user.nameTag.css('left', pos.x - 15) //TO DO: calculate centering nameTag
 
-    }else{
+    } else {
       user.nameTag.hide()
     }
   }
@@ -182,9 +171,28 @@ function hideNameTags() {
 //
 
 
-function addCanvasToPage(){
-  $('<div id="pt-canvas" class="pt-override-page"></div>').appendTo('body');
+function addCanvasToPage() {
+  $('<div id="pt-main-container" class="pt-override-page"></div>').appendTo('body');
 }
+
+
+//
+
+
+function addMenuIcon() {
+  var icon = $('<span class="glyphicon glyphicon-menu-hamburger"></span>')
+  var iconContainer = $('<div class="pt-menu-icon"></div>')
+
+  $(iconContainer).click(function(e){
+    e.stopPropagation()
+  })
+  $(iconContainer).on('mouseenter', showMenu)
+
+   iconContainer.append(icon)
+  $('body').append(iconContainer)
+  
+}
+
 
 //
 
@@ -196,18 +204,87 @@ function addMenuToPage() {
 
   $('body').append(container)
   container.html(html)
-  container.on('mouseleave', triggerMenu)
-}
 
+  $('#pt-menu-hide').click(togglePt)
+  $('.pt-menu a').click(toggleMenu)
+  $('#pt-menu-friend, #pt-menu-settings, #pt-menu-home').click(openIframe)
+  $('.pt-menu').click(function(e){
+    e.stopPropagation()
+  })
+
+}
 
 
 //
 
 
-function triggerMenu() {
-  $("#pt-menu-container").toggle();
+
+function openIframe(e) {
+
+  e.stopPropagation()
+  var target = e.currentTarget
+  var purpose = $(target).data('purpose')
+  var iframe = document.createElement('iframe')
+  var src = 'http://localhost:8080/' + purpose
+
+  $('.pt-iframe').remove()
+  $(iframe).attr('frameborder', 0)
+  $(iframe).attr('src', src)
+  $(iframe).addClass('pt-iframe')
+  $(iframe).click(function(e) {
+    e.stopPropagation()
+  })
+
+  $('body').append(iframe)
+
 }
 
+
+//
+
+
+function toggleMenu(e) {
+  e.preventDefault()
+  $('#pt-menu-container').toggle();
+}
+
+
+//
+
+
+function onDocumentClick() {
+  $('.pt-iframe').remove();
+  hideMenu()
+}
+
+
+//
+
+
+function showMenu() {
+  $('#pt-menu-container').show();
+  $('.pt-menu').addClass('pt-animated pt-zoomIn')
+}
+
+
+//
+
+
+function hideMenu() {
+  $('#pt-menu-container').hide();
+}
+
+
+//
+
+
+function togglePt() {
+  $('#pt-menu-container').remove()
+  $('#pt-main-container').remove()
+  $('.pt-menu-icon').remove()
+  $('.pt-iframe').remove()
+  removeDomListeners()
+}
 
 //
 
@@ -228,31 +305,23 @@ function changeSubmitButton(disable, replaceText, id) {
 //
 
 
-function showCanvas() {
-  $('#pt-canvas').show()
+function toggleCanvas() {
+  $('#pt-main-container').toggle()
 }
 
-
-//
-
-
-function hideCanvas() {
-  $('#pt-canvas').hide()
-}
 
 
 //
 
 
 function isWebGL() {
-    try {
-        var canvas = document.createElement("canvas");
-        return !!
-            window.WebGLRenderingContext &&
-            (canvas.getContext("webgl") ||
-                canvas.getContext("experimental-webgl"));
-    } catch (e) {
-        return false;
-    }
+  try {
+    var canvas = document.createElement("canvas");
+    return !!
+      window.WebGLRenderingContext &&
+      (canvas.getContext("webgl") ||
+        canvas.getContext("experimental-webgl"));
+  } catch (e) {
+    return false;
+  }
 }
-

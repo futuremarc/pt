@@ -55,14 +55,15 @@ function onInstall(data) {
       title: 'Welcome!',
       message: 'Welcome!',
       items: [{
-        title: " ",
-        message: " "
-      }, {
         title: "MOVE",
         message: "using the arrow keys."
       }, {
         title: "SIGN OFF",
-        message: "by walking out left."
+        message: "by walking offscreen to the left."
+      },
+       {
+        title: "HOVER THE MENU",
+        message: "in the bottom left corner for more..."
       }],
       iconUrl: "public/img/brand/favicon-128.png",
       requireInteraction: true,

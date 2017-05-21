@@ -4,29 +4,31 @@ block css
 
 block content
 
-  form(id='pt-auth-form', class='pt-form', data-action='signup')
+  div(class='pt-auth-container')
 
-    div(class='error-message')
-      h3 &nbsp;
-    br
-    div(id='auth-email-parent')
-      input(type='email', class='input-lg auth-email form-control', name='email', placeholder='Email')
-    br
+    form(id='pt-auth-form', class='pt-form', data-action='signup')
 
-    div(id='auth-name-parent')
-      input(class='input-lg auth-name form-control', name='name', placeholder='Name')
-    br
+      div(class='error-message')
+        h3 &nbsp;
+      br
+      div(id='auth-email-parent')
+        input(type='email', class='input-lg auth-email form-control', name='email', placeholder='Email')
+      br
 
-    div(id='auth-password-parent')
-      input(type='password', class='input-lg auth-password form-control', name='password', placeholder='Password (min. 8 chars)')
-    br
+      div(id='auth-name-parent')
+        input(class='input-lg auth-name form-control', name='name', placeholder='Nickname')
+      br
 
-    div(id="auth-subs-parent")
-    br
+      div(id='auth-password-parent')
+        input(type='password', class='input-lg auth-password form-control', name='password', placeholder='Password (min. 8 chars)')
+      br
+
+      div(id="auth-subs-parent")
+      br
  
-    input(type='submit', class='btn btn-lg btn-block btn-custom', value='Signup')
+      input(type='submit', class='btn btn-lg btn-block btn-custom', value='Signup')
 
-    h5 Share settings can always be adjusted in the settings menu. All content expires immediately after being live.
+      h5 Share settings can always be adjusted in the settings menu. All content expires immediately after being live.
 
 block javascript
   script.

@@ -3,16 +3,16 @@ extends ../main/layout
 block css
 
 block content
+  div(class='pt-auth-container')
+    form(id='pt-auth-form', class='pt-form', data-name='forgot')
 
-  form(id='pt-auth-form', class='pt-form', data-name='forgot')
-
-    div(class='error-message')
-      h3 &nbsp;
-    br
-    div(id='auth-email-parent')
-      input(type='email', class='input-lg auth-email form-control', name='email', placeholder='Email')
-    br
+      div(class='error-message')
+        h3 &nbsp;
+      br
+      div(id='auth-email-parent')
+        input(type='email', class='input-lg auth-email form-control', name='email', placeholder='Email')
+      br
    
-    input(type='submit', class='btn btn-lg btn-block btn-custom', value='I forgot my password')
+      input(type='submit', class='btn btn-lg btn-block btn-custom', value='I forgot my password')
 
 block javascript

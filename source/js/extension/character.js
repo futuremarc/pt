@@ -39,7 +39,7 @@ function createCharacter(data, cB) {
     character.nameTag = $('<div class="pt-name-tag">' + name + '</div>')
 
     var nameTag = character.nameTag
-    $('body').prepend(nameTag)
+    $('#pt-main-container').prepend(nameTag)
 
     character.purpose = 'character' //associate purpose for all meshes
     character.data = data

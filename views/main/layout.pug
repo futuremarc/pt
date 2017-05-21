@@ -28,18 +28,6 @@ html
     script.
       if (chrome.app.isInstalled) document.getElementById('install-tag').style.display = 'none';
 
-    a(href='/') Home
-    br
-    a(href='/signup') Signup
-    br
-    a(href='/login') Login
-    br
-    a(href='/friend') Add Friend
-    br
-    a(href='/settings') Settings
-    br
-    a(href='#' id="logout") Logout
-    br
     div(class='info-tag')
       div(id='name-tag') #{userName}
       a(id='install-tag', href='#', style='display:none', onclick='chrome.webstore.install()') Add to Chrome

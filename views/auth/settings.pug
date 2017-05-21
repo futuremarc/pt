@@ -4,16 +4,18 @@ block css
 
 block content
 
-  form(id='pt-auth-form', class='pt-form', data-action='settings')
+  div(class='pt-auth-container')
 
-    div(class='error-message')
-      h3 &nbsp;
-    br
+    form(id='pt-auth-form', class='pt-form', data-action='settings')
+
+      div(class='error-message')
+        h3 &nbsp;
+      br
  
-    div(id="auth-subs-parent")
-    br
+      div(id="auth-subs-parent")
+      br
  
-    input(type='submit', class='btn btn-lg btn-block btn-custom', value='Update')
+      input(type='submit', class='btn btn-lg btn-block btn-custom', value='Update')
     
 block javascript
   script.

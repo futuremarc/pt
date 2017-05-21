@@ -56,14 +56,11 @@ $("body").on('submit', '#pt-auth-form', function(e) {
 
   if (action === 'settings') {
 
+    myCharacter.data.subscriptions = subs
     errorMessage.html('&nbsp;')
-    var data = {
-      subscriptions: subs
-    }
 
-    putCharacter(data, function(data) {
+    putCharacter(function(data) {
       console.log(data)
-
       errorMessage.html(data.message + ' settings!')
       clearTimeout(timeout)
 
@@ -113,6 +110,66 @@ $("body").on('submit', '#pt-auth-form', function(e) {
     }
   })
 })
+
+
+//
+
+
+function onWindowMsg(e) {
+  console.log('receiveMessage', e)
+
+  var iframe = $('.pt-iframe')[0]
+  var event = e.data.event
+
+
+  //if (e.origin !== iframe.src) return;
+
+  switch (event) {
+
+    case 'settings':
+
+      var info = getCharacterInfo()
+      var data = {
+        '_id': info._id,
+        'position': info.position,
+        'rotation': info.rotation,
+        'name': info.name
+      }
+
+      iframe.contentWindow.postMessage({
+        'data': data,
+        'event': event
+      }, window.location)
+
+      break;
+
+    case 'friend':
+
+      var info = getCharacterInfo()
+      var data = {
+        '_id': info._id,
+        'position': info.position,
+        'rotation': info.rotation,
+        'name': info.name
+      }
+
+      var action = $(this).data('action')
+
+      var data = {
+        userId: userId,
+        friendId: friendId
+      }
+      console.log('friend')
+      break;
+  }
+
+}
+
+
+//
+
+
+window.addEventListener("message", onWindowMsg, false);
 
 
 //
@@ -177,7 +234,7 @@ $('body').on('keyup', '#pt-friend-form', function(e) {
     success: function(data) {
       console.log(data)
       clearTimeout(timeout)
-      
+
       if (data.status === 'success') {
 
         if (data.data) errorMessage.html(data.message + ' <strong>' + data.data.name + '</strong>!')
@@ -186,9 +243,9 @@ $('body').on('keyup', '#pt-friend-form', function(e) {
 
       } else if (data.status === 'not found') {
         changeSubmitButton(true)
-        // timeout = setTimeout(function() {
-        //   errorMessage.html('&nbsp;')
-        // }, 2000)
+          // timeout = setTimeout(function() {
+          //   errorMessage.html('&nbsp;')
+          // }, 2000)
       } else if (data.status === 'error') {
         errorMessage.html(data.message)
         changeSubmitButton(true)
@@ -263,6 +320,5 @@ $('body').on('click', '#logout', function() {
   }, function() {
     window.location.href = 'http://localhost:8080/logout'
   })
-  
-})
 
+})

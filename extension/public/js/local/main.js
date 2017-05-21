@@ -34,8 +34,8 @@ function render() {
 
 function animateMyChar() {
 
-  if (key.right && (activeKey === 39 || activeKey === 40 || activeKey === 38)) myCharacter.position.x += .05
-  if (key.left && myCharacter.position.x > .2 && (activeKey === 37 || activeKey === 40 || activeKey === 38)) myCharacter.position.x -= .05
+  if (key.right && (activeKey === 39 || activeKey === 40 || activeKey === 38)) myCharacter.position.x += .075
+  if (key.left && myCharacter.position.x > .2 && (activeKey === 37 || activeKey === 40 || activeKey === 38)) myCharacter.position.x -= .075
 
   else if (myCharacter.position.x < .4 && sceneCharacters.visible) {
 
@@ -68,8 +68,8 @@ function animateOtherChars() {
 
       if (character.isWalking) {
 
-        if (character.isWalking === 'right') character.position.x += .05
-        else if (character.position.x > 0) character.position.x -= .05
+        if (character.isWalking === 'right') character.position.x += .075
+        else if (character.position.x > 0) character.position.x -= .075
 
       }
 
@@ -78,11 +78,7 @@ function animateOtherChars() {
 
       else if (character.isWalking && isNameDisplayed && isMouseHovering) hideNameTags()
       else if (!character.isWalking && !isNameDisplayed && isMouseHovering && sceneCharacters.visible) showNameTags()
-
-
     }
-
-
   }
 }
 
@@ -118,6 +114,8 @@ function initPt() {
 
 function detectMeshHover(e) {
 
+  if (!isMouseHovering) return
+
   var x = (mouseX / window.innerWidth) * 2 - 1;
   var y = -(mouseY / window.innerHeight) * 2 + 1;
 
@@ -127,12 +125,11 @@ function detectMeshHover(e) {
   var intersects = raycaster.intersectObjects(scene.children, true);
 
   if (intersects.length > 0) {
+
     if (!hoveredMesh) {
 
       hoveredMesh = intersects[0].object;
       $('body').addClass('pt-hovering')
-
-      if (hoveredMesh.purpose === 'menu') triggerMenu()
     }
 
   } else {
@@ -206,12 +203,21 @@ function onVisibilityChange() {
 
 
 function addDomListeners() {
+  document.addEventListener('click', onDocumentClick)
+  document.addEventListener('keydown', onKeyDown)
+  document.addEventListener('keyup', onKeyUp)
+  window.addEventListener('visibilitychange', onVisibilityChange)
+  window.addEventListener('mousemove', onMouseMove)
+  window.addEventListener('resize', onWindowResize)
+}
 
-  document.addEventListener('keydown', onKeyDown, false);
-  document.addEventListener('keyup', onKeyUp, false);
-  window.addEventListener('visibilitychange', onVisibilityChange, false);
-  window.addEventListener('mousemove', onMouseMove, false);
-  window.addEventListener('resize', onWindowResize, false)
+function removeDomListeners() {
+  document.removeEventListener('click', onDocumentClick)
+  document.removeEventListener('keydown', onKeyDown)
+  document.removeEventListener('keyup', onKeyUp)
+  window.removeEventListener('visibilitychange', onVisibilityChange)
+  window.removeEventListener('mousemove', onMouseMove)
+  window.removeEventListener('resize', onWindowResize)
 }
 
 

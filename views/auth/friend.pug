@@ -3,17 +3,17 @@ extends ../main/layout
 block css
 
 block content
+  div(class='pt-auth-container')
+    form(id='pt-friend-form', class='pt-form' data-action='request')
 
-  form(id='pt-friend-form', class='pt-form' data-action='request')
-
-    div(class='error-message')
-      h3 &nbsp;
-    br
-    div(id='auth-name-parent')
-      input(class='input-lg auth-name form-control', name='name', placeholder='Enter friend\'s name', autocomplete='off')
-    br
+      div(class='error-message')
+        h3 &nbsp;
+      br
+      div(id='auth-name-parent')
+        input(class='input-lg auth-name form-control', name='name', placeholder='Enter a friend\'s nickname', autocomplete='off')
+      br
    
-    input(type='submit', disabled="true", class='btn btn-lg btn-block btn-custom', value='Send request')
+      input(type='submit', disabled="true", class='btn btn-lg btn-block btn-custom', value='Send request')
 
 block javascript
   script(src='/js/local/auth/friend.js')

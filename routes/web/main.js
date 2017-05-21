@@ -74,6 +74,10 @@ module.exports = function() {
     })
   })
 
+   router.get('/:anything', function(req, res) {
+    res.redirect('/')
+  })
+
   return router
 
 }
