@@ -1,24 +1,26 @@
-<ul data-id='{{data._id}}'  data-name='{{data.name}}'>
+<ul data-id='{{data._id}}'  data-name='{{data.name}}' data-is-me='{{isMe}}'>
 
 	{{#if isMe}}
 		  <li>
-		    <a href='#' id='pt-menu-home' data-purpose='home'>home</a>
+		    <a href='#' class='pt-menu-home' data-purpose='home'>home</a>
 		  </li>
 	 {{/if}}
 
  	{{#if isMe}}
   		<li>
-    		<a href='#' id='pt-menu-friend' data-purpose='friend' data-action='add'>add friend</a>
+    		<a href='#' class='pt-menu-friend' data-purpose='friend' data-action='add'>add friend</a>
   		</li>
   	{{/if}}
 
+  	{{#if isMe}}
   	<li>
-    	<a href='#' id='pt-menu-settings' data-purpose='settings'>settings</a>
+    	<a href='#' class='pt-menu-settings' data-purpose='settings'>settings</a>
   	</li>
+  	{{/if}}
 
  	{{#unless isMe}}
   	<li>
-    	<a href='#' id='pt-menu-hide' data-purpose='hide'>hide</a>
+    	<a href='#' class='pt-menu-hide' data-purpose='hide'>hide {{data.name}}</a>
   	</li>
   	{{/unless}}
 

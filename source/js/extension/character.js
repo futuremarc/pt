@@ -46,18 +46,22 @@ function createCharacter(data, cB) {
     var menu = $('<div class="pt-menu"></div>')
     var html = Templates.extension.addMenu({isMe: isMe, data:data})
 
+    if (isMe) character.isMe = true
     character.menu = menu
     $('body').append(menu)
     menu.html(html)
 
-    $('.pt-menu a').click(toggleMenu)
-    $('#pt-menu-hide').click(function(){
-      character.nametag = ''
+    menu.find('.pt-menu-hide').click(function(){
+      character.nameTag.remove()
+      character.menu.remove()
       sceneCharacters.remove(character)
     })
-    $('#pt-menu-friend, #pt-menu-settings, #pt-menu-home').click(openIframe)
-    $('.pt-menu').click(function(e) {
+    menu.find('.pt-menu-friend, .pt-menu-settings, .pt-menu-home').click(openIframe)
+    menu.click(function(e) {
       e.stopPropagation()
+    })
+    menu.find('a').click(function(e) {
+      hideMenu()
     })
 
 
@@ -79,6 +83,8 @@ function createCharacter(data, cB) {
 
       this.rotation.y = dir * Math.PI / 2
       this.fadeAction(this.animations[2])
+
+      if(!this.isWalking) menu.hide()
       this.isWalking = direction
     }
 

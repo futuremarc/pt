@@ -153,6 +153,8 @@ function onWindowMsg(e) {
         'name': info.name
       }
 
+      return
+
       var action = $(this).data('action')
 
       var data = {
@@ -161,7 +163,7 @@ function onWindowMsg(e) {
       }
       console.log('friend')
 
-       iframe.contentWindow.postMessage({
+      iframe.contentWindow.postMessage({
         'data': data,
         'event': event
       }, window.location)
@@ -220,50 +222,49 @@ $("body").on('submit', '#pt-friend-form', function(e) {
 //
 
 
-$('body').on('keyup', '#pt-friend-form', function(e) {
+// $('body').on('keyup', '#pt-friend-form', function(e) {
 
-  if (e.keyCode === 13) return
+//   if (e.keyCode === 13) return
 
-  var errorMessage = $(".error-message h3")
-  var name = $(this).find('input').val()
-  var timeout = null
+//   var errorMessage = $(".error-message h3")
+//   var name = $(this).find('input').val()
+//   var timeout = null
 
-  if (!name) return
-  
-  clearTimeout(timeout)
-  errorMessage.html('searching...')
+//   if (!name) return
 
-  var self = this
+//   clearTimeout(timeout)
+//   errorMessage.html('searching...')
 
-  $.ajax({
-    method: 'GET',
-    url: 'http://localhost:8080/api/user/' + name,
-    success: function(data) {
-      console.log(data)
-      clearTimeout(timeout)
+//   var self = this
 
-      if (data.status === 'success') {
+//   $.ajax({
+//     method: 'GET',
+//     url: 'http://localhost:8080/api/user/' + name,
+//     success: function(data) {
+//       console.log(data)
+//       clearTimeout(timeout)
 
-        if (data.data) errorMessage.html(data.message + ' <strong>' + data.data.name + '</strong>!')
-        $(self).data('id', data.data._id)
-        changeSubmitButton(false)
+//       if (data.status === 'success') {
 
-      } else if (data.status === 'not found') {
-        changeSubmitButton(true)
-          // timeout = setTimeout(function() {
-          //   errorMessage.html('&nbsp;')
-          // }, 2000)
-      } else if (data.status === 'error') {
-        errorMessage.html(data.message)
-        changeSubmitButton(true)
-      }
-    },
-    error: function(err) {
-      console.log(err)
-    }
-  })
-})
+//         if (data.data) errorMessage.html(data.message + ' <strong>' + data.data.name + '</strong>!')
+//         $(self).data('id', data.data._id)
+//         changeSubmitButton(false)
 
+//       } else if (data.status === 'not found') {
+//         changeSubmitButton(true)
+//           // timeout = setTimeout(function() {
+//           //   errorMessage.html('&nbsp;')
+//           // }, 2000)
+//       } else if (data.status === 'error') {
+//         errorMessage.html(data.message)
+//         changeSubmitButton(true)
+//       }
+//     },
+//     error: function(err) {
+//       console.log(err)
+//     }
+//   })
+// })
 
 //
 

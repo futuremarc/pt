@@ -183,14 +183,14 @@ function addMenuIcon() {
   var icon = $('<span class="glyphicon glyphicon-menu-hamburger"></span>')
   var iconContainer = $('<div class="pt-menu-icon"></div>')
 
-  $(iconContainer).click(function(e){
+  $(iconContainer).click(function(e) {
     e.stopPropagation()
   })
   $(iconContainer).on('mouseenter', showMenu)
 
-   iconContainer.append(icon)
+  iconContainer.append(icon)
   $('body').append(iconContainer)
-  
+
 }
 
 
@@ -202,19 +202,43 @@ function openIframe(e) {
 
   e.stopPropagation()
   var target = e.currentTarget
+  var isMe = $(target).closest('ul').data('is-me')
   var purpose = $(target).data('purpose')
   var iframe = document.createElement('iframe')
   var src = 'http://localhost:8080/' + purpose
 
+
   $('.pt-iframe').remove()
   $(iframe).attr('frameborder', 0)
   $(iframe).attr('src', src)
+  $(iframe).data('purpose', purpose)
   $(iframe).addClass('pt-iframe')
   $(iframe).click(function(e) {
     e.stopPropagation()
   })
 
   $('body').append(iframe)
+
+  iframe.onload = function() {
+    console.log('iframe loaded', window.location, window.location.href)
+
+    $(iframe.contentWindow.document).on('keyup', function(e) {
+
+      console.log('keydown iframe', e.keyCode)
+
+      if (e.keyCode === 13) return
+
+      var purpose = $(iframe).data('purpose')
+
+        iframe.contentWindow.postMessage({
+          'event': purpose
+        }, window.location.origin)
+
+    })
+
+  }
+
+
 
 }
 
@@ -231,18 +255,18 @@ function toggleMenu(e) {
 //
 
 
-function showPointer(){
- $('body').addClass('pt-hovering')
- isMousePointer = true
+function showPointer() {
+  $('body').addClass('pt-hovering')
+  isMousePointer = true
 }
 
 
 //
 
 
-function hidePointer(){
- $('body').removeClass('pt-hovering') 
- isMousePointer = false
+function hidePointer() {
+  $('body').removeClass('pt-hovering')
+  isMousePointer = false
 }
 
 

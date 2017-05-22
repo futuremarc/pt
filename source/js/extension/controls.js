@@ -125,8 +125,6 @@ isAltKeyDown = false
 
 function onKeyDown(e) {
 
-  hideMenu()
-
   if (activeKey === e.keyCode) return
 
 
