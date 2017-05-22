@@ -172,7 +172,7 @@ function hideNameTags() {
 
 
 function addCanvasToPage() {
-  $('<div id="pt-main-container" class="pt-override-page"></div>').appendTo('body');
+  $('<div id="pt-container" class="pt-override-page"></div>').appendTo('body');
 }
 
 
@@ -191,27 +191,6 @@ function addMenuIcon() {
    iconContainer.append(icon)
   $('body').append(iconContainer)
   
-}
-
-
-//
-
-
-function addMenuToPage() {
-
-  var container = $('<div id="pt-menu-container"></div>')
-  var html = Templates.extension.addMenu()
-
-  $('body').append(container)
-  container.html(html)
-
-  $('#pt-menu-hide').click(togglePt)
-  $('.pt-menu a').click(toggleMenu)
-  $('#pt-menu-friend, #pt-menu-settings, #pt-menu-home').click(openIframe)
-  $('.pt-menu').click(function(e){
-    e.stopPropagation()
-  })
-
 }
 
 
@@ -245,7 +224,25 @@ function openIframe(e) {
 
 function toggleMenu(e) {
   e.preventDefault()
-  $('#pt-menu-container').toggle();
+  $('.pt-menu').toggle();
+}
+
+
+//
+
+
+function showPointer(){
+ $('body').addClass('pt-hovering')
+ isMousePointer = true
+}
+
+
+//
+
+
+function hidePointer(){
+ $('body').removeClass('pt-hovering') 
+ isMousePointer = false
 }
 
 
@@ -261,9 +258,14 @@ function onDocumentClick() {
 //
 
 
-function showMenu() {
-  $('#pt-menu-container').show();
-  $('.pt-menu').addClass('pt-animated pt-zoomIn')
+function showMenu(mesh) {
+
+  hideMenu()
+  var pos = worldToScreen(mesh.position)
+  var menu = mesh.menu
+
+  menu.css('left', pos.x)
+  menu.show();
 }
 
 
@@ -271,7 +273,7 @@ function showMenu() {
 
 
 function hideMenu() {
-  $('#pt-menu-container').hide();
+  $('.pt-menu').hide();
 }
 
 
@@ -279,8 +281,8 @@ function hideMenu() {
 
 
 function togglePt() {
-  $('#pt-menu-container').remove()
-  $('#pt-main-container').remove()
+  $('.pt-menu').remove()
+  $('#pt-container').remove()
   $('.pt-menu-icon').remove()
   $('.pt-iframe').remove()
   removeDomListeners()
@@ -306,7 +308,7 @@ function changeSubmitButton(disable, replaceText, id) {
 
 
 function toggleCanvas() {
-  $('#pt-main-container').toggle()
+  $('#pt-container').toggle()
 }
 
 

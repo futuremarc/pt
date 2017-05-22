@@ -1,7 +1,9 @@
 var isNameDisplayed = false,
   mouseX = 0,
   mouseY = 0,
-  isMouseHovering = false
+  isMouseHovering = false,
+  isMousePointer = false
+
 
 //
 
@@ -34,18 +36,21 @@ function render() {
 
 function animateMyChar() {
 
-  if (key.right && (activeKey === 39 || activeKey === 40 || activeKey === 38)) myCharacter.position.x += .075
-  if (key.left && myCharacter.position.x > .2 && (activeKey === 37 || activeKey === 40 || activeKey === 38)) myCharacter.position.x -= .075
+  if (key.right && (activeKey === 39 || activeKey === 40 || activeKey === 38)) myCharacter.position.x += .065
+  if (key.left && myCharacter.position.x > .2 && (activeKey === 37 || activeKey === 40 || activeKey === 38)) myCharacter.position.x -= .065
 
   else if (myCharacter.position.x < .4 && sceneCharacters.visible) {
 
     sceneCharacters.visible = false
     mesh.position.set(.25, -.1, 0)
+    mesh.material.transparent = true
+    mesh.material.opacity = .30
 
   } else if (myCharacter.position.x > .4 && !sceneCharacters.visible) {
 
     sceneCharacters.visible = true
     mesh.position.set(.25, .85, 0)
+    mesh.material.opacity = .8
   }
 
   if (myCharacter.isWalking && isNameDisplayed && isMouseHovering) hideNameTags()
@@ -68,8 +73,8 @@ function animateOtherChars() {
 
       if (character.isWalking) {
 
-        if (character.isWalking === 'right') character.position.x += .075
-        else if (character.position.x > 0) character.position.x -= .075
+        if (character.isWalking === 'right') character.position.x += .065
+        else if (character.position.x > 0) character.position.x -= .065
 
       }
 
@@ -89,7 +94,7 @@ function animateOtherChars() {
 function initPt() {
 
   addCanvasToPage()
-  addMenuToPage()
+  //addMenuToPage()
 
   chrome.storage.sync.get('pt-user', function(data) {
 
@@ -114,29 +119,33 @@ function initPt() {
 
 function detectMeshHover(e) {
 
-  if (!isMouseHovering) return
+  if (!isMouseHovering && isMousePointer){
+    hidePointer()
+    return
+  }else if (!isMouseHovering) return
 
   var x = (mouseX / window.innerWidth) * 2 - 1;
   var y = -(mouseY / window.innerHeight) * 2 + 1;
-
   var raycaster = new THREE.Raycaster();
+
   raycaster.setFromCamera(new THREE.Vector2(x, y), camera);
 
   var intersects = raycaster.intersectObjects(scene.children, true);
 
-  if (intersects.length > 0) {
+  if (intersects.length > 0 && isMouseHovering) {
 
     if (!hoveredMesh) {
 
       hoveredMesh = intersects[0].object;
-      $('body').addClass('pt-hovering')
+      if (hoveredMesh.hasPointer) showPointer()
+      if (hoveredMesh.hasMenu) showMenu(hoveredMesh)
     }
 
   } else {
-    if (hoveredMesh) {
 
+    if (hoveredMesh) {
       hoveredMesh = undefined;
-      $('body').removeClass('pt-hovering')
+      hidePointer()
     }
   }
 }

@@ -23,7 +23,7 @@ function initScene(data) {
 
   renderer = isWebGL() ? new THREE.WebGLRenderer(options) : new THREE.CanvasRenderer(options);
 
-  container = document.getElementById('pt-main-container');
+  container = document.getElementById('pt-container');
 
   renderer.setPixelRatio(window.devicePixelRatio);
   renderer.setSize(container.offsetWidth, container.offsetHeight);
@@ -56,7 +56,7 @@ function setCameraZoom(data) {
   mesh = new THREE.Mesh(box, new THREE.MeshBasicMaterial({
     'color': 0x7ec0ee,
     'transparent':true,
-    'opacity':.7
+    'opacity':.8
   }))
 
   mesh.purpose = 'menu'
@@ -64,7 +64,7 @@ function setCameraZoom(data) {
   mesh.renderOrder = 1
 
   scene.add(mesh)
-  addMenuIcon()
+  //addMenuIcon()
 
   sceneCharacters.position.set(0, 1, 0);
 

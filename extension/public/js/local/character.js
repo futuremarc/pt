@@ -39,9 +39,31 @@ function createCharacter(data, cB) {
     character.nameTag = $('<div class="pt-name-tag">' + name + '</div>')
 
     var nameTag = character.nameTag
-    $('#pt-main-container').prepend(nameTag)
+    $('body').prepend(nameTag)
+
+
+    var isMe = (renderOrder === 0)
+    var menu = $('<div class="pt-menu"></div>')
+    var html = Templates.extension.addMenu({isMe: isMe, data:data})
+
+    character.menu = menu
+    $('body').append(menu)
+    menu.html(html)
+
+    $('.pt-menu a').click(toggleMenu)
+    $('#pt-menu-hide').click(function(){
+      character.nametag = ''
+      sceneCharacters.remove(character)
+    })
+    $('#pt-menu-friend, #pt-menu-settings, #pt-menu-home').click(openIframe)
+    $('.pt-menu').click(function(e) {
+      e.stopPropagation()
+    })
+
 
     character.purpose = 'character' //associate purpose for all meshes
+    character.hasPointer = true
+    character.hasMenu = true
     character.data = data
     character.mixer = new THREE.AnimationMixer(character);
     character.actions = {};
@@ -85,12 +107,12 @@ function createCharacter(data, cB) {
       this.material.materials[0].opacity = 1
     }
 
-    character.faceForward = function(){
-      this.rotation.set(0,Math.PI * 2,0)
+    character.faceForward = function() {
+      this.rotation.set(0, Math.PI * 2, 0)
     }
 
-    character.faceBackward= function(){
-      this.rotation.set(0,Math.PI,0)
+    character.faceBackward = function() {
+      this.rotation.set(0, Math.PI, 0)
     }
 
     character.fadeAction = function(name) {
@@ -144,7 +166,7 @@ function createCharacter(data, cB) {
 
     sceneCharacters.add(character)
     characters[data._id] = character
-    
+
     if (cB) cB(character)
 
   });
@@ -353,4 +375,3 @@ function getCharacterPos() {
 
   return pos
 }
-

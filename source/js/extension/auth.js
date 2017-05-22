@@ -160,6 +160,11 @@ function onWindowMsg(e) {
         friendId: friendId
       }
       console.log('friend')
+
+       iframe.contentWindow.postMessage({
+        'data': data,
+        'event': event
+      }, window.location)
       break;
   }
 
@@ -223,6 +228,8 @@ $('body').on('keyup', '#pt-friend-form', function(e) {
   var name = $(this).find('input').val()
   var timeout = null
 
+  if (!name) return
+  
   clearTimeout(timeout)
   errorMessage.html('searching...')
 
