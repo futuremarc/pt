@@ -142,11 +142,12 @@ function onKeyDown(e) {
     var info = getCharacterInfo()
 
     data = {
-      _id: info._id,
-      position: info.position,
-      rotation: info.rotation,
-      name: info.name,
-      liveFriends: info.liveFriends
+      'type' : 'socket',
+      '_id': info._id,
+      'position': info.position,
+      'rotation': info.rotation,
+      'name': info.name,
+      'liveFriends': info.liveFriends
     }
   }
 
@@ -176,11 +177,12 @@ function onKeyUp(e) {
     var info = getCharacterInfo()
 
     data = {
-      _id: info._id,
-      position: info.position,
-      rotation: info.rotation,
-      name: info.name,
-      liveFriends: info.liveFriends
+      'type' : 'socket',
+      '_id': info._id,
+      'position': info.position,
+      'rotation': info.rotation,
+      'name': info.name,
+      'liveFriends': info.liveFriends
     }
   }
 

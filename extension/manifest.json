@@ -18,7 +18,12 @@
     "48": "public/img/brand/favicon-48.png",
     "128": "public/img/brand/favicon-128.png"
   },
-
+  "externally_connectable": {
+    "matches": [
+      "https://passti.me/*",
+      "http://localhost/*"
+    ]
+  },
   "browser_action": {
     "default_icon": "public/img/brand/favicon-38.png",
     "default_title": "Passtime"
@@ -30,9 +35,8 @@
 
     {
       "matches": ["<all_urls>"],
-      "js": ["public/js/lib/jquery.min.js","public/js/lib/bootstrap.min.js", "public/js/lib/three.min.js", "public/js/lib/three.projector.js" ,"public/js/lib/socket.io.min.js", "public/js/lib/handlebars.runtime.min.js", "public/js/local/templates/templates.js", "public/js/local/helpers.js", "public/js/local/sockets.js", "public/js/local/scene.js", "public/js/local/character.js", "public/js/local/controls.js", "public/js/local/main.js", "public/js/local/auth.js"],
-      "css": ["public/css/lib/bootstrap.min.css", "public/css/local/extension.css"],
-      "all_frames": true
+      "js": ["public/js/lib/jquery.min.js", "public/js/lib/three.min.js", "public/js/lib/three.projector.js" ,"public/js/lib/socket.io.min.js", "public/js/lib/handlebars.runtime.min.js", "public/js/local/templates/templates.js", "public/js/local/helpers.js", "public/js/local/sockets.js", "public/js/local/scene.js", "public/js/local/character.js", "public/js/local/controls.js", "public/js/local/main.js", "public/js/local/auth.js"],
+      "css": ["public/css/local/extension.css"]
     }
 
   ],

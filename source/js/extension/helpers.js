@@ -23,6 +23,7 @@ function emitJoinMsg() {
     var info = getCharacterInfo()
 
     var data = {
+      'type' : 'socket',
       'event': 'join',
       '_id': info._id,
       'position': info.position,
@@ -44,6 +45,7 @@ function emitLeaveMsg() {
     var info = getCharacterInfo()
 
     var data = {
+      'type' : 'socket',
       'event': 'leave',
       '_id': info._id,
       'position': info.position,
@@ -197,7 +199,6 @@ function addMenuIcon() {
 //
 
 
-
 function openIframe(e) {
 
   e.stopPropagation()
@@ -219,26 +220,64 @@ function openIframe(e) {
 
   $('body').append(iframe)
 
-  iframe.onload = function() {
-    console.log('iframe loaded', window.location, window.location.href)
+  // iframe.onload = function() {
+  //   console.log('iframe loaded', window.location, window.location.origin)
 
-    $(iframe.contentWindow.document).on('keyup', function(e) {
+  //   $(iframe.contentWindow.document).on('keyup', function(e) {
 
-      console.log('keydown iframe', e.keyCode)
+  //     if (e.keyCode === 13) return
 
-      if (e.keyCode === 13) return
+  //     var errorMessage = $(iframe).contents().find('.error-message h3')
+  //     var name = $(iframe).contents().find('input').val()
+  //     var timeout = null
 
-      var purpose = $(iframe).data('purpose')
+  //     if (!name) return
 
-        iframe.contentWindow.postMessage({
-          'event': purpose
-        }, window.location.origin)
+  //     clearTimeout(timeout)
+  //     errorMessage.html('searching...')
 
-    })
+  //     var self = this
 
-  }
+  //     $.ajax({
+  //       method: 'GET',
+  //       url: 'http://localhost:8080/api/user/' + name,
+  //       success: function(data) {
+  //         console.log(data)
+  //         clearTimeout(timeout)
 
+  //         if (data.status === 'success') {
 
+  //           if (data.data) errorMessage.html(data.message + ' <strong>' + data.data.name + '</strong>!')
+  //           $(self).data('id', data.data._id)
+
+  //           //iframe.contentWindow.changeSubmitButton(false)
+  //           $('iframe')[0].contentWindow.changeSubmitButton(false)
+
+  //         } else if (data.status === 'not found') {
+  //           changeSubmitButton(true)
+  //             // timeout = setTimeout(function() {
+  //             //   errorMessage.html('&nbsp;')
+  //             // }, 2000)
+  //         } else if (data.status === 'error') {
+  //           errorMessage.html(data.message)
+  //           iframe.contentWindow.changeSubmitButton(true)
+  //         }
+  //       },
+  //       error: function(err) {
+  //         console.log(err)
+  //       }
+  //     })
+  //   })
+
+  // }
+
+}
+
+function onExternalMsg(data, sender, sendResponse){
+  console.log('extension recieved from bg', data)
+  data.update = true
+  if (sendResponse) sendResponse(data)
+  console.log('extension sent', data, sendResponse != undefined)
 
 }
 

@@ -94,7 +94,7 @@ function animateOtherChars() {
 function initPt() {
 
   addCanvasToPage()
-  //addMenuToPage()
+    //addMenuToPage()
 
   chrome.storage.sync.get('pt-user', function(data) {
 
@@ -119,10 +119,10 @@ function initPt() {
 
 function detectMeshHover(e) {
 
-  if (!isMouseHovering && isMousePointer){
+  if (!isMouseHovering && isMousePointer) {
     hidePointer()
     return
-  }else if (!isMouseHovering) return
+  } else if (!isMouseHovering) return
 
   var x = (mouseX / window.innerWidth) * 2 - 1;
   var y = -(mouseY / window.innerHeight) * 2 + 1;
@@ -251,6 +251,7 @@ function onIdleState(data) {
         'rotation': info.rotation,
         'liveFriends': info.liveFriends,
         'event': 'action',
+        'type':'socket',
         'action': state
       }
 
@@ -278,7 +279,7 @@ function onIdleState(data) {
 
 
 function onBgMessage(data, sender, sendResponse) {
-  console.log('recieved', data)
+  console.log('extension recieved', data)
 
   switch (data.type) {
 
@@ -287,6 +288,9 @@ function onBgMessage(data, sender, sendResponse) {
       break;
     case 'socket':
       onSocket(data)
+      break;
+    case 'external':
+      onExternalMsg(data, sender, sendResponse)
       break;
   }
 }

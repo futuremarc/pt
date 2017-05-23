@@ -36,137 +36,124 @@ function signInFromExtension(data) {
 //
 
 
-$("body").on('submit', '#pt-auth-form', function(e) {
+// $("body").on('submit', '#pt-auth-form', function(e) {
 
-  e.preventDefault();
+//   e.preventDefault();
 
-  var errorMessage = $(".error-message h3")
-  var email = $('.auth-email').val();
-  var pass = $('.auth-password').val();
-  var name = $('.auth-name').val();
-  var action = $(this).data('action')
-  var subs = []
-  var timeout = null
+//   var errorMessage = $(".error-message h3")
+//   var email = $('.auth-email').val();
+//   var pass = $('.auth-password').val();
+//   var name = $('.auth-name').val();
+//   var action = $(this).data('action')
+//   var subs = []
+//   var timeout = null
 
-  $("#pt-auth-form input:checkbox:checked").each(function() {
+//   $("#pt-auth-form input:checkbox:checked").each(function() {
 
-    var sub = $(this).data('id')
-    subs.push(sub)
-  });
+//     var sub = $(this).data('id')
+//     subs.push(sub)
+//   });
 
-  if (action === 'settings') {
+//   if (action === 'settings') {
 
-    myCharacter.data.subscriptions = subs
-    errorMessage.html('&nbsp;')
+//     myCharacter.data.subscriptions = subs
+//     errorMessage.html('&nbsp;')
 
-    putCharacter(function(data) {
-      console.log(data)
-      errorMessage.html(data.message + ' settings!')
-      clearTimeout(timeout)
+//     putCharacter(function(data) {
+//       console.log(data)
+//       errorMessage.html(data.message + ' settings!')
+//       clearTimeout(timeout)
 
-      timeout = setTimeout(function() {
-        errorMessage.html('&nbsp;')
-      }, 2000)
+//       timeout = setTimeout(function() {
+//         errorMessage.html('&nbsp;')
+//       }, 2000)
 
-    })
+//     })
 
-    return
-  }
+//     return
+//   }
 
-  var pos = getCharacterPos()
-  var rot = getCharacterRot()
-  var data = {
-    email: email,
-    password: pass,
-    name: name,
-    position: pos,
-    rotation: rot,
-    subscriptions: subs
-  }
+//   var pos = getCharacterPos()
+//   var rot = getCharacterRot()
+//   var data = {
+//     email: email,
+//     password: pass,
+//     name: name,
+//     position: pos,
+//     rotation: rot,
+//     subscriptions: subs
+//   }
 
-  $.ajax({
-    method: 'POST',
-    url: 'http://localhost:8080/api/' + action,
-    data: data,
-    success: function(data) {
-      console.log(data)
-      if (data.status === 'success') {
+//   $.ajax({
+//     method: 'POST',
+//     url: 'http://localhost:8080/api/' + action,
+//     data: data,
+//     success: function(data) {
+//       console.log(data)
+//       if (data.status === 'success') {
 
-        errorMessage.html(data.message + ' <strong>' + data.data.name + '</strong>!')
-        myCharacter.data = data.data
+//         errorMessage.html(data.message + ' <strong>' + data.data.name + '</strong>!')
+//         myCharacter.data = data.data
 
-        putCharacter()
+//         putCharacter()
 
-        setTimeout(function() {
-          location.href = '/'
-        }, 500)
+//         setTimeout(function() {
+//           location.href = '/'
+//         }, 500)
 
-      } else {
-        errorMessage.html(data.message)
-      }
-    },
-    error: function(err) {
-      console.log(err)
-    }
-  })
-})
+//       } else {
+//         errorMessage.html(data.message)
+//       }
+//     },
+//     error: function(err) {
+//       console.log(err)
+//     }
+//   })
+// })
 
 
 //
 
 
-function onWindowMsg(e) {
-  console.log('receiveMessage', e)
+function onWindowMsg(event) {
+  console.log('EXTENSION received', event)
 
   var iframe = $('.pt-iframe')[0]
-  var event = e.data.event
-
+  var action = event.data.action
 
   //if (e.origin !== iframe.src) return;
+  var info = getCharacterInfo()
+  var data = {
+    '_id': info._id,
+    'position': info.position,
+    'rotation': info.rotation,
+    'name': info.name
+  }
 
-  switch (event) {
+
+  switch (action) {
 
     case 'settings':
 
-      var info = getCharacterInfo()
-      var data = {
-        '_id': info._id,
-        'position': info.position,
-        'rotation': info.rotation,
-        'name': info.name
-      }
-
       iframe.contentWindow.postMessage({
         'data': data,
-        'event': event
-      }, window.location)
+        'action': action
+      }, '*')
 
       break;
 
     case 'friend':
 
-      var info = getCharacterInfo()
-      var data = {
-        '_id': info._id,
-        'position': info.position,
-        'rotation': info.rotation,
-        'name': info.name
-      }
+      var friendData = event.data.data
+      var friendId = friendData.friendId
 
-      return
-
-      var action = $(this).data('action')
-
-      var data = {
-        userId: userId,
-        friendId: friendId
-      }
-      console.log('friend')
+      data.friendId = friendId
 
       iframe.contentWindow.postMessage({
         'data': data,
-        'event': event
-      }, window.location)
+        'action': action
+      }, '*')
+
       break;
   }
 
@@ -182,41 +169,41 @@ window.addEventListener("message", onWindowMsg, false);
 //
 
 
-$("body").on('submit', '#pt-friend-form', function(e) {
+// $("body").on('submit', '#pt-friend-form', function(e) {
 
-  e.preventDefault();
+//   e.preventDefault();
 
-  var errorMessage = $(".error-message h3")
-  var name = $('.auth-name').val();
-  var userId = myCharacter.data._id
-  var friendId = $(this).data('id')
-  var action = $(this).data('action')
+//   var errorMessage = $(".error-message h3")
+//   var name = $('.auth-name').val();
+//   var userId = myCharacter.data._id
+//   var friendId = $(this).data('id')
+//   var action = $(this).data('action')
 
-  var data = {
-    userId: userId,
-    friendId: friendId
-  }
+//   var data = {
+//     userId: userId,
+//     friendId: friendId
+//   }
 
-  $.ajax({
-    method: 'POST',
-    url: 'http://localhost:8080/api/user/friend/' + action,
-    data: data,
-    success: function(data) {
-      console.log(data)
-      if (data.status === 'success') {
+//   $.ajax({
+//     method: 'POST',
+//     url: 'http://localhost:8080/api/user/friend/' + action,
+//     data: data,
+//     success: function(data) {
+//       console.log(data)
+//       if (data.status === 'success') {
 
-        errorMessage.html(data.message + ' to <strong>' + data.data.name + '</strong>!')
-        updateCharacter(null, 'getRemote')
+//         errorMessage.html(data.message + ' to <strong>' + data.data.name + '</strong>!')
+//         updateCharacter(null, 'getRemote')
 
-      } else {
-        errorMessage.html(data.message)
-      }
-    },
-    error: function(err) {
-      console.log(err)
-    }
-  })
-})
+//       } else {
+//         errorMessage.html(data.message)
+//       }
+//     },
+//     error: function(err) {
+//       console.log(err)
+//     }
+//   })
+// })
 
 
 //

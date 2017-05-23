@@ -55,15 +55,14 @@ function onInstall(data) {
       title: 'Welcome!',
       message: 'Welcome!',
       items: [{
-        title: "MOVE",
+        title: "Move",
         message: "using the arrow keys."
       }, {
-        title: "SIGN OFF",
+        title: "Sign off",
         message: "by walking offscreen to the left."
-      },
-       {
-        title: "HOVER THE MENU",
-        message: "in the bottom left corner for more..."
+      }, {
+        title: "Hover over characters",
+        message: "for options."
       }],
       iconUrl: "public/img/brand/favicon-128.png",
       requireInteraction: true,
@@ -119,15 +118,11 @@ function onJoin(data) {
 
 
 function onContentMessage(data, sender, sendResponse) {
+  console.log('received content', data)
 
-  var isSocketMessage = data.event
-
-  if (isSocketMessage) {
+  if (data.type === 'socket') {
 
     var event = data.event
-    data.type = 'socket'
-
-    console.log(data)
 
     switch (event) {
 
@@ -145,12 +140,15 @@ function onContentMessage(data, sender, sendResponse) {
 //
 
 
-function emitMsgToClient(data) {
+function emitMsgToClient(data, sendResponse) {
 
   chrome.tabs.query({}, function(tabs) {
 
     tabs.forEach(function(tab) {
-      chrome.tabs.sendMessage(tab.id, data);
+      chrome.tabs.sendMessage(tab.id, data, function(response){
+        console.log('background send to iframe', response)
+        if (sendResponse && response) sendResponse(response)
+      });
     })
   });
 }
@@ -170,11 +168,21 @@ function emitMsgToServer(event, data) {
 chrome.windows.onRemoved.addListener(function(windowid) {
 
   var data = myCharacter.data
-  emitMsgToServer('leave',data)
+  emitMsgToServer('leave', data)
 })
 
 
 //
+
+
+function onExternalMessage(data, sender, sendResponse) {
+  console.log('recieved external', data, 'sender', sender)
+  emitMsgToClient(data, sendResponse)
+  return true
+ 
+}
+
+chrome.runtime.onMessageExternal.addListener(onExternalMessage);
 
 
 chrome.idle.onStateChanged.addListener(idleStateChange);
@@ -182,4 +190,3 @@ chrome.runtime.onInstalled.addListener(onInstall);
 chrome.browserAction.onClicked.addListener(onBrowserAction);
 chrome.runtime.onMessage.addListener(onContentMessage);
 initSockets()
-
