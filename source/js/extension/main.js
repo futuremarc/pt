@@ -230,6 +230,74 @@ function removeDomListeners() {
 }
 
 
+
+/*************from iframe*************/
+
+
+
+function onWindowMsg(data) {
+  console.log('extension received windowMsg', data)
+
+  var source = data.source
+  var origin = data.origin
+  var iframe = $('.pt-iframe')[0]
+  var action = data.data.action
+  var friendId = data.data.friendId
+
+  //if (e.origin !== iframe.src) return;
+  var info = getCharacterInfo()
+  var user = {
+    '_id': info._id,
+    'position': info.position,
+    'rotation': info.rotation,
+    'name': info.name
+  }
+
+
+  switch (action) {
+
+    case 'settings':
+
+      data = {
+        'user': user,
+        'action': action,
+        'type': 'window',
+        'fromExtension': true
+      }
+
+      source.postMessage(data, '*')
+
+      console.log('extension sent windowMsg', data)
+
+      break;
+
+    case 'friend':
+
+      data = {
+        'user': user,
+        'action': action,
+        'type': 'window',
+        'friendId' : friendId,
+        'fromExtension': true
+      }
+
+      console.log('extension sent windowMsg', data)
+
+      source.postMessage(data, '*')
+
+      break;
+  }
+
+}
+
+
+//
+
+
+window.addEventListener("message", onWindowMsg, false);
+
+
+
 /*************from background*************/
 
 
@@ -251,7 +319,7 @@ function onIdleState(data) {
         'rotation': info.rotation,
         'liveFriends': info.liveFriends,
         'event': 'action',
-        'type':'socket',
+        'type': 'socket',
         'action': state
       }
 
@@ -273,7 +341,6 @@ function onIdleState(data) {
     if (isRegistered()) emitLeaveMsg()
   }
 }
-
 
 //
 

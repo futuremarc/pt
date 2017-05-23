@@ -145,9 +145,13 @@ function emitMsgToClient(data, sendResponse) {
   chrome.tabs.query({}, function(tabs) {
 
     tabs.forEach(function(tab) {
-      chrome.tabs.sendMessage(tab.id, data, function(response){
-        console.log('background send to iframe', response)
-        if (sendResponse && response) sendResponse(response)
+      chrome.tabs.sendMessage(tab.id, data, function(response) {
+
+        if (sendResponse && response) {
+          console.log('background send to iframe', response)
+          sendResponse(response)
+        }
+
       });
     })
   });
@@ -179,7 +183,7 @@ function onExternalMessage(data, sender, sendResponse) {
   console.log('recieved external', data, 'sender', sender)
   emitMsgToClient(data, sendResponse)
   return true
- 
+
 }
 
 chrome.runtime.onMessageExternal.addListener(onExternalMessage);

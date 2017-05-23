@@ -1,5 +1,6 @@
 $('document').ready(function() {
 
+  var loggedIn = loggedIn || false
 
   if (loggedIn) {
 
@@ -35,16 +36,21 @@ $('document').ready(function() {
   }
 
 
+
   //
 
 
   function submitData(data, action, cB) {
 
     var timeout = null
-    var errorMessage = $('.error-message')
-    var name = data.name
+    var errorMessage = $('.error-message h3')
+    var name = data.user.name
+    var userId = data.user._id
+    var friendId = data.friendId
+    var action = action
 
-    console.log('SUBMIT', data, action)
+
+    console.log('iframe submit', data, name, action)
 
 
     switch (action) {
@@ -80,9 +86,32 @@ $('document').ready(function() {
 
         break;
 
-      case 'addFriend':
+      case 'friend':
 
-        onSubmitFriendRequest(data, action)
+        var data = {
+          userId: userId,
+          friendId: friendId
+        }
+
+        $.ajax({
+          method: 'POST',
+          url: 'http://localhost:8080/api/user/friend/' + action,
+          data: data,
+          success: function(data) {
+            console.log(data)
+            if (data.status === 'success') {
+
+              errorMessage.html(data.message + ' to <strong>' + data.data.name + '</strong>!')
+                //updateCharacter(null, 'getRemote')
+
+            } else {
+              errorMessage.html(data.message)
+            }
+          },
+          error: function(err) {
+            console.log(err)
+          }
+        })
 
         break;
     }
@@ -90,50 +119,16 @@ $('document').ready(function() {
   }
 
 
-  function onSubmitFriendRequest(data, action) {
 
-    var errorMessage = $(".error-message h3")
-    var name = data.name;
-    var userId = data._id
-    var friendId = data.friendId
-    var action = action
+  //
 
-    var data = {
-      userId: userId,
-      friendId: friendId
-    }
-
-    $.ajax({
-      method: 'POST',
-      url: 'http://localhost:8080/api/user/friend/request',
-      data: data,
-      success: function(data) {
-        console.log(data)
-        if (data.status === 'success') {
-
-          errorMessage.html(data.message + ' to <strong>' + data.data.name + '</strong>!')
-            //updateCharacter(null, 'getRemote')
-
-        } else {
-          errorMessage.html(data.message)
-        }
-      },
-      error: function(err) {
-        console.log(err)
-      }
-    })
-  }
 
 
   var windowMsgEvents = {
 
     'settings': function(data) {
 
-      console.log('IFRAME settings', data)
-
       var action = data.action
-      var data = {}
-
       var subs = []
 
       $("#pt-auth-form input:checkbox:checked").each(function() {
@@ -149,9 +144,6 @@ $('document').ready(function() {
     'friend': function(data) {
 
       var action = data.action
-      var data = data.data
-
-      console.log('IFRAME friend', data)
 
       submitData(data, action)
 
@@ -161,18 +153,81 @@ $('document').ready(function() {
 
   //
 
-  function onWindowMsg(event) {
-    console.log('IFRAME recieved', event)
+  function onWindowMsg(data) {
 
-    var action = event.data.action
-    var data = event.data
+    console.log('iframe random msg', data)
 
-    windowMsgEvents[action](data)
+    if (data.data.fromExtension) {
+
+      console.log('iframe recieved', data)
+
+      var action = data.data.action
+      var data = data.data
+
+      windowMsgEvents[action](data)
+
+    }
+
   }
 
 
 
   window.addEventListener("message", onWindowMsg, false);
+
+
+
+  //
+
+
+  $("body").on('submit', '#pt-auth-form', function(e) {
+
+    e.preventDefault();
+
+    var action = $(this).data('action')
+    var data = {
+      'action': action,
+      'type': 'window'
+    }
+
+    console.log('iframe sent', data)
+    window.parent.postMessage(data, '*')
+
+    // var extensionId = 'malhbgmooogkoheilhpjnlimhmnmlpii'
+    // chrome.runtime.sendMessage(extensionId, data, function(response){
+    //   console.log('iframe recieved', response)
+    // })
+
+  })
+
+
+
+  $("body").on('submit', '#pt-friend-form', function(e) {
+
+    e.preventDefault();
+
+    var action = $(this).data('action')
+    var friendId = $(this).data('id')
+
+    var data = {
+      'friendId': friendId,
+      'type': 'window',
+      'action': action
+    }
+
+    // var extensionId = 'malhbgmooogkoheilhpjnlimhmnmlpii'
+    // chrome.runtime.sendMessage(extensionId, data, function(response){
+    //   console.log('got response', response)
+    // })
+
+    window.parent.postMessage(data, '*')
+
+    // parent.postMessage({
+    //   data: data,
+    //   action: action
+    // }, window.location.href)
+
+  })
+
 
 
 })

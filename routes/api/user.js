@@ -20,6 +20,8 @@ module.exports = function(passport) {
       var friendId = req.body.friendId
       var userId = req.body.userId
 
+      console.log('ADD FRIEND', friendId, userId)
+
       User
         .findByIdAndUpdate(friendId, {
           $addToSet: {

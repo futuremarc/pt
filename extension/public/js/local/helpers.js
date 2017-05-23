@@ -274,7 +274,6 @@ function openIframe(e) {
 }
 
 function onExternalMsg(data, sender, sendResponse){
-  console.log('extension recieved from bg', data)
   data.update = true
   if (sendResponse) sendResponse(data)
   console.log('extension sent', data, sendResponse != undefined)

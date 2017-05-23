@@ -115,56 +115,6 @@ function signInFromExtension(data) {
 //
 
 
-function onWindowMsg(event) {
-  console.log('EXTENSION received', event)
-
-  var iframe = $('.pt-iframe')[0]
-  var action = event.data.action
-
-  //if (e.origin !== iframe.src) return;
-  var info = getCharacterInfo()
-  var data = {
-    '_id': info._id,
-    'position': info.position,
-    'rotation': info.rotation,
-    'name': info.name
-  }
-
-
-  switch (action) {
-
-    case 'settings':
-
-      iframe.contentWindow.postMessage({
-        'data': data,
-        'action': action
-      }, '*')
-
-      break;
-
-    case 'friend':
-
-      var friendData = event.data.data
-      var friendId = friendData.friendId
-
-      data.friendId = friendId
-
-      iframe.contentWindow.postMessage({
-        'data': data,
-        'action': action
-      }, '*')
-
-      break;
-  }
-
-}
-
-
-//
-
-
-window.addEventListener("message", onWindowMsg, false);
-
 
 //
 

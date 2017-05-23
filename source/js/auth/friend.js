@@ -60,29 +60,4 @@ $(document).ready(function() {
 
 
 
-  $("body").on('submit', '#pt-friend-form', function(e) {
-
-    e.preventDefault();
-
-    var action = $(this).data('action')
-    var friendId = $(this).data('id')
-
-    var data = {
-      'friendId': friendId,
-      'type':'external'
-    }
-
-    var extensionId = 'malhbgmooogkoheilhpjnlimhmnmlpii'
-    chrome.runtime.sendMessage(extensionId, data, function(response){
-      console.log('got response', response)
-    })
-
-    // parent.postMessage({
-    //   data: data,
-    //   action: action
-    // }, window.location.href)
-
-  })
-
-
 })

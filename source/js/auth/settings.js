@@ -37,26 +37,4 @@ $(document).ready(function() {
   }
 
 
-    $("body").on('submit', '#pt-auth-form', function(e) {
-
-    e.preventDefault();
-
-    var action = $(this).data('action')
-    var data = {
-      'action': action,
-      'type':'external'
-    }
-
-    console.log('iframe sent', data)
-    // parent.postMessage(data, '*')
-
-    var extensionId = 'malhbgmooogkoheilhpjnlimhmnmlpii'
-    chrome.runtime.sendMessage(extensionId, data, function(response){
-      console.log('iframe recieved', response)
-    })
-
-  })
-
-
-
 })
