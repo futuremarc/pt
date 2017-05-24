@@ -9,7 +9,7 @@ module.exports = function() {
 
     if (!req.user) return res.render('auth/login.pug')
 
-    return res.render('main/index.pug', {
+    return res.render('auth/home.pug', {
       loggedIn: true,
       userName: req.user.name
     })

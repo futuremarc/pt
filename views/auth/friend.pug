@@ -16,5 +16,8 @@ block content
       input(type='submit', disabled="true", class='btn btn-lg btn-block btn-custom', value='Send request')
 
 block javascript
+  script.
+    loggedIn = "#{loggedIn}";
+    name = "#{userName}";
   script(src='/js/local/main/main.js')
   script(src='/js/local/auth/friend.js')

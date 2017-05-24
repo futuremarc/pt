@@ -319,6 +319,7 @@ function onDocumentClick() {
 
 //
 
+var isMenuDisplayed = false
 
 function showMenu(mesh) {
 
@@ -328,6 +329,7 @@ function showMenu(mesh) {
 
   menu.css('left', pos.x)
   menu.show();
+  isMenuDisplayed = true
 }
 
 
@@ -336,6 +338,7 @@ function showMenu(mesh) {
 
 function hideMenu() {
   $('.pt-menu').hide();
+  isMenuDisplayed = false
 }
 
 

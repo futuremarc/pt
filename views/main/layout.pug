@@ -27,7 +27,7 @@ html
       ga('send', 'pageview');
     script.
       if (chrome.app.isInstalled) document.getElementById('install-tag').style.display = 'none';
-
+      
     div(class='info-tag')
       div(id='name-tag') #{userName}
       a(id='install-tag', href='#', style='display:none', onclick='chrome.webstore.install()') Add to Chrome

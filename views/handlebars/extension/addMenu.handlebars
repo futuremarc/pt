@@ -6,20 +6,38 @@
 		  </li>
 	 {{/if}}
 
+  {{#if isMe}}
+      <li>
+        <a href='#' class='pt-menu-signup' data-purpose='signup'>signup</a>
+      </li>
+  {{/if}}
+
+  {{#if isMe}}
+      <li>
+        <a href='#' class='pt-menu-login' data-purpose='login'>login</a>
+      </li>
+  {{/if}}
+
  	{{#if isMe}}
   		<li>
-    		<a href='#' class='pt-menu-friend' data-purpose='friend' data-action='add'>add friend</a>
+    		<a href='#' class='pt-menu-friend' data-purpose='friend'>add friend</a>
   		</li>
-  	{{/if}}
+  {{/if}}
 
-  	{{#if isMe}}
+  {{#if isMe}}
   	<li>
     	<a href='#' class='pt-menu-settings' data-purpose='settings'>settings</a>
   	</li>
-  	{{/if}}
+  {{/if}}
+
+  {{#if isMe}}
+      <li>
+        <a href='#' class='pt-menu-logout' data-purpose='logout'>logout</a>
+      </li>
+  {{/if}}
 
   	<li>
-    	<a href='#' class='pt-menu-hide' data-purpose='hide'>hide {{data.name}}</a>
+    	<a href='#' class='pt-menu-hide' data-purpose='hide'>hide</a>
   	</li>
 
 </ul>

@@ -112,7 +112,7 @@ function signInFromExtension(data) {
 // })
 
 
-//
+
 
 
 
@@ -256,14 +256,14 @@ $('body').on('click', '.friend-request-btn, .friends-list-btn', function(e) {
 //
 
 
-$('body').on('click', '#logout', function() {
+// $('body').on('click', '.pt-menu-logout', function() {
 
-  if (isRegistered()) emitLeaveMsg()
+//   if (isRegistered()) emitLeaveMsg()
 
-  chrome.storage.sync.set({
-    'pt-user': {}
-  }, function() {
-    window.location.href = 'http://localhost:8080/logout'
-  })
+//   chrome.storage.sync.set({
+//     'pt-user': {}
+//   }, function() {
+//     window.location.href = 'http://localhost:8080/logout'
+//   })
 
-})
+// })

@@ -1,45 +1,5 @@
 $('document').ready(function() {
 
-  var loggedIn = loggedIn || false
-
-  if (loggedIn) {
-
-    var errorMessage = $(".error-message h3")
-
-    $.ajax({
-      method: 'GET',
-      url: 'http://localhost:8080/api/user/' + name,
-      success: function(data) {
-        console.log(data)
-
-        if (data.status === 'success') {
-
-          var container = $('#friend-requests-parent')
-          var reqs = data.data.friendRequests
-          var html = Templates.auth.addFriendRequests(reqs)
-          container.html(html)
-
-          var container = $('#friends-list-parent')
-          var friends = data.data.friends
-          var html = Templates.auth.addFriendsList(friends)
-          container.html(html)
-
-        } else {
-          errorMessage.html(data.message)
-        }
-      },
-      error: function(err) {
-        console.log(err)
-      }
-    })
-
-  }
-
-
-
-  //
-
-
   function submitData(data, action, cB) {
 
     var timeout = null
@@ -49,9 +9,7 @@ $('document').ready(function() {
     var friendId = data.friendId
     var action = action
 
-
     console.log('iframe submit', data, name, action)
-
 
     switch (action) {
 
@@ -114,6 +72,45 @@ $('document').ready(function() {
         })
 
         break;
+
+      default:
+
+        var pos = data.user.position
+        var rot = data.user.rotation
+
+        var data = {
+          email: email,
+          password: pass,
+          name: name,
+          position: pos,
+          rotation: rot,
+          subscriptions: subs
+        }
+
+        $.ajax({
+          method: 'POST',
+          url: 'http://localhost:8080/api/' + action,
+          data: data,
+          success: function(data) {
+            console.log(data)
+            if (data.status === 'success') {
+
+              errorMessage.html(data.message + ' <strong>' + data.data.name + '</strong>!')
+
+
+              setTimeout(function() {
+                location.href = '/'
+              }, 500)
+
+            } else {
+              errorMessage.html(data.message)
+            }
+          },
+          error: function(err) {
+            console.log(err)
+          }
+        })
+
     }
 
   }
@@ -144,9 +141,7 @@ $('document').ready(function() {
     'friend': function(data) {
 
       var action = data.action
-
       submitData(data, action)
-
     }
   }
 
@@ -159,17 +154,14 @@ $('document').ready(function() {
 
     if (data.data.fromExtension) {
 
-      console.log('iframe recieved', data)
+      console.log('iframe recieved from extension', data)
 
       var action = data.data.action
       var data = data.data
 
       windowMsgEvents[action](data)
-
     }
-
   }
-
 
 
   window.addEventListener("message", onWindowMsg, false);
@@ -180,8 +172,20 @@ $('document').ready(function() {
 
 
   $("body").on('submit', '#pt-auth-form', function(e) {
-
+    console.log('SUBMIT FORM')
     e.preventDefault();
+
+    var action = $(this).data('action')
+    window.email = $('.auth-email').val();
+    window.pass = $('.auth-password').val();
+    window.subs = []
+
+    $("#pt-auth-form input:checkbox:checked").each(function() {
+
+      var sub = $(this).data('id')
+      subs.push(sub)
+    });
+
 
     var action = $(this).data('action')
     var data = {
@@ -192,42 +196,60 @@ $('document').ready(function() {
     console.log('iframe sent', data)
     window.parent.postMessage(data, '*')
 
-    // var extensionId = 'malhbgmooogkoheilhpjnlimhmnmlpii'
-    // chrome.runtime.sendMessage(extensionId, data, function(response){
-    //   console.log('iframe recieved', response)
-    // })
-
   })
 
 
 
-  $("body").on('submit', '#pt-friend-form', function(e) {
-
-    e.preventDefault();
+$('body').on('click', '.pt-menu-logout', function() {
 
     var action = $(this).data('action')
-    var friendId = $(this).data('id')
-
     var data = {
-      'friendId': friendId,
-      'type': 'window',
-      'action': action
+      'action': action,
+      'type': 'window'
     }
 
-    // var extensionId = 'malhbgmooogkoheilhpjnlimhmnmlpii'
-    // chrome.runtime.sendMessage(extensionId, data, function(response){
-    //   console.log('got response', response)
-    // })
-
+    console.log('iframe sent', data)
     window.parent.postMessage(data, '*')
 
-    // parent.postMessage({
-    //   data: data,
-    //   action: action
-    // }, window.location.href)
-
-  })
+})
 
 
+  //
+
+
+  // $("body").on('submit', '#pt-auth-form', function(e) {
+
+  //   e.preventDefault();
+
+  //   var action = $(this).data('action')
+  //   var data = {
+  //     'action': action,
+  //     'type': 'window'
+  //   }
+
+  //   console.log('iframe sent', data)
+  //   window.parent.postMessage(data, '*')
+
+  //   // var extensionId = 'malhbgmooogkoheilhpjnlimhmnmlpii'
+  //   // chrome.runtime.sendMessage(extensionId, data, function(response){
+  //   //   console.log('iframe recieved', response)
+  //   // })
+
+  // })
 
 })
+
+
+//
+
+
+function changeSubmitButton(disable, replaceText, id) {
+  if (!id) var btn = $("input[type='submit']")
+  else var btn = $(id)
+
+  if (replaceText) {
+    if (!btn.val()) btn.html(replaceText)
+    else btn.val(replaceText)
+  }
+  btn.attr('disabled', disable)
+}

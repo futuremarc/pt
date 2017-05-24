@@ -56,7 +56,7 @@ function createCharacter(data, cB) {
       character.menu.remove()
       sceneCharacters.remove(character)
     })
-    menu.find('.pt-menu-friend, .pt-menu-settings, .pt-menu-home').click(openIframe)
+    menu.find('.pt-menu-friend, .pt-menu-settings, .pt-menu-home, .pt-menu-login, .pt-menu-signup, .pt-menu-logout').click(openIframe)
     menu.click(function(e) {
       e.stopPropagation()
     })

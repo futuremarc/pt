@@ -1,21 +1,6 @@
 $(document).ready(function() {
 
 
-
-  function changeSubmitButton(disable, replaceText, id) {
-    if (!id) var btn = $("input[type='submit']")
-    else var btn = $(id)
-
-    if (replaceText) {
-      if (!btn.val()) btn.html(replaceText)
-      else btn.val(replaceText)
-    }
-
-    btn.attr('disabled', disable)
-  }
-
-
-
   $('body').on('keyup', '#pt-friend-form', function(e) {
 
     if (e.keyCode === 13) return
@@ -59,5 +44,29 @@ $(document).ready(function() {
   })
 
 
+//
+
+
+  $("body").on('submit', '#pt-friend-form', function(e) {
+
+    e.preventDefault();
+
+    var action = $(this).data('action')
+    var friendId = $(this).data('id')
+
+    var data = {
+      'friendId': friendId,
+      'type': 'window',
+      'action': action
+    }
+
+    // var extensionId = 'malhbgmooogkoheilhpjnlimhmnmlpii'
+    // chrome.runtime.sendMessage(extensionId, data, function(response){
+    //   console.log('got response', response)
+    // })
+
+    window.parent.postMessage(data, '*')
+
+  })
 
 })

@@ -54,7 +54,7 @@ function animateMyChar() {
   }
 
   if (myCharacter.isWalking && isNameDisplayed && isMouseHovering) hideNameTags()
-  else if (!myCharacter.isWalking && !isNameDisplayed && isMouseHovering && sceneCharacters.visible) showNameTags()
+  else if (!myCharacter.isWalking && !isNameDisplayed && isMouseHovering && !isMenuDisplayed && sceneCharacters.visible) showNameTags()
 }
 
 
@@ -82,7 +82,7 @@ function animateOtherChars() {
       else if (character.position.x > .4 && !character.visible) character.visible = true
 
       else if (character.isWalking && isNameDisplayed && isMouseHovering) hideNameTags()
-      else if (!character.isWalking && !isNameDisplayed && isMouseHovering && sceneCharacters.visible) showNameTags()
+      else if (!character.isWalking && !isNameDisplayed && isMouseHovering && sceneCharacters.visible && !isMenuDisplayed) showNameTags()
     }
   }
 }
@@ -138,7 +138,10 @@ function detectMeshHover(e) {
 
       hoveredMesh = intersects[0].object;
       if (hoveredMesh.hasPointer) showPointer()
-      if (hoveredMesh.hasMenu) showMenu(hoveredMesh)
+      if (hoveredMesh.hasMenu) {
+        hideNameTags()
+        showMenu(hoveredMesh)
+      }
     }
 
   } else {
@@ -156,7 +159,7 @@ function detectMeshHover(e) {
 
 function onCanvasHover(e) {
 
-  if (isMouseHovering && !isNameDisplayed && sceneCharacters.visible) {
+  if (isMouseHovering && !isNameDisplayed && sceneCharacters.visible && !isMenuDisplayed) {
     showNameTags()
       // zoomInScene()
       // showSceneBg()
@@ -256,33 +259,45 @@ function onWindowMsg(data) {
 
   switch (action) {
 
-    case 'settings':
-
-      data = {
-        'user': user,
-        'action': action,
-        'type': 'window',
-        'fromExtension': true
-      }
-
-      source.postMessage(data, '*')
-
-      console.log('extension sent windowMsg', data)
-
-      break;
-
     case 'friend':
 
       data = {
         'user': user,
         'action': action,
         'type': 'window',
-        'friendId' : friendId,
+        'friendId': friendId,
         'fromExtension': true
       }
 
       console.log('extension sent windowMsg', data)
+      source.postMessage(data, '*')
 
+      break;
+
+    case 'logout':
+
+      if (isRegistered()) emitLeaveMsg()
+
+      chrome.storage.sync.set({
+        'pt-user': {}
+      }, function() {
+        window.location.href = 'http://localhost:8080/logout'
+      })
+
+      break
+
+    default:
+
+      data = {
+        'user': user,
+        'action': action,
+        'type': 'window',
+        'fromExtension': true
+      }
+
+      //putCharacter()
+
+      console.log('extension sent windowMsg', data)
       source.postMessage(data, '*')
 
       break;
