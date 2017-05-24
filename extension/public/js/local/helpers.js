@@ -225,7 +225,7 @@ function openIframe(e) {
   var isMe = $(target).closest('ul').data('is-me')
   var purpose = $(target).data('purpose')
   var iframe = document.createElement('iframe')
-  var src = 'https://passti.me/' + purpose
+  var src = 'http://localhost:8080/' + purpose
 
 
   $('.pt-iframe').remove()
@@ -259,7 +259,7 @@ function openIframe(e) {
 
   //     $.ajax({
   //       method: 'GET',
-  //       url: 'https://passti.me/api/user/' + name,
+  //       url: 'http://localhost:8080/api/user/' + name,
   //       success: function(data) {
   //         console.log(data)
   //         clearTimeout(timeout)
