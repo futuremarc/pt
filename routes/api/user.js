@@ -301,7 +301,7 @@ module.exports = function(passport) {
           name: req.params.name
         })
         .exec(function(err, user) {
-          if (err) {
+          if (err || !user) { //incase remote character wants to login to local
             return res.json({
               status: "error",
               data: null,

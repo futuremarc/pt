@@ -240,7 +240,9 @@ function removeDomListeners() {
 
 function onWindowMsg(data) {
 
-   if (data.origin !== 'http://localhost:8080/') return;
+  console.log('origin', data.origin, data)
+
+   if (data.origin !== 'http://localhost:8080') return;
   console.log('extension received windowMsg', data)
 
   var source = data.source

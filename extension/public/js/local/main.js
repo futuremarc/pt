@@ -240,7 +240,9 @@ function removeDomListeners() {
 
 function onWindowMsg(data) {
 
-   if (data.origin !== 'https://passti.me/') return;
+  console.log('origin', data.origin, data)
+
+   if (data.origin !== 'https://passti.me') return;
   console.log('extension received windowMsg', data)
 
   var source = data.source
