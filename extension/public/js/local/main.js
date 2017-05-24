@@ -248,14 +248,20 @@ function onWindowMsg(data) {
   var friendId = data.data.friendId
 
   //if (e.origin !== iframe.src) return;
-  var info = getCharacterInfo()
-  var user = {
-    '_id': info._id,
-    'position': info.position,
-    'rotation': info.rotation,
-    'name': info.name
-  }
 
+  if (action === 'signup') {
+    var user = {
+      name: data.data.name
+    }
+  } else {
+    var info = getCharacterInfo()
+    var user = {
+      '_id': info._id,
+      'position': info.position,
+      'rotation': info.rotation,
+      'name': info.name
+    }
+  }
 
   switch (action) {
 
@@ -284,7 +290,7 @@ function onWindowMsg(data) {
         window.location.href = 'http://localhost:8080/logout'
       })
 
-      break
+      break;
 
     default:
 

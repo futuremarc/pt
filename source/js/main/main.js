@@ -142,6 +142,16 @@ $('document').ready(function() {
 
       var action = data.action
       submitData(data, action)
+    },
+    'login': function(data) {
+
+      var action = data.action
+      submitData(data, action)
+    },
+    'signup': function(data) {
+
+      var action = data.action
+      submitData(data, action)
     }
   }
 
@@ -176,6 +186,7 @@ $('document').ready(function() {
     e.preventDefault();
 
     var action = $(this).data('action')
+    var name = $('.auth-name').val();
     window.email = $('.auth-email').val();
     window.pass = $('.auth-password').val();
     window.subs = []
@@ -190,6 +201,7 @@ $('document').ready(function() {
     var action = $(this).data('action')
     var data = {
       'action': action,
+      'name': name,
       'type': 'window'
     }
 
