@@ -204,7 +204,10 @@ function addMenuIcon() {
   $(iconContainer).click(function(e) {
     e.stopPropagation()
   })
-  $(iconContainer).on('mouseenter', showMenu)
+  $(iconContainer).on('mouseenter', function(){
+    showMenu(mesh)
+    hideNameTags()
+  })
 
   iconContainer.append(icon)
   $('body').append(iconContainer)
@@ -338,6 +341,8 @@ function onDocumentClick() {
 var isMenuDisplayed = false
 
 function showMenu(mesh) {
+
+  if (!mesh) return
 
   hideMenu()
   var pos = worldToScreen(mesh.position)

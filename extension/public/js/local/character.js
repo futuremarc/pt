@@ -66,8 +66,8 @@ function createCharacter(data, cB) {
 
 
     character.purpose = 'character' //associate purpose for all meshes
-    character.hasPointer = true
-    character.hasMenu = true
+    character.hasPointer = false
+    character.hasMenu = false
     character.data = data
     character.mixer = new THREE.AnimationMixer(character);
     character.actions = {};

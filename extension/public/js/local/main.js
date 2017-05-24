@@ -307,13 +307,8 @@ function onWindowMsg(data) {
         'type': 'window',
         'fromExtension': true
       }
-
-      myCharacter.data = user
-      putCharacter(function() {})
-
       console.log('extension sent windowMsg', data)
       source.postMessage(data, '*')
-
 
       break;
   }

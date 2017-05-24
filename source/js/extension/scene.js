@@ -64,7 +64,27 @@ function setCameraZoom(data) {
   mesh.renderOrder = 1
 
   scene.add(mesh)
-  //addMenuIcon()
+  addMenuIcon()
+
+  var menu = $('<div class="pt-menu"></div>')
+  var html = Templates.extension.addMenu({isMe: true, data:data})
+
+    mesh.menu = menu
+    $('body').append(menu)
+    menu.html(html)
+
+    menu.find('.pt-menu-hide').click(function(){
+      character.nameTag.remove()
+      character.menu.remove()
+      sceneCharacters.remove(character)
+    })
+    menu.find('.pt-menu-friend, .pt-menu-settings, .pt-menu-home, .pt-menu-login, .pt-menu-signup, .pt-menu-logout').click(openIframe)
+    menu.click(function(e) {
+      e.stopPropagation()
+    })
+    menu.find('a').click(function(e) {
+      hideMenu()
+    })
 
   sceneCharacters.position.set(0, 1, 0);
 

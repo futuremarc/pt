@@ -1,5 +1,7 @@
 function signInFromExtension(data) {
 
+  console.log('signInFromExtension', data)
+
   var errorMessage = $(".error-message h3")
   var my = data
   var data = {
@@ -55,6 +57,8 @@ $("body").on('submit', '#pt-auth-form', function(e) {
   });
 
   if (action === 'settings') {
+
+    return //clean this all up
 
     myCharacter.data.subscriptions = subs
     errorMessage.html('&nbsp;')

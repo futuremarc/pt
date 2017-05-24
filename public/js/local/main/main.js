@@ -192,43 +192,40 @@ $('document').ready(function() {
 
 
 
-  //
+  
 
 
-  // $("body").on('submit', '#pt-auth-form', function(e) {
+  $("body").on('submit', '#pt-auth-form', function(e) {
+    e.preventDefault();
 
-  //   e.preventDefault();
+    var action = $(this).data('action')
+    if (action !== 'settings') return
 
-  //   window.name = $('.auth-name').val();
-  //   window.email = $('.auth-email').val();
-  //   window.pass = $('.auth-password').val();
-  //   window.subs = []
+    window.name = $('.auth-name').val();
+    window.email = $('.auth-email').val();
+    window.pass = $('.auth-password').val();
+    window.subs = []
 
-  //   $("#pt-auth-form input:checkbox:checked").each(function() {
+    $("#pt-auth-form input:checkbox:checked").each(function() {
 
-  //     var sub = $(this).data('id')
-  //     subs.push(sub)
-  //   });
+      var sub = $(this).data('id')
+      subs.push(sub)
+    });
 
-  //   var action = $(this).data('action')
-  //   var user = {
-  //     name: name
-  //   }
-  //   var data = {
-  //     'action': action,
-  //     'user': user,
-  //     'type': 'window'
-  //   }
+    
+    var user = {
+      name: name
+    }
+    var data = {
+      'action': action,
+      'user': user,
+      'type': 'window'
+    }
 
+    console.log('iframe sent', data)
+    window.parent.postMessage(data, '*')
 
-  //   submitData(data, action)
-
-  //   return
-
-  //   console.log('iframe sent', data)
-  //   window.parent.postMessage(data, '*')
-
-  // })
+  })
 
 
 

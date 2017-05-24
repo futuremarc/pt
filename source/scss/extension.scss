@@ -65,6 +65,22 @@
 	}
 }
 
+.pt-menu-icon{
+
+	position:fixed !important;
+	z-index:2147483647 !important;
+	padding:0px !important;
+	margin:0px !important;
+	bottom: 3px !important;
+	left:2px !important;
+	font-size:17px !important;
+	color:rgba(255,255,255,0.75) !important;
+	&:hover{
+		color: rgba(0,0,0,1) !important;
+	}
+  }
+
+
 .pt-iframe{
 	position: absolute !important;
 	margin: auto !important;
