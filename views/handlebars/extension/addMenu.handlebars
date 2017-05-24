@@ -1,5 +1,11 @@
 <ul data-id='{{data._id}}'  data-name='{{data.name}}' data-is-me='{{isMe}}'>
 
+  {{#if isMe}}
+      <li>
+        <a href='#' class='pt-menu-card' data-purpose='card'> new card</a>
+      </li>
+  {{/if}}
+
 	{{#if isMe}}
 		  <li>
 		    <a href='#' class='pt-menu-home' data-purpose='home'>friend requests</a>
@@ -18,9 +24,9 @@
   	</li>
   {{/if}}
 
-  <!--
+  {{#if isMe}}
   	<li>
-    	<a href='#' class='pt-menu-hide' data-purpose='hide'>hide</a>
+    	<a href='#' class='pt-menu-hide-pt' data-purpose='hide-pt'>hide pt</a>
   	</li>
-  -->
+  {{/if}}
 </ul>

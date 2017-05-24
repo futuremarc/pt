@@ -55,8 +55,8 @@ function setCameraZoom(data) {
   var box = new THREE.BoxGeometry(1, 2, 1)
   mesh = new THREE.Mesh(box, new THREE.MeshBasicMaterial({
     'color': 0x7ec0ee,
-    'transparent':true,
-    'opacity':.8
+    'transparent': true,
+    'opacity': .8
   }))
 
   mesh.purpose = 'menu'
@@ -64,27 +64,7 @@ function setCameraZoom(data) {
   mesh.renderOrder = 1
 
   scene.add(mesh)
-  addMenuIcon()
-
-  var menu = $('<div class="pt-menu"></div>')
-  var html = Templates.extension.addMenu({isMe: true, data:data})
-
-    mesh.menu = menu
-    $('body').append(menu)
-    menu.html(html)
-
-    menu.find('.pt-menu-hide').click(function(){
-      character.nameTag.remove()
-      character.menu.remove()
-      sceneCharacters.remove(character)
-    })
-    menu.find('.pt-menu-friend, .pt-menu-settings, .pt-menu-home, .pt-menu-login, .pt-menu-signup, .pt-menu-logout').click(openIframe)
-    menu.click(function(e) {
-      e.stopPropagation()
-    })
-    menu.find('a').click(function(e) {
-      hideMenu()
-    })
+  addMainMenu(mesh,data)
 
   sceneCharacters.position.set(0, 1, 0);
 
@@ -102,6 +82,34 @@ function setCameraZoom(data) {
   setSceneOffset()
   mesh.position.set(.25, .85, 0)
 
+}
+
+
+function addMainMenu(mesh,data) {
+
+  var menu = $('<div class="pt-menu pt"></div>')
+
+  var isMainMenu = mesh.isMe || mesh.purpose === 'menu'
+
+  var html = Templates.extension.addMenu({
+    isMe: isMainMenu,
+    data: data
+  })
+
+  mesh.menu = menu
+  $('body').append(menu)
+  menu.html(html)
+
+  menu.find('.pt-menu-hide-pt').click(closePt)
+  menu.find('.pt-menu-friend, .pt-menu-settings, .pt-menu-home, .pt-menu-login, .pt-menu-signup, .pt-menu-logout').click(openIframe)
+  menu.click(function(e) {
+    e.stopPropagation()
+  })
+  menu.find('a').click(function(e) {
+    hideMenu()
+  })
+
+  addMenuIcon()
 }
 
 

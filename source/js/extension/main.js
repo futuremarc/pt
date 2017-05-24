@@ -269,13 +269,12 @@ function onWindowMsg(data) {
 
     case 'refreshPage':
 
-      chrome.storage.sync.set({
-        'pt-user': {}
-      }, function() {
-        window.location.href = 'http://localhost:8080/logout'
-      })
+      window.reload()
+      break;
 
+    case 'closeIframe':
 
+      closeIframe()
       break;
 
     case 'friend':
@@ -390,11 +389,7 @@ function onBgMessage(data, sender, sendResponse) {
 }
 
 
-//
 
-
+//chrome.storage.onChanged.addListener(function(changes, namespace) {})
 chrome.runtime.onMessage.addListener(onBgMessage);
 initPt()
-
-
-//

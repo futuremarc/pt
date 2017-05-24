@@ -36,35 +36,16 @@ function createCharacter(data, cB) {
     var name = data.name || ''
 
     character.name = name
-    character.nameTag = $('<div class="pt-name-tag">' + name + '</div>')
+    character.nameTag = $('<div class="pt-name-tag pt">' + name + '</div>')
 
     var nameTag = character.nameTag
     $('body').prepend(nameTag)
 
 
     var isMe = (renderOrder === 0)
-    var menu = $('<div class="pt-menu"></div>')
-    var html = Templates.extension.addMenu({isMe: isMe, data:data})
-
     if (isMe) character.isMe = true
-    character.menu = menu
-    $('body').append(menu)
-    menu.html(html)
 
-    menu.find('.pt-menu-hide').click(function(){
-      character.nameTag.remove()
-      character.menu.remove()
-      sceneCharacters.remove(character)
-    })
-    menu.find('.pt-menu-friend, .pt-menu-settings, .pt-menu-home, .pt-menu-login, .pt-menu-signup, .pt-menu-logout').click(openIframe)
-    menu.click(function(e) {
-      e.stopPropagation()
-    })
-    menu.find('a').click(function(e) {
-      hideMenu()
-    })
-
-
+    character.menu = addCharacterMenu(character, data)
     character.purpose = 'character' //associate purpose for all meshes
     character.hasPointer = false
     character.hasMenu = false
@@ -84,7 +65,7 @@ function createCharacter(data, cB) {
       this.rotation.y = dir * Math.PI / 2
       this.fadeAction(this.animations[2])
 
-      if(!this.isWalking) menu.hide()
+      if (!this.isWalking && character.hasMenu) character.menu.hide()
       this.isWalking = direction
     }
 
@@ -270,6 +251,15 @@ function updateCharacter(data, request, cB) {
       })
 
       break
+
+    case false:
+
+      pos = data.position
+      rot = data.rotation
+
+      myCharacter.position.set(pos.x, pos.y, pos.z)
+      myCharacter.rotation.set(rot.x, rot.y, rot.z)
+      myCharacter.data = data
   }
 
 }
@@ -305,6 +295,39 @@ function getCharacterInfo() {
   }
 
   return info
+}
+
+
+//
+
+
+function addCharacterMenu(character, data) {
+
+  var menu = $('<div class="pt-menu pt"></div>')
+  var isMe = character.isMe
+  var html = Templates.extension.addMenu({
+    isMe: isMe,
+    data: data
+  })
+
+  $('body').append(menu)
+  menu.html(html)
+
+  menu.find('.pt-menu-hide').click(function() {
+    character.nameTag.remove()
+    character.menu.remove()
+    sceneCharacters.remove(character)
+  })
+  menu.find('.pt-menu-friend, .pt-menu-settings, .pt-menu-home, .pt-menu-login, .pt-menu-signup, .pt-menu-logout').click(openIframe)
+  menu.click(function(e) {
+    e.stopPropagation()
+  })
+  menu.find('a').click(function(e) {
+    hideMenu()
+  })
+
+  return menu
+
 }
 
 

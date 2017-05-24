@@ -22,7 +22,7 @@ function logout(cB) {
 
   chrome.storage.sync.set({
     'pt-user': {}
-  },function(){
+  }, function() {
     if (cB) cB()
   })
 
@@ -190,7 +190,7 @@ function hideNameTags() {
 
 
 function addCanvasToPage() {
-  $('<div id="pt-container" class="pt-override-page"></div>').appendTo('body');
+  $('<div id="pt-container" class="pt-override-page pt"></div>').appendTo('body');
 }
 
 
@@ -198,13 +198,13 @@ function addCanvasToPage() {
 
 
 function addMenuIcon() {
-  var icon = $('<span class="glyphicon glyphicon-menu-hamburger"></span>')
-  var iconContainer = $('<div class="pt-menu-icon"></div>')
+  var icon = $('<span>&#9776;</span>')
+  var iconContainer = $('<div class="pt-menu-icon pt"></div>')
 
   $(iconContainer).click(function(e) {
     e.stopPropagation()
   })
-  $(iconContainer).on('mouseenter', function(){
+  $(iconContainer).on('mouseenter', function() {
     showMenu(mesh)
     hideNameTags()
   })
@@ -228,11 +228,11 @@ function openIframe(e) {
   var src = 'http://localhost:8080/' + purpose
 
 
-  $('.pt-iframe').remove()
+  closeIframe()
   $(iframe).attr('frameborder', 0)
   $(iframe).attr('src', src)
   $(iframe).data('purpose', purpose)
-  $(iframe).addClass('pt-iframe')
+  $(iframe).addClass('pt-iframe pt')
   $(iframe).click(function(e) {
     e.stopPropagation()
   })
@@ -240,60 +240,20 @@ function openIframe(e) {
   $('body').append(iframe)
 
   // iframe.onload = function() {
-  //   console.log('iframe loaded', window.location, window.location.origin)
-
-  //   $(iframe.contentWindow.document).on('keyup', function(e) {
-
-  //     if (e.keyCode === 13) return
-
-  //     var errorMessage = $(iframe).contents().find('.error-message h3')
-  //     var name = $(iframe).contents().find('input').val()
-  //     var timeout = null
-
-  //     if (!name) return
-
-  //     clearTimeout(timeout)
-  //     errorMessage.html('searching...')
-
-  //     var self = this
-
-  //     $.ajax({
-  //       method: 'GET',
-  //       url: 'http://localhost:8080/api/user/' + name,
-  //       success: function(data) {
-  //         console.log(data)
-  //         clearTimeout(timeout)
-
-  //         if (data.status === 'success') {
-
-  //           if (data.data) errorMessage.html(data.message + ' <strong>' + data.data.name + '</strong>!')
-  //           $(self).data('id', data.data._id)
-
-  //           //iframe.contentWindow.changeSubmitButton(false)
-  //           $('iframe')[0].contentWindow.changeSubmitButton(false)
-
-  //         } else if (data.status === 'not found') {
-  //           changeSubmitButton(true)
-  //             // timeout = setTimeout(function() {
-  //             //   errorMessage.html('&nbsp;')
-  //             // }, 2000)
-  //         } else if (data.status === 'error') {
-  //           errorMessage.html(data.message)
-  //           iframe.contentWindow.changeSubmitButton(true)
-  //         }
-  //       },
-  //       error: function(err) {
-  //         console.log(err)
-  //       }
-  //     })
-  //   })
-
+  //   var content = $(iframe).contents()
+  //   content.find('form').on('submit', function(e) {})
+  //   content.find('form').on('keyup', function(e) {})
   // }
 
 }
 
+
+//
+
+
+
 function onExternalMsg(data, sender, sendResponse) {
-  data.update = true
+  data.fromExtension = true
   if (sendResponse) sendResponse(data)
   console.log('extension sent', data, sendResponse != undefined)
 
@@ -331,13 +291,20 @@ function hidePointer() {
 
 
 function onDocumentClick() {
-  $('.pt-iframe').remove();
+  closeIframe()
   hideMenu()
 }
 
 
 //
 
+
+function closeIframe() {
+  $('.pt-iframe').remove();
+}
+
+
+//
 var isMenuDisplayed = false
 
 function showMenu(mesh) {
@@ -366,11 +333,8 @@ function hideMenu() {
 //
 
 
-function togglePt() {
-  $('.pt-menu').remove()
-  $('#pt-container').remove()
-  $('.pt-menu-icon').remove()
-  $('.pt-iframe').remove()
+function closePt() {
+  $('.pt').remove()
   removeDomListeners()
 }
 

@@ -30,7 +30,8 @@ $('document').ready(function() {
 
               timeout = setTimeout(function() {
                 errorMessage.html('&nbsp;')
-              }, 2000)
+
+              }, 1000)
               if (cB) cB()
 
             } else {
@@ -188,15 +189,17 @@ $('document').ready(function() {
   }
 
 
-  window.addEventListener("message", onWindowMsg, false);
+  // window.addEventListener("message", onWindowMsg, false);
 
 
 
-  
+  // $("body").on('submit', '#pt-auth-form', function(e) {
+ 
+  // })
 
-
-  $("body").on('submit', '#pt-auth-form', function(e) {
-    e.preventDefault();
+  function submitAuth(){
+    // 
+       e.preventDefault();
 
     var action = $(this).data('action')
     if (action !== 'settings') return
@@ -212,7 +215,7 @@ $('document').ready(function() {
       subs.push(sub)
     });
 
-    
+
     var user = {
       name: name
     }
@@ -225,7 +228,7 @@ $('document').ready(function() {
     console.log('iframe sent', data)
     window.parent.postMessage(data, '*')
 
-  })
+  }
 
 
 

@@ -1,7 +1,6 @@
 $(document).ready(function() {
 
-
-  if (loggedIn) {
+  if (loggedIn) { //from pug view
 
     var errorMessage = $(".error-message h3")
 
@@ -13,7 +12,7 @@ $(document).ready(function() {
         if (data.status === 'success') {
 
           var mySubs = data.data.subscriptions
-          var subs = JSON.parse(subscriptions) //from pug
+          var subs = JSON.parse(subscriptions) //from pug view
 
           var subsWrapper = $('#auth-subs-parent')
 
