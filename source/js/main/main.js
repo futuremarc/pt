@@ -4,7 +4,7 @@ $('document').ready(function() {
 
     var timeout = null
     var errorMessage = $('.error-message h3')
-    var name = data.user.name
+    name = data.user.name || name
     var userId = data.user._id
     var friendId = data.friendId
     var action = action
@@ -87,6 +87,8 @@ $('document').ready(function() {
           subscriptions: subs
         }
 
+        console.log('signup/login', data)
+
         $.ajax({
           method: 'POST',
           url: 'http://localhost:8080/api/' + action,
@@ -100,7 +102,19 @@ $('document').ready(function() {
 
               setTimeout(function() {
                 location.href = '/'
-              }, 500)
+              }, 100)
+
+              return
+
+              data = {
+                'action': 'refreshPage',
+                'name': name,
+                'user': data.data,
+                'type': 'window'
+              }
+
+              console.log('iframe sent', data)
+              window.parent.postMessage(data, '*')
 
             } else {
               errorMessage.html(data.message)
@@ -181,27 +195,48 @@ $('document').ready(function() {
   //
 
 
-  $("body").on('submit', '#pt-auth-form', function(e) {
-    console.log('SUBMIT FORM')
-    e.preventDefault();
+  // $("body").on('submit', '#pt-auth-form', function(e) {
 
-    var action = $(this).data('action')
-    var name = $('.auth-name').val();
-    window.email = $('.auth-email').val();
-    window.pass = $('.auth-password').val();
-    window.subs = []
+  //   e.preventDefault();
 
-    $("#pt-auth-form input:checkbox:checked").each(function() {
+  //   window.name = $('.auth-name').val();
+  //   window.email = $('.auth-email').val();
+  //   window.pass = $('.auth-password').val();
+  //   window.subs = []
 
-      var sub = $(this).data('id')
-      subs.push(sub)
-    });
+  //   $("#pt-auth-form input:checkbox:checked").each(function() {
 
+  //     var sub = $(this).data('id')
+  //     subs.push(sub)
+  //   });
+
+  //   var action = $(this).data('action')
+  //   var user = {
+  //     name: name
+  //   }
+  //   var data = {
+  //     'action': action,
+  //     'user': user,
+  //     'type': 'window'
+  //   }
+
+
+  //   submitData(data, action)
+
+  //   return
+
+  //   console.log('iframe sent', data)
+  //   window.parent.postMessage(data, '*')
+
+  // })
+
+
+
+  $('body').on('click', '.pt-menu-logout', function() {
 
     var action = $(this).data('action')
     var data = {
       'action': action,
-      'name': name,
       'type': 'window'
     }
 
@@ -209,21 +244,6 @@ $('document').ready(function() {
     window.parent.postMessage(data, '*')
 
   })
-
-
-
-$('body').on('click', '.pt-menu-logout', function() {
-
-    var action = $(this).data('action')
-    var data = {
-      'action': action,
-      'type': 'window'
-    }
-
-    console.log('iframe sent', data)
-    window.parent.postMessage(data, '*')
-
-})
 
 
   //

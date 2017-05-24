@@ -16,6 +16,22 @@ function onSocket(data) {
 //
 
 
+function logout(cB) {
+
+  if (isRegistered()) emitLeaveMsg()
+
+  chrome.storage.sync.set({
+    'pt-user': {}
+  },function(){
+    if (cB) cB()
+  })
+
+}
+
+
+//
+
+
 function emitJoinMsg() {
 
   putCharacter(function() {
@@ -23,7 +39,7 @@ function emitJoinMsg() {
     var info = getCharacterInfo()
 
     var data = {
-      'type' : 'socket',
+      'type': 'socket',
       'event': 'join',
       '_id': info._id,
       'position': info.position,
@@ -45,7 +61,7 @@ function emitLeaveMsg() {
     var info = getCharacterInfo()
 
     var data = {
-      'type' : 'socket',
+      'type': 'socket',
       'event': 'leave',
       '_id': info._id,
       'position': info.position,
@@ -273,7 +289,7 @@ function openIframe(e) {
 
 }
 
-function onExternalMsg(data, sender, sendResponse){
+function onExternalMsg(data, sender, sendResponse) {
   data.update = true
   if (sendResponse) sendResponse(data)
   console.log('extension sent', data, sendResponse != undefined)

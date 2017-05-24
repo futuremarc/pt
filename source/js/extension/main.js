@@ -249,7 +249,7 @@ function onWindowMsg(data) {
 
   //if (e.origin !== iframe.src) return;
 
-  if (action === 'signup') {
+  if (action === 'signup' || action === 'login' || action === 'refreshPage') {
     var user = {
       name: data.data.name
     }
@@ -264,6 +264,17 @@ function onWindowMsg(data) {
   }
 
   switch (action) {
+
+    case 'refreshPage':
+
+      chrome.storage.sync.set({
+        'pt-user': {}
+      }, function() {
+        window.location.href = 'http://localhost:8080/logout'
+      })
+
+
+      break;
 
     case 'friend':
 
@@ -282,11 +293,7 @@ function onWindowMsg(data) {
 
     case 'logout':
 
-      if (isRegistered()) emitLeaveMsg()
-
-      chrome.storage.sync.set({
-        'pt-user': {}
-      }, function() {
+      logout(function() {
         window.location.href = 'http://localhost:8080/logout'
       })
 
@@ -301,10 +308,12 @@ function onWindowMsg(data) {
         'fromExtension': true
       }
 
-      //putCharacter()
+      myCharacter.data = user
+      putCharacter(function() {})
 
       console.log('extension sent windowMsg', data)
       source.postMessage(data, '*')
+
 
       break;
   }

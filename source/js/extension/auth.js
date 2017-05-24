@@ -33,83 +33,83 @@ function signInFromExtension(data) {
 }
 
 
-//
 
 
-// $("body").on('submit', '#pt-auth-form', function(e) {
 
-//   e.preventDefault();
+$("body").on('submit', '#pt-auth-form', function(e) {
 
-//   var errorMessage = $(".error-message h3")
-//   var email = $('.auth-email').val();
-//   var pass = $('.auth-password').val();
-//   var name = $('.auth-name').val();
-//   var action = $(this).data('action')
-//   var subs = []
-//   var timeout = null
+  e.preventDefault();
 
-//   $("#pt-auth-form input:checkbox:checked").each(function() {
+  var errorMessage = $(".error-message h3")
+  var email = $('.auth-email').val();
+  var pass = $('.auth-password').val();
+  var name = $('.auth-name').val();
+  var action = $(this).data('action')
+  var subs = []
+  var timeout = null
 
-//     var sub = $(this).data('id')
-//     subs.push(sub)
-//   });
+  $("#pt-auth-form input:checkbox:checked").each(function() {
 
-//   if (action === 'settings') {
+    var sub = $(this).data('id')
+    subs.push(sub)
+  });
 
-//     myCharacter.data.subscriptions = subs
-//     errorMessage.html('&nbsp;')
+  if (action === 'settings') {
 
-//     putCharacter(function(data) {
-//       console.log(data)
-//       errorMessage.html(data.message + ' settings!')
-//       clearTimeout(timeout)
+    myCharacter.data.subscriptions = subs
+    errorMessage.html('&nbsp;')
 
-//       timeout = setTimeout(function() {
-//         errorMessage.html('&nbsp;')
-//       }, 2000)
+    putCharacter(function(data) {
+      console.log(data)
+      errorMessage.html(data.message + ' settings!')
+      clearTimeout(timeout)
 
-//     })
+      timeout = setTimeout(function() {
+        errorMessage.html('&nbsp;')
+      }, 2000)
 
-//     return
-//   }
+    })
 
-//   var pos = getCharacterPos()
-//   var rot = getCharacterRot()
-//   var data = {
-//     email: email,
-//     password: pass,
-//     name: name,
-//     position: pos,
-//     rotation: rot,
-//     subscriptions: subs
-//   }
+    return
+  }
 
-//   $.ajax({
-//     method: 'POST',
-//     url: 'http://localhost:8080/api/' + action,
-//     data: data,
-//     success: function(data) {
-//       console.log(data)
-//       if (data.status === 'success') {
+  var pos = getCharacterPos()
+  var rot = getCharacterRot()
+  var data = {
+    email: email,
+    password: pass,
+    name: name,
+    position: pos,
+    rotation: rot,
+    subscriptions: subs
+  }
 
-//         errorMessage.html(data.message + ' <strong>' + data.data.name + '</strong>!')
-//         myCharacter.data = data.data
+  $.ajax({
+    method: 'POST',
+    url: 'http://localhost:8080/api/' + action,
+    data: data,
+    success: function(data) {
+      console.log(data)
+      if (data.status === 'success') {
 
-//         putCharacter()
+        errorMessage.html(data.message + ' <strong>' + data.data.name + '</strong>!')
+        myCharacter.data = data.data
 
-//         setTimeout(function() {
-//           location.href = '/'
-//         }, 500)
+        putCharacter()
 
-//       } else {
-//         errorMessage.html(data.message)
-//       }
-//     },
-//     error: function(err) {
-//       console.log(err)
-//     }
-//   })
-// })
+        setTimeout(function() {
+          location.href = '/'
+        }, 500)
+
+      } else {
+        errorMessage.html(data.message)
+      }
+    },
+    error: function(err) {
+      console.log(err)
+    }
+  })
+})
 
 
 
