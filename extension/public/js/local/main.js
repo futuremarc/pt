@@ -270,7 +270,7 @@ function onWindowMsg(data) {
       chrome.storage.sync.set({
         'pt-user': {}
       }, function() {
-        window.location.href = 'http://localhost:8080/logout'
+        window.location.href = 'https://passti.me/logout'
       })
 
 
@@ -294,7 +294,7 @@ function onWindowMsg(data) {
     case 'logout':
 
       logout(function() {
-        window.location.href = 'http://localhost:8080/logout'
+        window.location.href = 'https://passti.me/logout'
       })
 
       break;

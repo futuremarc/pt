@@ -61,8 +61,8 @@ function onInstall(data) {
         title: "Sign off",
         message: "by walking offscreen to the left."
       }, {
-        title: "Hover over characters",
-        message: "for options."
+        title: "The menu",
+        message: "is in the bottom left corner."
       }],
       iconUrl: "public/img/brand/favicon-128.png",
       requireInteraction: true,

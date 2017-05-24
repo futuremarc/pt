@@ -309,6 +309,8 @@ module.exports = function(passport) {
             })
           }
 
+          if (!req.body.subscriptions) req.body.subscriptions = [] //when empty array is passed over its lost for some reason
+
           for (var prop in req.body) {
             user[prop] = req.body[prop]
           }
@@ -355,7 +357,6 @@ module.exports = function(passport) {
               })
 
               user.friends = friends
-
 
               return res.json({
                 status: "success",

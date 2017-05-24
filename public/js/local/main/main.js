@@ -19,7 +19,7 @@ $('document').ready(function() {
 
         $.ajax({
           method: 'PUT',
-          url: 'http://localhost:8080/api/user/' + name,
+          url: 'https://passti.me/api/user/' + name,
           data: data,
           success: function(data) {
             console.log(data)
@@ -53,7 +53,7 @@ $('document').ready(function() {
 
         $.ajax({
           method: 'POST',
-          url: 'http://localhost:8080/api/user/friend/' + action,
+          url: 'https://passti.me/api/user/friend/' + action,
           data: data,
           success: function(data) {
             console.log(data)
@@ -91,7 +91,7 @@ $('document').ready(function() {
 
         $.ajax({
           method: 'POST',
-          url: 'http://localhost:8080/api/' + action,
+          url: 'https://passti.me/api/' + action,
           data: data,
           success: function(data) {
             console.log(data)
