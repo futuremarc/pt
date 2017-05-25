@@ -42,15 +42,15 @@ function animateMyChar() {
   else if (myCharacter.position.x < .4 && sceneCharacters.visible) {
 
     sceneCharacters.visible = false
-    mesh.position.set(.25, -.1, 0)
-    mesh.material.transparent = true
-    mesh.material.opacity = .30
+    //mesh.position.set(.25, -.1, 0)
+    //mesh.material.transparent = true
+    //mesh.material.opacity = .20
 
   } else if (myCharacter.position.x > .4 && !sceneCharacters.visible) {
 
     sceneCharacters.visible = true
-    mesh.position.set(.25, .85, 0)
-    mesh.material.opacity = .8
+    //mesh.position.set(.25, .85, 0)
+    //mesh.material.opacity = .8
   }
 
   if (myCharacter.isWalking && isNameDisplayed && isMouseHovering) hideNameTags()

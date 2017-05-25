@@ -1,3 +1,8 @@
+.pt{
+	font-family: "Helvetica Neue", Helvetica, sans-serif !important;
+}
+
+
 .pt-override-page{
 
 	height:75px !important;
@@ -26,7 +31,6 @@
 
 .pt-name-tag{
 	background:white  !important;
-	font-family: "Helvetica Neue", Helvetica, sans-serif !important;
 	position:fixed !important;
 	z-index:2147483647 !important;
 	display:none;
@@ -42,15 +46,43 @@
 	padding:4px !important;
 	position:fixed !important;
 	z-index:2147483647 !important;
-	bottom: 55px !important;
+	bottom: 30px !important;
 	background-color:skyblue !important;
-	box-shadow: 2px 2px 2px rgba(0,0,0,0.4) !important;
+	box-shadow: 2px 2px 2px rgba(0,0,0,0.2) !important;
 	opacity:.95 !important;
 
 	ul{
 		list-style: none !important;	
 		margin:0px !important;
-		padding:0px !important;
+		
+		padding:2px 12px 2px 4px !important;
+
+		li{
+			position:relative !important;
+			div{
+				padding:3px !important;
+			    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif  !important;
+				font-size:14px !important;
+				color:rgba(255,255,255,1) !important;
+				&:hover{
+					cursor: pointer !important;
+					color: rgba(0,0,0,1) !important;
+				}
+
+			}
+
+		.pt-notification-counter {
+			display:none;
+		    position: absolute !important;
+		    top: 0px !important;
+		    right: -14px !important;
+		    background-color: rgba(212, 19, 13, 1) !important;
+		    color: #fff !important;
+		    border-radius: 3px !important;
+		    padding: 1px 3px !important;
+		    font-size:12px !important;
+		}
+
 	}
 	
 
@@ -63,6 +95,10 @@
 			color: rgba(0,0,0,1) !important;
 		}
 	}
+
+
+	}
+
 }
 
 .pt-menu-icon{
@@ -74,12 +110,36 @@
 	bottom: 0px !important;
 	left:1px !important;
 	font-size:22px !important;
+	opacity:.8;
+
+	span{
+		background: skyblue !important;
+		box-shadow: 1px 1px 2px rgba(0,0,0,0.2) !important;
+	}
+
 	color:rgba(255,255,255,0.75) !important;
 	text-shadow: 1px 1px 2px rgba(0,0,0,.3);
 	&:hover{
 		color: rgba(0,0,0,1) !important;
+		cursor: default !important;
 	}
+
+
+	.pt-notification-counter {   
+		display:none;
+	    position: absolute !important;
+	    top: -2px !important;
+	    left: 12px !important;
+	    background-color: rgba(212, 19, 13, 1) !important;
+	    color: #fff !important;
+	    border-radius: 3px !important;
+	    padding: 1px 3px !important;
+	    font-size:12px !important;
+	}
+
   }
+
+
 
 
 .pt-iframe{
@@ -92,5 +152,5 @@
 	width: 500px !important;
 	height: 500px !important;
 	z-index:2147483647 !important;
-	box-shadow: 2px 2px 2px rgba(0,0,0,0.4) !important;
+	box-shadow: 2px 2px 2px rgba(0,0,0,0.2) !important;
 }

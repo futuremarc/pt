@@ -189,17 +189,11 @@ $('document').ready(function() {
   }
 
 
-  // window.addEventListener("message", onWindowMsg, false);
+  window.addEventListener("message", onWindowMsg, false);
 
 
-
-  // $("body").on('submit', '#pt-auth-form', function(e) {
- 
-  // })
-
-  function submitAuth(){
-    // 
-       e.preventDefault();
+  $("body").on('submit', '#pt-auth-form', function(e) {
+    e.preventDefault();
 
     var action = $(this).data('action')
     if (action !== 'settings') return
@@ -228,7 +222,7 @@ $('document').ready(function() {
     console.log('iframe sent', data)
     window.parent.postMessage(data, '*')
 
-  }
+  })
 
 
 

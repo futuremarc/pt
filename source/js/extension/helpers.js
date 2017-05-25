@@ -197,20 +197,71 @@ function addCanvasToPage() {
 //
 
 
-function addMenuIcon() {
-  var icon = $('<span>&#9776;</span>')
-  var iconContainer = $('<div class="pt-menu-icon pt"></div>')
+function addMainMenu(mesh,data) {
 
-  $(iconContainer).click(function(e) {
+  var menu = $('<div class="pt-menu pt"></div>')
+
+  var isMainMenu = mesh.isMe || mesh.purpose === 'menu'
+
+  var html = Templates.extension.addMenu({
+    isMe: isMainMenu,
+    data: data
+  })
+
+  console.log('addMainMenu',data)
+
+  mesh.menu = menu
+  $('body').append(menu)
+  menu.html(html)
+
+  menu.find('.pt-menu-hide-pt').click(closePt)
+  menu.find('.pt-menu-friend, .pt-menu-settings, .pt-menu-home, .pt-menu-login, .pt-menu-signup, .pt-menu-logout').click(openIframe)
+  menu.click(function(e) {
     e.stopPropagation()
   })
-  $(iconContainer).on('mouseenter', function() {
+  menu.find('div').click(function(e) {
+    hideMenu()
+  })
+
+  addMenuIcon(data)
+}
+
+
+//
+
+
+function addMenuIcon(data) {
+
+  var icon = $('<span>&#9776;</span>')
+  var badge = $('<span class="pt-notification-counter"></span>')
+  var container = $('<div class="pt-menu-icon pt"></div>')
+  var num_requests = data.friendRequests.length
+
+  $(container).click(function(e) {
+    e.stopPropagation()
+  })
+
+  $(container).on('mouseenter', function() {
     showMenu(mesh)
     hideNameTags()
   })
 
-  iconContainer.append(icon)
-  $('body').append(iconContainer)
+  var notifications = num_requests
+  badge.text(notifications)
+
+  container.append(icon)
+  container.append(badge)
+  $('body').append(container)
+
+  if (num_requests > 0) badge.show()
+
+}
+
+
+//
+
+
+function addNotificationBadge(container){
 
 }
 
@@ -223,7 +274,7 @@ function openIframe(e) {
   e.stopPropagation()
   var target = e.currentTarget
   var isMe = $(target).closest('ul').data('is-me')
-  var purpose = $(target).data('purpose')
+  var purpose = $(target).find('div').data('purpose')
   var iframe = document.createElement('iframe')
   var src = 'http://localhost:8080/' + purpose
 
@@ -316,6 +367,7 @@ function showMenu(mesh) {
   var menu = mesh.menu
 
   menu.css('left', pos.x)
+  if(mesh.purpose === 'menu') menu.css('left', pos.x *3)
   menu.show();
   isMenuDisplayed = true
 }

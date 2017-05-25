@@ -1,7 +1,5 @@
 function signInFromExtension(data) {
 
-  console.log('signInFromExtension', data)
-
   var errorMessage = $(".error-message h3")
   var my = data
   var data = {

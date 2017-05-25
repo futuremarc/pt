@@ -62,6 +62,7 @@ function setCameraZoom(data) {
   mesh.purpose = 'menu'
   mesh.position.set(0, -2, 0)
   mesh.renderOrder = 1
+  mesh.visible = false
 
   scene.add(mesh)
   addMainMenu(mesh,data)
@@ -80,36 +81,8 @@ function setCameraZoom(data) {
   camera.updateMatrix();
 
   setSceneOffset()
-  mesh.position.set(.25, .85, 0)
+  mesh.position.set(.25, -.1, 0) //.85 old y
 
-}
-
-
-function addMainMenu(mesh,data) {
-
-  var menu = $('<div class="pt-menu pt"></div>')
-
-  var isMainMenu = mesh.isMe || mesh.purpose === 'menu'
-
-  var html = Templates.extension.addMenu({
-    isMe: isMainMenu,
-    data: data
-  })
-
-  mesh.menu = menu
-  $('body').append(menu)
-  menu.html(html)
-
-  menu.find('.pt-menu-hide-pt').click(closePt)
-  menu.find('.pt-menu-friend, .pt-menu-settings, .pt-menu-home, .pt-menu-login, .pt-menu-signup, .pt-menu-logout').click(openIframe)
-  menu.click(function(e) {
-    e.stopPropagation()
-  })
-  menu.find('a').click(function(e) {
-    hideMenu()
-  })
-
-  addMenuIcon()
 }
 
 

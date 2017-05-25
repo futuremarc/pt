@@ -1,32 +1,40 @@
 <ul data-id='{{data._id}}'  data-name='{{data.name}}' data-is-me='{{isMe}}'>
 
+<!--
   {{#if isMe}}
       <li>
-        <a href='#' class='pt-menu-card' data-purpose='card'> new card</a>
+        <div class='pt-menu-share' data-purpose='share'>share this page</div>
       </li>
   {{/if}}
 
+-->
+
 	{{#if isMe}}
-		  <li>
-		    <a href='#' class='pt-menu-home' data-purpose='home'>friend requests</a>
+		  <li class='pt-menu-home'>
+		    <div data-purpose='home'>friend requests</div>
+        {{#ifCond data.friendRequests.length '>' 0}}
+          <span class='pt-notification-counter' style='display:block'>{{data.friendRequests.length}}</span>
+        {{else}}
+           <span class='pt-notification-counter'>{{data.friendRequests.length}}</span>
+        {{/ifCond}}
 		  </li>
 	 {{/if}}
 
  	{{#if isMe}}
-  		<li>
-    		<a href='#' class='pt-menu-friend' data-purpose='friend'>add friend</a>
+  		<li class='pt-menu-friend' >
+    		<div data-purpose='friend'>add friend</div>
   		</li>
   {{/if}}
 
   {{#if isMe}}
-  	<li>
-    	<a href='#' class='pt-menu-settings' data-purpose='settings'>settings</a>
+  	<li class='pt-menu-home'>
+    	<div data-purpose='settings'>settings</div>
   	</li>
   {{/if}}
 
   {{#if isMe}}
-  	<li>
-    	<a href='#' class='pt-menu-hide-pt' data-purpose='hide-pt'>hide pt</a>
+  	<li class='pt-menu-hide-pt'>
+    	<div data-purpose='hide-pt'>hide pt</div>
   	</li>
   {{/if}}
 </ul>
