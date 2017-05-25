@@ -17,7 +17,7 @@ $('document').ready(function() {
 
       $.ajax({
         method: 'POST',
-        url: 'http://localhost:8080/api/user/friend/' + event,
+        url: 'http://localhost:8080/api/user/friend/request', // + event
         data: data,
         success: function(data) {
           console.log(data)
@@ -65,29 +65,27 @@ $('document').ready(function() {
 
       $.ajax({
         method: method,
-        url: 'http://localhost:8080/api/user/friend/' + event,
+        url: 'http://localhost:8080/api/user/friend/request', //+ event,
         data: data,
         success: function(data) {
           console.log(data)
 
+          var user = data.data
+
           var container = $('#friend-requests-parent')
-          var reqs = data.data.friendRequests
+          var reqs = user.friendRequests
           var html = Templates.auth.addFriendRequests(reqs)
           container.html(html)
 
-          container = $('#friends-list-parent')
-          var friends = data.data.friends
-          html = Templates.auth.addFriendsList(friends)
+          var container = $('#friends-list-parent')
+          var friends = user.friends
+          var html = Templates.auth.addFriendsList(friends)
           container.html(html)
 
           data = {
             'event': 'update',
-            'data': {
-              'updateCharacter': true,
-              'updateUI': true
-            },
             'type': 'window',
-            'user': data.data
+            'user': user
           }
 
           window.parent.postMessage(data, '*')

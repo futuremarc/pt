@@ -39,18 +39,18 @@ function animateMyChar() {
   if (key.right && (activeKey === 39 || activeKey === 40 || activeKey === 38)) myCharacter.position.x += .065
   if (key.left && myCharacter.position.x > .2 && (activeKey === 37 || activeKey === 40 || activeKey === 38)) myCharacter.position.x -= .065
 
-  else if (myCharacter.position.x < .4 && sceneCharacters.visible) {
+  else if (myCharacter.position.x < .2 && sceneCharacters.visible) {
 
     sceneCharacters.visible = false
-    //mesh.position.set(.25, -.1, 0)
-    //mesh.material.transparent = true
-    //mesh.material.opacity = .20
+      //mesh.position.set(.25, -.1, 0)
+      //mesh.material.transparent = true
+      //mesh.material.opacity = .20
 
-  } else if (myCharacter.position.x > .4 && !sceneCharacters.visible) {
+  } else if (myCharacter.position.x > .2 && !sceneCharacters.visible) {
 
     sceneCharacters.visible = true
-    //mesh.position.set(.25, .85, 0)
-    //mesh.material.opacity = .8
+      //mesh.position.set(.25, .85, 0)
+      //mesh.material.opacity = .8
   }
 
   if (myCharacter.isWalking && isNameDisplayed && isMouseHovering) hideNameTags()
@@ -78,8 +78,8 @@ function animateOtherChars() {
 
       }
 
-      if (character.position.x < .4 && character.visible) character.visible = false
-      else if (character.position.x > .4 && !character.visible) character.visible = true
+      if (character.position.x < .2 && character.visible) character.visible = false
+      else if (character.position.x > .2 && !character.visible) character.visible = true
 
       else if (character.isWalking && isNameDisplayed && isMouseHovering) hideNameTags()
       else if (!character.isWalking && !isNameDisplayed && isMouseHovering && sceneCharacters.visible && !isMenuDisplayed) showNameTags()
@@ -107,7 +107,7 @@ function initPt() {
 
     updateCharacter(user, 'getRemote', function(data) {
       if (signedIntoExtension && signedIntoSite) signInFromExtension(data)
-      else initScene(data)
+      initScene(data)
     })
 
     
@@ -241,7 +241,7 @@ function removeDomListeners() {
 
 function onWindowMsg(data) {
 
-   if (data.origin !== 'http://localhost:8080') return;
+  if (data.origin !== 'http://localhost:8080') return;
   console.log('extension received windowMsg', data)
 
   var source = data.source
@@ -258,6 +258,10 @@ function onWindowMsg(data) {
     var user = {
       name: data.data.name
     }
+
+  } else if (event === 'update') {
+    var user = data.data.user
+
   } else {
     var info = getCharacterInfo()
     var user = {
@@ -302,7 +306,7 @@ function onWindowMsg(data) {
       data = {
         'user': user,
         'event': event,
-        'method':method,
+        'method': method,
         'type': 'window',
         'friendId': friendId,
         'fromExtension': true,
@@ -324,9 +328,9 @@ function onWindowMsg(data) {
       break;
 
     case 'update':
-    if (data.data.updateCharacter) updateCharacter(null, 'getRemote')
-    if (data.data.updateUI) console.log('updateUI', data)
-     
+      updateCharacter(null, 'getRemote')
+      console.log('updateUI', data)
+
       break;
 
     default:

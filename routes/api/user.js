@@ -14,7 +14,7 @@ if (app.get('env') === 'development') {
 
 module.exports = function(passport) {
 
-  router.route('/user/friend/:action')
+  router.route('/user/friend/request')
     .post(function(req, res) {
 
       var friendId = req.body.friendId
