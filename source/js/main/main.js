@@ -23,21 +23,25 @@ $('document').ready(function() {
           console.log(data)
           if (data.status === 'success') {
 
-            errorMessage.html(data.message + ' to <strong>' + data.data.name + '</strong>!')
+            var user = data.data
 
-            data = {
-              'event': 'update',
-              'data': {
-                'updateCharacter': true,
-                'updateUI': true
-              },
-              'type': 'window',
-              'user': data.data
-            }
+            changeSubmitButton(true, data.message)
+            clearTimeout(timeout)
+            timeout = setTimeout(function() {
+              changeSubmitButton(false, 'Send request')
+            }, 1000)
 
           } else {
-            errorMessage.html(data.message)
+            changeSubmitButton(true, data.message)
           }
+
+          data = {
+            'event': 'update',
+            'type': 'window',
+            'user': user
+          }
+          window.parent.postMessage(data, '*')
+
         },
         error: function(err) {
           console.log(err)
@@ -125,12 +129,19 @@ $('document').ready(function() {
             timeout = setTimeout(function() {
               changeSubmitButton(false, 'Update')
             }, 1000)
-            
+
             changeSubmitButton(true, data.message + ' settings!')
-            if (cB) cB()
+
+            data = {
+              'event': 'update',
+              'type': 'window',
+              'user': user
+            }
+
+            window.parent.postMessage(data, '*')
 
           } else {
-             changeSubmitButton(true, data.message)
+            changeSubmitButton(true, data.message)
           }
         },
         error: function(err) {
