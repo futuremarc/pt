@@ -199,9 +199,11 @@ function addCanvasToPage() {
 
 function addMainMenu(mesh,data) {
 
+  data = data.data
+
   var menu = $('<div class="pt-menu pt"></div>')
 
-  var isMainMenu = mesh.isMe || mesh.purpose === 'menu'
+  var isMainMenu = mesh.isMe || mesh.role === 'menu'
 
   var html = Templates.extension.addMenu({
     isMe: isMainMenu,
@@ -235,7 +237,8 @@ function addMenuIcon(data) {
   var icon = $('<span>&#9776;</span>')
   var badge = $('<span class="pt-notification-counter"></span>')
   var container = $('<div class="pt-menu-icon pt"></div>')
-  var num_requests = data.friendRequests.length
+  var requests = data.friendRequests || []
+  var num_requests = requests.length
 
   $(container).click(function(e) {
     e.stopPropagation()
@@ -252,6 +255,8 @@ function addMenuIcon(data) {
   container.append(icon)
   container.append(badge)
   $('body').append(container)
+
+  console.log('addMenuIcon', data, num_requests)
 
   if (num_requests > 0) badge.show()
 
@@ -274,15 +279,15 @@ function openIframe(e) {
   e.stopPropagation()
   var target = e.currentTarget
   var isMe = $(target).closest('ul').data('is-me')
-  var purpose = $(target).find('div').data('purpose')
+  var role = $(target).find('div').data('role')
   var iframe = document.createElement('iframe')
-  var src = 'http://localhost:8080/' + purpose
+  var src = 'http://localhost:8080/' + role
 
 
   closeIframe()
   $(iframe).attr('frameborder', 0)
   $(iframe).attr('src', src)
-  $(iframe).data('purpose', purpose)
+  $(iframe).data('role', role)
   $(iframe).addClass('pt-iframe pt')
   $(iframe).click(function(e) {
     e.stopPropagation()
@@ -367,7 +372,7 @@ function showMenu(mesh) {
   var menu = mesh.menu
 
   menu.css('left', pos.x)
-  if(mesh.purpose === 'menu') menu.css('left', pos.x *3)
+  if(mesh.role === 'menu') menu.css('left', pos.x *3)
   menu.show();
   isMenuDisplayed = true
 }

@@ -9,7 +9,7 @@
 
         <div class="checkbox">
           <label>
-            <input type="checkbox", data-id='{{_id}}', data-title="{{title}}", {{#if ../mySubscriptions}} {{#ifIn _id ../mySubscriptions}}checked{{/ifIn}} {{/if}} value="">
+            <input type="checkbox", data-id='{{_id}}', data-role='subscription', data-title="{{title}}", {{#if ../mySubscriptions}} {{#ifIn _id ../mySubscriptions}}checked{{/ifIn}} {{/if}} value="">
             {{title}}
           </label>
         </div>

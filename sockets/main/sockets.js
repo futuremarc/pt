@@ -40,7 +40,7 @@ module.exports = function(io) {
 
     })
 
-    var events = ['action', 'chat', 'post']
+    var events = ['action', 'chat', 'post','request', 'friend']
 
     events.forEach(function(event) {
 

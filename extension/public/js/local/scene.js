@@ -59,7 +59,7 @@ function setCameraZoom(data) {
     'opacity': .8
   }))
 
-  mesh.purpose = 'menu'
+  mesh.role = 'menu'
   mesh.position.set(0, -2, 0)
   mesh.renderOrder = 1
   mesh.visible = false
@@ -81,7 +81,7 @@ function setCameraZoom(data) {
   camera.updateMatrix();
 
   setSceneOffset()
-  mesh.position.set(.25, -.1, 0) //.85 old y
+  mesh.position.set(.25, -.1, 0) //.85 old y value
 
 }
 

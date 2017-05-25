@@ -51,19 +51,14 @@ $(document).ready(function() {
 
     e.preventDefault();
 
-    var action = $(this).data('action')
+    var role = $(this).data('role')
     var friendId = $(this).data('id')
 
     var data = {
       'friendId': friendId,
       'type': 'window',
-      'action': action
+      'event': role
     }
-
-    // var extensionId = 'malhbgmooogkoheilhpjnlimhmnmlpii'
-    // chrome.runtime.sendMessage(extensionId, data, function(response){
-    //   console.log('got response', response)
-    // })
 
     window.parent.postMessage(data, '*')
 

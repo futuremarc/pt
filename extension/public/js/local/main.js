@@ -105,11 +105,12 @@ function initPt() {
     if (user && user._id) var signedIntoExtension = user
     else var signedIntoExtension = false
 
-    if (signedIntoExtension && signedIntoSite) updateCharacter(user, 'getRemote', function() {
-      signInFromExtension(user)
+    updateCharacter(user, 'getRemote', function(data) {
+      if (signedIntoExtension && signedIntoSite) signInFromExtension(data)
+      else initScene(data)
     })
 
-    initScene(user)
+    
   })
 }
 
@@ -246,12 +247,14 @@ function onWindowMsg(data) {
   var source = data.source
   var origin = data.origin
   var iframe = $('.pt-iframe')[0]
+  var event = data.data.event
   var action = data.data.action
   var friendId = data.data.friendId
+  var method = data.data.method
 
   //if (e.origin !== iframe.src) return;
 
-  if (action === 'signup' || action === 'login' || action === 'refreshPage') {
+  if (event === 'signup' || event === 'login' || event === 'refreshPage') {
     var user = {
       name: data.data.name
     }
@@ -265,7 +268,7 @@ function onWindowMsg(data) {
     }
   }
 
-  switch (action) {
+  switch (event) {
 
     case 'refreshPage':
 
@@ -281,15 +284,36 @@ function onWindowMsg(data) {
 
       data = {
         'user': user,
-        'action': action,
+        'event': event,
         'type': 'window',
         'friendId': friendId,
         'fromExtension': true
       }
 
-      console.log('extension sent windowMsg', data)
+      emitMsgToBg(data)
       source.postMessage(data, '*')
 
+      console.log('extension sent windowMsg', data)
+      console.log('extension emit socket', data)
+      break;
+
+    case 'request':
+
+      data = {
+        'user': user,
+        'event': event,
+        'method':method,
+        'type': 'window',
+        'friendId': friendId,
+        'fromExtension': true,
+        'action': action
+      }
+
+      emitMsgToBg(data)
+      source.postMessage(data, '*')
+
+      console.log('extension sent windowMsg', data)
+      console.log('extension emit socket', data)
       break;
 
     case 'logout':
@@ -297,14 +321,19 @@ function onWindowMsg(data) {
       logout(function() {
         window.location.href = 'http://localhost:8080/logout'
       })
+      break;
 
+    case 'update':
+    if (data.data.updateCharacter) updateCharacter(null, 'getRemote')
+    if (data.data.updateUI) console.log('updateUI', data)
+     
       break;
 
     default:
 
       data = {
         'user': user,
-        'action': action,
+        'event': event,
         'type': 'window',
         'fromExtension': true
       }

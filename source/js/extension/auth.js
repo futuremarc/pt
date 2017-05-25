@@ -44,7 +44,7 @@ $("body").on('submit', '#pt-auth-form', function(e) {
   var email = $('.auth-email').val();
   var pass = $('.auth-password').val();
   var name = $('.auth-name').val();
-  var action = $(this).data('action')
+  var role = $(this).data('role')
   var subs = []
   var timeout = null
 
@@ -54,7 +54,7 @@ $("body").on('submit', '#pt-auth-form', function(e) {
     subs.push(sub)
   });
 
-  if (action === 'settings') {
+  if (role === 'settings') {
 
     return //clean this all up
 
@@ -88,7 +88,7 @@ $("body").on('submit', '#pt-auth-form', function(e) {
 
   $.ajax({
     method: 'POST',
-    url: 'http://localhost:8080/api/' + action,
+    url: 'http://localhost:8080/api/' + role,
     data: data,
     success: function(data) {
       console.log(data)
@@ -208,51 +208,51 @@ $("body").on('submit', '#pt-auth-form', function(e) {
 //
 
 
-$('body').on('click', '.friend-request-btn, .friends-list-btn', function(e) {
+// $('body').on('click', '.friend-request-btn, .friends-list-btn', function(e) {
 
-  e.preventDefault()
-  var userId = myCharacter.data._id
-  var friendId = $(this).data('id')
-  var purpose = $(this).data('purpose')
-  var action = $(this).data('action')
+//   e.preventDefault()
+//   var userId = myCharacter.data._id
+//   var friendId = $(this).data('id')
+//   var purpose = $(this).data('purpose')
+//   var action = $(this).data('action')
 
-  if (action === 'accept' || action === 'reject') var method = 'PUT'
-  else if (action === 'remove') var method = 'DELETE'
+//   if (action === 'accept' || action === 'reject') var method = 'PUT'
+//   else if (action === 'remove') var method = 'DELETE'
 
-  var data = {
-    friendId: friendId,
-    userId: userId
-  }
+//   var data = {
+//     friendId: friendId,
+//     userId: userId
+//   }
 
-  console.log('add/remove friend', data)
+//   console.log('add/remove friend', data)
 
-  var self = this
+//   var self = this
 
-  $.ajax({
-    method: method,
-    url: 'http://localhost:8080/api/user/friend/' + action,
-    data: data,
-    success: function(data) {
-      console.log(data)
+//   $.ajax({
+//     method: method,
+//     url: 'http://localhost:8080/api/user/friend/' + action,
+//     data: data,
+//     success: function(data) {
+//       console.log(data)
 
-      updateCharacter(null, 'getRemote')
+//       updateCharacter(null, 'getRemote')
 
-      var container = $('#friend-requests-parent')
-      var reqs = data.data.friendRequests
-      var html = Templates.auth.addFriendRequests(reqs)
-      container.html(html)
+//       var container = $('#friend-requests-parent')
+//       var reqs = data.data.friendRequests
+//       var html = Templates.auth.addFriendRequests(reqs)
+//       container.html(html)
 
-      var container = $('#friends-list-parent')
-      var friends = data.data.friends
-      var html = Templates.auth.addFriendsList(friends)
-      container.html(html)
+//       var container = $('#friends-list-parent')
+//       var friends = data.data.friends
+//       var html = Templates.auth.addFriendsList(friends)
+//       container.html(html)
 
-    },
-    error: function(data) {
-      console.log(data)
-    }
-  })
-})
+//     },
+//     error: function(data) {
+//       console.log(data)
+//     }
+//   })
+// })
 
 
 //

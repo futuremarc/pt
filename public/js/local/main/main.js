@@ -1,172 +1,206 @@
 $('document').ready(function() {
 
-  function submitData(data, action, cB) {
+  var submitData = {
 
-    var timeout = null
-    var errorMessage = $('.error-message h3')
-    name = data.user.name || name
-    var userId = data.user._id
-    var friendId = data.friendId
-    var action = action
+    'friend': function(data) {
 
-    console.log('iframe submit', data, name, action)
+      var timeout = null
+      var errorMessage = $('.error-message h3')
+      var event = data.event
+      var userId = data.user._id
+      var friendId = data.friendId
 
-    switch (action) {
+      data = {
+        userId: userId,
+        friendId: friendId
+      }
 
-      case 'settings':
+      $.ajax({
+        method: 'POST',
+        url: 'http://localhost:8080/api/user/friend/' + event,
+        data: data,
+        success: function(data) {
+          console.log(data)
+          if (data.status === 'success') {
 
-        errorMessage.html('&nbsp;')
+            errorMessage.html(data.message + ' to <strong>' + data.data.name + '</strong>!')
 
-        $.ajax({
-          method: 'PUT',
-          url: 'http://localhost:8080/api/user/' + name,
-          data: data,
-          success: function(data) {
-            console.log(data)
-            if (data.status === 'success') {
-
-              errorMessage.html(data.message + ' settings!')
-              clearTimeout(timeout)
-
-              timeout = setTimeout(function() {
-                errorMessage.html('&nbsp;')
-
-              }, 1000)
-              if (cB) cB()
-
-            } else {
-              errorMessage.html(data.message)
+            data = {
+              'event': 'update',
+              'data': {
+                'updateCharacter': true,
+                'updateUI': true
+              },
+              'type': 'window',
+              'user': data.data
             }
-          },
-          error: function(err) {
-            console.log(err)
+
+          } else {
+            errorMessage.html(data.message)
           }
-        })
-
-        break;
-
-      case 'friend':
-
-        var data = {
-          userId: userId,
-          friendId: friendId
+        },
+        error: function(err) {
+          console.log(err)
         }
+      })
+    },
 
-        $.ajax({
-          method: 'POST',
-          url: 'http://localhost:8080/api/user/friend/' + action,
-          data: data,
-          success: function(data) {
-            console.log(data)
-            if (data.status === 'success') {
+    'request': function(data) {
+      console.log('iframe recieved', data)
 
-              errorMessage.html(data.message + ' to <strong>' + data.data.name + '</strong>!')
-                //updateCharacter(null, 'getRemote')
+      var timeout = null
+      var errorMessage = $('.error-message h3')
+      var event = data.event
+      var action = data.action
+      var method = data.method
+      var userId = data.user._id
+      var friendId = data.friendId
+      var self = this
 
-            } else {
-              errorMessage.html(data.message)
-            }
-          },
-          error: function(err) {
-            console.log(err)
+      data = {
+        userId: userId,
+        friendId: friendId,
+        action: action
+      }
+
+      $.ajax({
+        method: method,
+        url: 'http://localhost:8080/api/user/friend/' + event,
+        data: data,
+        success: function(data) {
+          console.log(data)
+
+          var container = $('#friend-requests-parent')
+          var reqs = data.data.friendRequests
+          var html = Templates.auth.addFriendRequests(reqs)
+          container.html(html)
+
+          container = $('#friends-list-parent')
+          var friends = data.data.friends
+          html = Templates.auth.addFriendsList(friends)
+          container.html(html)
+
+          data = {
+            'event': 'update',
+            'data': {
+              'updateCharacter': true,
+              'updateUI': true
+            },
+            'type': 'window',
+            'user': data.data
           }
-        })
 
-        break;
+          window.parent.postMessage(data, '*')
 
-      default:
-
-        var pos = data.user.position
-        var rot = data.user.rotation
-
-        var data = {
-          email: email,
-          password: pass,
-          name: name,
-          position: pos,
-          rotation: rot,
-          subscriptions: subs
+        },
+        error: function(data) {
+          console.log(data)
         }
+      })
 
-        console.log('signup/login', data)
-
-        $.ajax({
-          method: 'POST',
-          url: 'http://localhost:8080/api/' + action,
-          data: data,
-          success: function(data) {
-            console.log(data)
-            if (data.status === 'success') {
-
-              errorMessage.html(data.message + ' <strong>' + data.data.name + '</strong>!')
-
-
-              setTimeout(function() {
-                location.href = '/'
-              }, 100)
-
-              return
-
-              data = {
-                'action': 'refreshPage',
-                'name': name,
-                'user': data.data,
-                'type': 'window'
-              }
-
-              console.log('iframe sent', data)
-              window.parent.postMessage(data, '*')
-
-            } else {
-              errorMessage.html(data.message)
-            }
-          },
-          error: function(err) {
-            console.log(err)
-          }
-        })
-
-    }
-
-  }
-
-
-
-  //
-
-
-
-  var windowMsgEvents = {
+    },
 
     'settings': function(data) {
 
-      var action = data.action
+      var timeout = null
+      var errorMessage = $('.error-message h3')
+      var event = data.event
+      var userId = data.user._id
+      var name = data.user.name
+
       var subs = []
-
       $("#pt-auth-form input:checkbox:checked").each(function() {
-
         var sub = $(this).data('id')
         subs.push(sub)
       });
-
       data.subscriptions = subs
-      submitData(data, action)
 
+      errorMessage.html('&nbsp;')
+
+      $.ajax({
+        method: 'PUT',
+        url: 'http://localhost:8080/api/user/' + name,
+        data: data,
+        success: function(data) {
+          console.log(data)
+          if (data.status === 'success') {
+
+            errorMessage.html(data.message + ' settings!')
+            clearTimeout(timeout)
+
+            timeout = setTimeout(function() {
+              errorMessage.html('&nbsp;')
+
+            }, 1000)
+            if (cB) cB()
+
+          } else {
+            errorMessage.html(data.message)
+          }
+        },
+        error: function(err) {
+          console.log(err)
+        }
+      })
     },
-    'friend': function(data) {
+    default: function(data) {
 
-      var action = data.action
-      submitData(data, action)
-    },
-    'login': function(data) {
+      //not in use
+      var timeout = null
+      var errorMessage = $('.error-message h3')
+      var pos = data.user.position
+      var rot = data.user.rotation
+      var event = data.event
+      var userId = data.user._id
 
-      var action = data.action
-      submitData(data, action)
-    },
-    'signup': function(data) {
+      data = {
+        email: email,
+        password: pass,
+        name: name,
+        position: pos,
+        rotation: rot,
+        subscriptions: subs
+      }
 
-      var action = data.action
-      submitData(data, action)
+      console.log('signup/login', data)
+
+      $.ajax({
+        method: 'POST',
+        url: 'http://localhost:8080/api/' + event,
+        data: data,
+        success: function(data) {
+          console.log(data)
+          if (data.status === 'success') {
+
+            errorMessage.html(data.message + ' <strong>' + data.data.name + '</strong>!')
+
+
+            setTimeout(function() {
+              location.href = '/'
+            }, 100)
+
+            return
+
+            data = {
+              'event': 'refreshPage',
+              'name': name,
+              'user': data.data,
+              'type': 'window'
+            }
+
+            console.log('iframe sent', data)
+            window.parent.postMessage(data, '*')
+
+          } else {
+            errorMessage.html(data.message)
+          }
+        },
+        error: function(err) {
+          console.log(err)
+        }
+      })
+
+
     }
   }
 
@@ -181,10 +215,11 @@ $('document').ready(function() {
 
       console.log('iframe recieved from extension', data)
 
-      var action = data.data.action
-      var data = data.data
+      var event = data.data.event
+      data = data.data
 
-      windowMsgEvents[action](data)
+      submitData[event](data)
+
     }
   }
 
@@ -195,8 +230,8 @@ $('document').ready(function() {
   $("body").on('submit', '#pt-auth-form', function(e) {
     e.preventDefault();
 
-    var action = $(this).data('action')
-    if (action !== 'settings') return
+    var role = $(this).data('role')
+    if (role !== 'settings') return
 
     window.name = $('.auth-name').val();
     window.email = $('.auth-email').val();
@@ -214,7 +249,7 @@ $('document').ready(function() {
       name: name
     }
     var data = {
-      'action': action,
+      'event': role,
       'user': user,
       'type': 'window'
     }
@@ -228,14 +263,43 @@ $('document').ready(function() {
 
   $('body').on('click', '.pt-menu-logout', function() {
 
-    var action = $(this).data('action')
+    var role = $(this).data('role')
     var data = {
-      'action': action,
+      'event': role,
       'type': 'window'
     }
 
     console.log('iframe sent', data)
     window.parent.postMessage(data, '*')
+
+  })
+
+
+  //
+
+
+  $('body').on('click', '.friend-request-btn, .friends-list-btn', function(e) {
+
+    e.preventDefault()
+
+    var role = $(this).data('role')
+    var action = $(this).data('action')
+    var friendId = $(this).data('id')
+
+    if (action === 'accept' || action === 'reject') var method = 'PUT'
+    else if (action === 'remove') var method = 'DELETE'
+
+    var data = {
+      'event': role,
+      'action': action,
+      'friendId': friendId,
+      'method': method,
+      'type': 'window'
+    }
+
+    console.log('iframe sent', data)
+    window.parent.postMessage(data, '*')
+    return
 
   })
 

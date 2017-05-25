@@ -23,6 +23,12 @@ var socketEvents = {
   },
   'action': function(data) {
     socketUpdateCharacter(data)
+  },
+  'request':function(data){
+    console.log(data)
+  },
+  'friend':function(data){
+    console.log(data)
   }
 }
 

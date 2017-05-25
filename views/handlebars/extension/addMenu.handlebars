@@ -3,7 +3,7 @@
 <!--
   {{#if isMe}}
       <li>
-        <div class='pt-menu-share' data-purpose='share'>share this page</div>
+        <div class='pt-menu-share' data-role='share'>share this page</div>
       </li>
   {{/if}}
 
@@ -11,7 +11,7 @@
 
 	{{#if isMe}}
 		  <li class='pt-menu-home'>
-		    <div data-purpose='home'>friend requests</div>
+		    <div data-role='home'>friend requests</div>
         {{#ifCond data.friendRequests.length '>' 0}}
           <span class='pt-notification-counter' style='display:block'>{{data.friendRequests.length}}</span>
         {{else}}
@@ -22,19 +22,19 @@
 
  	{{#if isMe}}
   		<li class='pt-menu-friend' >
-    		<div data-purpose='friend'>add friend</div>
+    		<div data-role='friend'>add friend</div>
   		</li>
   {{/if}}
 
   {{#if isMe}}
   	<li class='pt-menu-home'>
-    	<div data-purpose='settings'>settings</div>
+    	<div data-role='settings'>settings</div>
   	</li>
   {{/if}}
 
   {{#if isMe}}
   	<li class='pt-menu-hide-pt'>
-    	<div data-purpose='hide-pt'>hide pt</div>
+    	<div data-role='hide-pt'>hide pt</div>
   	</li>
   {{/if}}
 </ul>

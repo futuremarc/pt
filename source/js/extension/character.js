@@ -9,7 +9,7 @@ function createMyCharacter(data) {
 
     myCharacter = character
     myCharacter.awake()
-    setCameraZoom(data)
+    setCameraZoom(character)
 
     if (isRegistered()) {
       addLiveCharacters()
@@ -46,7 +46,7 @@ function createCharacter(data, cB) {
     if (isMe) character.isMe = true
 
     character.menu = addCharacterMenu(character, data)
-    character.purpose = 'character' //associate purpose for all meshes
+    character.role = 'character' //associate purpose for all meshes
     character.hasPointer = false
     character.hasMenu = false
     character.data = data
@@ -167,6 +167,8 @@ function createCharacter(data, cB) {
 function updateCharacter(data, request, cB) {
 
   var pos, rot, data = data || {}
+
+  console.log('updateCharacter', data)
 
   switch (request) {
 
