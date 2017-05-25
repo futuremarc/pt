@@ -110,15 +110,15 @@
 	bottom: 0px !important;
 	left:1px !important;
 	font-size:22px !important;
-	opacity:.8;
+	opacity:.82;
 
 	span{
 		background: skyblue !important;
 		box-shadow: 3px 3px 5px rgba(0,0,0,0.2) !important;
 	}
 
-	color:rgba(255,255,255,0.75) !important;
-	text-shadow: 1px 1px 3px rgba(0,0,0,.35);
+	color:rgba(255,255,255,1) !important;
+	text-shadow: 1px 1px 2px rgba(0,0,0,.35);
 	&:hover{
 		color: rgba(0,0,0,1) !important;
 		cursor: default !important;
@@ -149,8 +149,8 @@
 	left: 0 !important;
 	bottom: 0 !important;
 	right: 0 !important;
-	width: 300px !important;
-	height: 300px !important;
+	width: 400px !important;
+	height: 400px !important;
 	z-index:2147483647 !important;
 	box-shadow: 8px 8px 8px rgba(0,0,0,0.15) !important;
 }

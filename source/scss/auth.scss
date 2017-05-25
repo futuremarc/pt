@@ -1,3 +1,4 @@
+
 .pt-auth-container { 
     display: flex;
     box-orient: horizontal;
@@ -12,15 +13,18 @@
 		top:0;
 		bottom:0;
 		width:35%;
-		height:65%;
+		height:70%;
 
 		@media(max-width: 768px){
 			width: 80%;
-			height: 60%;
 		}
 		
 		position: absolute;
+	}
 
+	span{
+		font-style:italic;
+		padding-left:12%;
 	}
 
 }

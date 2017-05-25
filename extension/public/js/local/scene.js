@@ -104,7 +104,7 @@ function setSceneOffset() {
 function zoomInScene() {
   $(container).addClass('pt-enlarge')
   $(renderer.domElement).addClass('pt-enlarge')
-  setCameraZoom()
+  setCameraZoom(data)
   onWindowResize()
 }
 

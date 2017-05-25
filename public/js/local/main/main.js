@@ -113,8 +113,6 @@ $('document').ready(function() {
       });
       data.subscriptions = subs
 
-      errorMessage.html('&nbsp;')
-
       $.ajax({
         method: 'PUT',
         url: 'http://localhost:8080/api/user/' + name,
@@ -123,17 +121,16 @@ $('document').ready(function() {
           console.log(data)
           if (data.status === 'success') {
 
-            errorMessage.html(data.message + ' settings!')
             clearTimeout(timeout)
-
             timeout = setTimeout(function() {
-              errorMessage.html('&nbsp;')
-
+              changeSubmitButton(false, 'Update')
             }, 1000)
+            
+            changeSubmitButton(true, data.message + ' settings!')
             if (cB) cB()
 
           } else {
-            errorMessage.html(data.message)
+             changeSubmitButton(true, data.message)
           }
         },
         error: function(err) {
@@ -175,7 +172,7 @@ $('document').ready(function() {
 
             setTimeout(function() {
               location.href = '/'
-            }, 100)
+            }, 0)
 
             return
 

@@ -1,11 +1,11 @@
 function signInFromExtension(data) {
 
   var errorMessage = $(".error-message h3")
-  var my = data
+  var user = data
   var data = {
-    email: my.email,
-    password: my.password,
-    name: my.name
+    email: user.email,
+    password: user.password,
+    name: user.name
   }
 
   $.ajax({
@@ -14,13 +14,15 @@ function signInFromExtension(data) {
     data: data,
     success: function(data) {
       console.log(data)
+
+      console.log('LOG IN',data)
       if (data.status === 'success') {
 
         errorMessage.html(data.message + ' <strong>' + data.data.name + '</strong>!')
 
         setTimeout(function() {
           location.href = '/'
-        }, 500)
+        }, 0)
 
       } else {
         errorMessage.html(data.message)
