@@ -226,6 +226,12 @@ function updateCharacter(data, request, cB) {
       break
 
     case 'getRemote':
+
+      if (!data._id && !myCharacter) {
+        if (cB) cB(null)
+        return
+      }
+
       var name = data.name || myCharacter.data.name
       var errorMessage = $('.error-message h3')
 
@@ -281,6 +287,9 @@ function putCharacter(cB) {
 
 
 function getCharacterInfo() {
+
+
+  if (!isRegistered()) return false
 
   var liveFriends = getLiveFriends()
   var pos = getCharacterPos()

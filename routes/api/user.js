@@ -18,7 +18,7 @@ module.exports = function(passport) {
     .post(function(req, res) {
 
       var friendId = req.body.friendId
-      var userId = req.body.userId
+      var userId = req.body.userId 
 
       User
         .findByIdAndUpdate(friendId, {
@@ -233,66 +233,6 @@ module.exports = function(passport) {
 
 
   })
-
-  router.route('/user/friend/:name')
-    .post(function(req, res) {
-
-    })
-
-  .get(function(req, res) {
-    User
-      .findById(req.params.id)
-      .populate({
-        path: 'friends',
-        select: 'user',
-        populate: {
-          path: 'user',
-          select: 'name _id'
-        }
-      })
-      .exec(function(err, user) {
-        if (err) {
-          return res.json({
-            status: "error",
-            data: null,
-            message: "Error finding friends"
-          })
-        }
-
-        var friends = []
-
-        async.forEach(user.friends, function(friend, callback) {
-          User.populate(
-            friend, {
-              path: "user"
-            },
-            function(err, friend) {
-
-              friends.push(friend)
-              if (err) throw err;
-              callback();
-            }
-          );
-        }, function(err) {
-
-          if (err) return res.json({
-            status: "error",
-            data: null,
-            message: "Couldn't find friends of user"
-          })
-
-          user.friends = friends
-
-          return res.json({
-            status: "success",
-            data: user,
-            message: "Found user"
-          })
-
-        })
-      })
-  })
-
 
   router.route('/user/:name')
     .put(function(req, res) {

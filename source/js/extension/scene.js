@@ -13,6 +13,8 @@ function initScene(data) {
 
   var data = data || {}
 
+  console.log('initScene', data)
+
   clock = new THREE.Clock();
   scene = new THREE.Scene();
 

@@ -58,11 +58,11 @@ function onInstall(data) {
         title: "Move",
         message: "using the arrow keys."
       }, {
-        title: "Sign off",
-        message: "by walking offscreen to the left."
-      }, {
         title: "The menu",
         message: "is in the bottom left corner."
+      }, {
+        title: "Sign off",
+        message: "by walking to the left wall"
       }],
       iconUrl: "public/img/brand/favicon-128.png",
       requireInteraction: true,

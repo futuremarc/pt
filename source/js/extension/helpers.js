@@ -210,8 +210,6 @@ function addMainMenu(mesh,data) {
     data: data
   })
 
-  console.log('addMainMenu',data)
-
   mesh.menu = menu
   $('body').append(menu)
   menu.html(html)
@@ -255,8 +253,6 @@ function addMenuIcon(data) {
   container.append(icon)
   container.append(badge)
   $('body').append(container)
-
-  console.log('addMenuIcon', data, num_requests)
 
   if (num_requests > 0) badge.show()
 

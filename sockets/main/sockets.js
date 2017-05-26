@@ -25,6 +25,8 @@ module.exports = function(io) {
       var id = data._id;
       var socketId = socket.id;
 
+      if (!id) return
+
       clients[id] = socketId
       broadcastToFriends('join', data)
 
@@ -34,6 +36,8 @@ module.exports = function(io) {
 
       var id = data._id;
       var socketId = socket.id;
+
+      if (!id) return
 
       clients[id] = socketId
       broadcastToFriends('leave', data)
@@ -48,6 +52,8 @@ module.exports = function(io) {
 
         var id = data._id;
         var socketId = socket.id;
+
+        if (!id) return
 
         clients[id] = socketId
         broadcastToFriends(event, data)

@@ -58,7 +58,8 @@ var userSchema = new Schema({
 
   friendRequests: [{
     type: Schema.Types.ObjectId,
-    ref: 'User'
+    ref: 'User',
+    unique:true
   }],
 
   posts: [{

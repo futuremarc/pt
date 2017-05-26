@@ -1,6 +1,14 @@
 $('document').ready(function() {
 
+  var myCharacter = {}
+
   var submitData = {
+
+    'initAuth': function(data) {
+
+      console.log('iframe initAuth', data)
+      myCharacter.data = data.user
+    },
 
     'friend': function(data) {
 
@@ -24,15 +32,19 @@ $('document').ready(function() {
           if (data.status === 'success') {
 
             var user = data.data
+            myCharacter.data = user
 
-            changeSubmitButton(true, data.message)
+            errorMessage.html(data.message+'!')
+            changeSubmitButton(true)
+
             clearTimeout(timeout)
             timeout = setTimeout(function() {
-              changeSubmitButton(false, 'Send request')
+              changeSubmitButton(false)
             }, 1000)
 
           } else {
-            changeSubmitButton(true, data.message)
+            errorMessage.html(data.message)
+            changeSubmitButton(true)
           }
 
           data = {
@@ -310,28 +322,101 @@ $('document').ready(function() {
   })
 
 
+  $('body').on('keyup', '#pt-friend-form', function(e) {
+
+    if (e.keyCode === 13) return
+
+    var errorMessage = $(".error-message h3")
+    var name = $(this).find('input').val()
+    var timeout = null
+
+    clearTimeout(timeout)
+    errorMessage.html('searching...')
+
+    var friends = myCharacter.data.friends
+    var friendExists = false
+
+    console.log('friends', friends)
+    friends.some(function(friend) {
+      if (friend.user.name === name) {
+
+        console.log('name', friend.user.name, name, friend)
+
+        friendExists = true
+        return friend
+
+      }
+    })
+
+    if (friendExists) {
+
+      errorMessage.html('<b>' + name + '</b> is already your friend')
+      changeSubmitButton(true, 'Add friend')
+
+      return
+    } else changeSubmitButton()
+
+    var self = this
+
+    $.ajax({
+      method: 'GET',
+      url: 'http://localhost:8080/api/user/' + name,
+      success: function(data) {
+        console.log(data)
+
+        clearTimeout(timeout)
+
+        if (data.status === 'success') {
+
+          if (data.data) errorMessage.html(data.message + ' <strong>' + data.data.name + '</strong>!')
+          $(self).data('id', data.data._id)
+          changeSubmitButton(false)
+
+        } else if (data.status === 'not found') {
+          changeSubmitButton(true)
+            // timeout = setTimeout(function() {
+            //   errorMessage.html('&nbsp;')
+            // }, 2000)
+        } else if (data.status === 'error') {
+          errorMessage.html(data.message)
+          changeSubmitButton(true)
+        }
+      },
+      error: function(err) {
+        console.log(err)
+      }
+    })
+  })
+
+
   //
 
 
-  // $("body").on('submit', '#pt-auth-form', function(e) {
+  $("body").on('submit', '#pt-friend-form', function(e) {
 
-  //   e.preventDefault();
+    e.preventDefault();
 
-  //   var action = $(this).data('action')
-  //   var data = {
-  //     'action': action,
-  //     'type': 'window'
-  //   }
+    var role = $(this).data('role')
+    var friendId = $(this).data('id')
 
-  //   console.log('iframe sent', data)
-  //   window.parent.postMessage(data, '*')
+    var data = {
+      'friendId': friendId,
+      'type': 'window',
+      'event': role
+    }
 
-  //   // var extensionId = 'malhbgmooogkoheilhpjnlimhmnmlpii'
-  //   // chrome.runtime.sendMessage(extensionId, data, function(response){
-  //   //   console.log('iframe recieved', response)
-  //   // })
+    window.parent.postMessage(data, '*')
 
-  // })
+  })
+
+
+  var isIframe = (window.parent !== window.self)
+  var data = {
+    'event': 'initAuth',
+    'type': 'window'
+  }
+
+  if (isIframe) window.parent.postMessage(data, '*')
 
 })
 

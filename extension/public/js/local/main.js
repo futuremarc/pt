@@ -105,12 +105,13 @@ function initPt() {
     if (user && user._id) var signedIntoExtension = user
     else var signedIntoExtension = false
 
-    updateCharacter(user, 'getRemote', function(data) {
-      if (signedIntoExtension && signedIntoSite) signInFromExtension(data)
-      initScene(data)
+    updateCharacter(user, 'getRemote', function(user) {
+
+      if (signedIntoExtension && signedIntoSite) signInFromExtension(user)
+      initScene(user)
     })
 
-    
+
   })
 }
 
@@ -208,7 +209,8 @@ function onWindowResize() {
 
 
 function onVisibilityChange() {
-  if (document.visibilityState === 'visible') updateCharacter(null, 'getLocal')
+  if (document.visibilityState === 'visible')
+    if (isRegistered()) updateCharacter(null, 'getLocal')
 }
 
 
@@ -262,6 +264,22 @@ function onWindowMsg(data) {
   } else if (event === 'update') {
     var user = data.data.user
 
+  } else if (event === 'initAuth') {
+    var user = updateCharacter(null, 'getRemote', function(user) {
+
+      var data = {
+        'user': user,
+        'event': event,
+        'type': 'window',
+        'fromExtension': true
+      }
+
+      source.postMessage(data, '*')
+      console.log('extension sent windowMsg', data)
+      console.log('extension emit socket', data)
+
+
+    })
   } else {
     var info = getCharacterInfo()
     var user = {
@@ -277,6 +295,11 @@ function onWindowMsg(data) {
     case 'refreshPage':
 
       window.reload()
+      break;
+
+    case 'initAuth':
+
+      // above
       break;
 
     case 'closeIframe':
