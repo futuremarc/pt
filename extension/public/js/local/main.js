@@ -317,10 +317,18 @@ function onWindowMsg(data) {
         'fromExtension': true
       }
 
-      emitMsgToBg(data)
       source.postMessage(data, '*')
-
       console.log('extension sent windowMsg', data)
+
+      data = {
+        '_id': user._id,
+        'event': event,
+        'type': 'socket',
+        'friendId': friendId
+      }
+
+      emitMsgToBg(data)
+
       console.log('extension emit socket', data)
       break;
 

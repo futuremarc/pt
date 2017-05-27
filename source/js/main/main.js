@@ -14,12 +14,14 @@ $('document').ready(function() {
 
       var errorMessage = $('.error-message h3')
       var event = data.event
+      var action = data.action
       var userId = data.user._id
       var friendId = data.friendId
 
       data = {
         userId: userId,
-        friendId: friendId
+        friendId: friendId,
+        action: action
       }
 
       $.ajax({
@@ -33,7 +35,7 @@ $('document').ready(function() {
             var user = data.data
             myCharacter.data = user
 
-            errorMessage.html(data.message+'!')
+            errorMessage.html(data.message + '!')
             changeSubmitButton(true)
 
           } else {
@@ -347,14 +349,12 @@ $('document').ready(function() {
       changeSubmitButton(true, 'Add friend')
 
       return
-    } else if (name === myCharacter.data.name){
+    } else if (name === myCharacter.data.name) {
       errorMessage.html('... that\'s you...')
       changeSubmitButton(true, 'Add friend')
 
       return
-    }
- 
-    else changeSubmitButton()
+    } else changeSubmitButton()
 
     var self = this
 
@@ -398,6 +398,7 @@ $('document').ready(function() {
 
     var role = $(this).data('role')
     var friendId = $(this).data('id')
+    var userId = myCharacter.data._id
 
     var data = {
       'friendId': friendId,

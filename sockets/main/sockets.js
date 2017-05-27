@@ -14,9 +14,17 @@ module.exports = function(io) {
       for (var friend in liveFriends) {
         var socketId = clients[liveFriends[friend]]
         if (io.sockets.connected[socketId]) io.sockets.connected[socketId].emit(event, data);
-
-
       }
+    }
+
+    function emitToOne(event,data){
+
+      console.log('emitToOne', event, data)
+
+      var friendId = data.friendId
+      var socketId = clients[friendId]
+
+        if (io.sockets.connected[socketId]) io.sockets.connected[socketId].emit(event, data);
 
     }
 
@@ -41,6 +49,18 @@ module.exports = function(io) {
 
       clients[id] = socketId
       broadcastToFriends('leave', data)
+
+    })
+
+    socket.on('friend', function(data) {
+
+      var id = data._id;
+      var socketId = socket.id;
+
+      if (!id) return
+
+      clients[id] = socketId
+      emitToOne('friend', data)
 
     })
 

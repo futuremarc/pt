@@ -46,7 +46,7 @@ module.exports = function(passport) {
 
       var friendId = req.body.friendId
       var userId = req.body.userId
-      var action = req.params.action
+      var action = req.body.action
 
       User
         .findByIdAndUpdate(userId, {
