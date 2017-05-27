@@ -351,7 +351,10 @@ function onWindowMsg(data) {
       break;
 
     case 'update':
-      updateCharacter(null, 'getRemote')
+      updateCharacter(null, 'getRemote', function(character){
+        removeMainMenu()
+        addMainMenu(mesh, character)
+      })
       console.log('updateUI', data)
 
       break;

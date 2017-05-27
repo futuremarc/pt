@@ -197,9 +197,7 @@ function addCanvasToPage() {
 //
 
 
-function addMainMenu(mesh,data) {
-
-  data = data.data
+function addMainMenu(mesh, data) {
 
   var menu = $('<div class="pt-menu pt"></div>')
 
@@ -256,6 +254,15 @@ function addMenuIcon(data) {
 
   if (num_requests > 0) badge.show()
 
+}
+
+function removeMenuIcon(){
+  $('.pt-menu-icon').remove()
+}
+
+function removeMainMenu(){
+  $('.pt-menu').remove()
+  removeMenuIcon()
 }
 
 

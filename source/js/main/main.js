@@ -12,7 +12,6 @@ $('document').ready(function() {
 
     'friend': function(data) {
 
-      var timeout = null
       var errorMessage = $('.error-message h3')
       var event = data.event
       var userId = data.user._id
@@ -36,11 +35,6 @@ $('document').ready(function() {
 
             errorMessage.html(data.message+'!')
             changeSubmitButton(true)
-
-            clearTimeout(timeout)
-            timeout = setTimeout(function() {
-              changeSubmitButton(false)
-            }, 1000)
 
           } else {
             errorMessage.html(data.message)
@@ -330,17 +324,16 @@ $('document').ready(function() {
     var name = $(this).find('input').val()
     var timeout = null
 
+    if (!name) return
+
     clearTimeout(timeout)
     errorMessage.html('searching...')
 
     var friends = myCharacter.data.friends
     var friendExists = false
 
-    console.log('friends', friends)
     friends.some(function(friend) {
       if (friend.user.name === name) {
-
-        console.log('name', friend.user.name, name, friend)
 
         friendExists = true
         return friend
@@ -354,7 +347,14 @@ $('document').ready(function() {
       changeSubmitButton(true, 'Add friend')
 
       return
-    } else changeSubmitButton()
+    } else if (name === myCharacter.data.name){
+      errorMessage.html('... that\'s you...')
+      changeSubmitButton(true, 'Add friend')
+
+      return
+    }
+ 
+    else changeSubmitButton()
 
     var self = this
 

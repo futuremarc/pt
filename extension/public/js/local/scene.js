@@ -67,7 +67,7 @@ function setCameraZoom(data) {
   mesh.visible = false
 
   scene.add(mesh)
-  addMainMenu(mesh,data)
+  addMainMenu(mesh,data.data)
 
   sceneCharacters.position.set(0, 1, 0);
 
