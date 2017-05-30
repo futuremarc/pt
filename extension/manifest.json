@@ -2,7 +2,7 @@
   "manifest_version": 2,
   "name": "Passtime",
   "short_name": "Passtime",
-  "version": "0.9",
+  "version": "0.91",
   "permissions": [
     "storage",
     "notifications",

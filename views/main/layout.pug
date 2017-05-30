@@ -27,10 +27,11 @@ html
       ga('send', 'pageview');
     script.
       if (chrome.app.isInstalled) document.getElementById('install-tag').style.display = 'none';
-      
+    
+    a(id='install-tag', href='#', onclick='chrome.webstore.install()') Add to Chrome
     div(class='info-tag')
       div(id='name-tag') #{userName}
-      a(id='install-tag', href='#', style='display:none', onclick='chrome.webstore.install()') Add to Chrome
+      
     
     div(class='container')
       div(class='row')
