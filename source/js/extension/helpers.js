@@ -56,6 +56,7 @@ function emitJoinMsg() {
 
 function emitLeaveMsg() {
 
+  myCharacter.data.isLive = false
   putCharacter(function() {
 
     var info = getCharacterInfo()

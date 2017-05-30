@@ -221,7 +221,7 @@ function onVisibilityChange() {
 
 
 function addDomListeners() {
-  document.addEventListener('click', onDocumentClick)
+  window.addEventListener('click', onDocumentClick)
   document.addEventListener('keydown', onKeyDown)
   document.addEventListener('keyup', onKeyUp)
   window.addEventListener('visibilitychange', onVisibilityChange)
@@ -230,7 +230,7 @@ function addDomListeners() {
 }
 
 function removeDomListeners() {
-  document.removeEventListener('click', onDocumentClick)
+  window.removeEventListener('click', onDocumentClick)
   document.removeEventListener('keydown', onKeyDown)
   document.removeEventListener('keyup', onKeyUp)
   window.removeEventListener('visibilitychange', onVisibilityChange)

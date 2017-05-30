@@ -36,7 +36,6 @@ var socketEvents = {
 
 //
 
-var createdCharacters = {}
 
 function socketUpdateCharacter(data) {
 
@@ -45,17 +44,15 @@ function socketUpdateCharacter(data) {
   var rot = data.rotation
   var action = data.action
 
-  if (!friend && !createdCharacters[data._id]) {
+  if (!friend) {
 
-    createdCharacters[data._id] = true
+    characters[data._id] = true
 
     //update live friends
 
     setTimeout(function() {
 
       updateCharacter(null, 'getRemote', function() {
-
-        characters[data._id] = {} //dont let PT create same character before character is finished creating
 
         createCharacter(data, function() {
 
@@ -67,7 +64,8 @@ function socketUpdateCharacter(data) {
           if (action) friend[action](data)
 
         })
-      }, 2000)
+        
+      }, 3000)
 
 
     })

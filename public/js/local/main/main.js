@@ -89,13 +89,11 @@ $('document').ready(function() {
           var user = data.data
 
           var container = $('#friend-requests-parent')
-          var reqs = user.friendRequests
-          var html = Templates.auth.addFriendRequests(reqs)
+          var html = Templates.auth.addFriendRequests(user.friendRequests)
           container.html(html)
 
           var container = $('#friends-list-parent')
-          var friends = user.friends
-          var html = Templates.auth.addFriendsList(friends)
+          var html = Templates.auth.addFriendsList(user.friends)
           container.html(html)
 
           data = {
@@ -312,6 +310,17 @@ $('document').ready(function() {
       'friendId': friendId,
       'type': 'window'
     }
+
+    // data = {
+    //     'user': myCharacter.data,
+    //     'event': role,
+    //     'type': 'window',
+    //     'friendId': friendId,
+    //     'fromExtension': true,
+    //     'action': action
+    //   }
+
+    //submitData[role](data)
 
     console.log('iframe sent', data)
     window.parent.postMessage(data, '*')

@@ -1,13 +1,10 @@
 <ul data-id='{{data._id}}'  data-name='{{data.name}}' data-is-me='{{isMe}}'>
 
-<!--
   {{#if isMe}}
-      <li>
-        <div class='pt-menu-share' data-role='share'>share this page</div>
+      <li class='pt-menu-party' >
+        <div data-role='friend'>new party window</div>
       </li>
   {{/if}}
-
--->
 
 	{{#if isMe}}
 		  <li class='pt-menu-home'>
@@ -25,6 +22,13 @@
     		<div data-role='friend'>add friend</div>
   		</li>
   {{/if}}
+
+  {{#if isMe}}
+      <li>
+        <div class='pt-menu-share' data-role='share'>share this page</div>
+      </li>
+  {{/if}}
+
 
   {{#if isMe}}
   	<li class='pt-menu-home'>
