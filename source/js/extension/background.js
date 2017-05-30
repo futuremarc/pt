@@ -11,7 +11,7 @@ var myCharacter = {}
 
 function initSockets() {
 
-  var events = ['chat', 'post', 'action', 'join', 'leave', 'connect', 'reconnect', 'disconnect']
+  var events = ['chat', 'post', 'action', 'join', 'leave', 'connect', 'reconnect', 'disconnect','friend','request']
 
   events.forEach(function(event) {
 

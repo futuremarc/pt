@@ -64,16 +64,20 @@ $('document').ready(function() {
       var errorMessage = $('.error-message h3')
       var event = data.event
       var action = data.action
-      var method = data.method
       var userId = data.user._id
       var friendId = data.friendId
-      var self = this
+
+      if (action === 'accept' || action === 'reject') var method = 'PUT'
+      else if (action === 'remove') var method = 'DELETE'
+
 
       data = {
         userId: userId,
         friendId: friendId,
         action: action
       }
+
+      var self = this
 
       $.ajax({
         method: method,
@@ -300,14 +304,12 @@ $('document').ready(function() {
     var action = $(this).data('action')
     var friendId = $(this).data('id')
 
-    if (action === 'accept' || action === 'reject') var method = 'PUT'
-    else if (action === 'remove') var method = 'DELETE'
+    //if i accept friend request, get otehr guys info and 'join'
 
     var data = {
       'event': role,
       'action': action,
       'friendId': friendId,
-      'method': method,
       'type': 'window'
     }
 

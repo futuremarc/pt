@@ -17,14 +17,17 @@ module.exports = function(io) {
       }
     }
 
-    function emitToOne(event,data){
-
-      console.log('emitToOne', event, data)
+    function emitToOne(event, data){
 
       var friendId = data.friendId
       var socketId = clients[friendId]
 
-        if (io.sockets.connected[socketId]) io.sockets.connected[socketId].emit(event, data);
+      console.log('emitToOne', data)
+  
+        if (io.sockets.connected[socketId]){
+                console.log('emitToOne', 'connected')
+          io.sockets.connected[socketId].emit(event, data);
+        }
 
     }
 
@@ -32,11 +35,13 @@ module.exports = function(io) {
 
       var id = data._id;
       var socketId = socket.id;
+      var friendId = data.friendId
 
       if (!id) return
 
       clients[id] = socketId
       broadcastToFriends('join', data)
+      if (friendId) emitToOne('join', data)
 
     })
 
@@ -44,11 +49,13 @@ module.exports = function(io) {
 
       var id = data._id;
       var socketId = socket.id;
+      var friendId = data.friendId
 
       if (!id) return
 
       clients[id] = socketId
       broadcastToFriends('leave', data)
+      if (friendId) emitToOne('leave', data)
 
     })
 
@@ -64,7 +71,19 @@ module.exports = function(io) {
 
     })
 
-    var events = ['action', 'chat', 'post','request', 'friend']
+    socket.on('request', function(data) {
+
+      var id = data._id;
+      var socketId = socket.id;
+
+      if (!id) return
+
+      clients[id] = socketId
+      emitToOne('request', data)
+
+    })
+
+    var events = ['action', 'chat', 'post']
 
     events.forEach(function(event) {
 

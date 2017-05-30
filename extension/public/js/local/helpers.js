@@ -225,6 +225,7 @@ function addMainMenu(mesh, data) {
 }
 
 
+
 //
 
 
@@ -256,11 +257,19 @@ function addMenuIcon(data) {
 
 }
 
-function removeMenuIcon(){
+
+//
+
+
+function removeMenuIcon() {
   $('.pt-menu-icon').remove()
 }
 
-function removeMainMenu(){
+
+//
+
+
+function removeMainMenu() {
   $('.pt-menu').remove()
   removeMenuIcon()
 }
@@ -269,7 +278,125 @@ function removeMainMenu(){
 //
 
 
-function addNotificationBadge(container){
+function getFriendInfo(idOrName, cB) {
+
+  $.ajax({
+    method: 'GET',
+    url: 'http://localhost:8080/api/user/' + idOrName,
+    success: function(data) {
+      console.log(data)
+
+      if (data.status === 'success') {
+        var user = data.data
+
+        if (cB) cB(user)
+        return user
+      }
+    },
+    error: function(err) {
+      console.log(err)
+    }
+  })
+}
+
+
+//
+
+
+function getLiveFriends() {
+
+  var liveFriends = {}
+
+  myCharacter.data.friends.forEach(function(friend) {
+
+   console.log(friend)
+
+   if (!friend || !friend.user) return
+    var friend = friend.user
+    if (friend.isLive) liveFriends[friend._id] = friend._id
+  })
+  return liveFriends
+}
+
+
+//
+
+
+function getLiveFriends() {
+
+  var liveFriends = {}
+
+  myCharacter.data.friends.forEach(function(friend) {
+
+    var friend = friend.user
+    if (friend.isLive) liveFriends[friend._id] = friend._id
+  })
+  return liveFriends
+}
+
+
+//
+
+
+function getRemoteLiveFriends(cB) {
+
+  var liveFriends = {}
+
+  updateCharacter(null, 'getRemote', function(character) {
+
+    console.log('getRemoteLiveFriends', character)
+
+    character.friends.forEach(function(friend) {
+      var friend = friend.user
+      if (friend.isLive) liveFriends[friend._id] = friend._id
+    })
+
+    console.log('liveFriends', liveFriends, 'character', character)
+
+    if (cB) cB(liveFriends)
+  })
+}
+
+
+//
+
+
+function refreshMainMenu() {
+
+  updateCharacter(null, 'getRemote', function(character) {
+    removeMainMenu()
+    addMainMenu(mesh, character)
+  })
+}
+
+
+
+//
+
+
+function addLiveCharacters() {
+
+  updateCharacter(null, 'getRemote', function(character) {
+
+    console.log('addLiveCharacters', character, character.friends)
+
+    character.friends.forEach(function(friend) {
+
+      var friend = friend.user
+      if (friend.isLive) createCharacter(friend)
+    })
+  })
+}
+
+
+//
+
+
+function removeLiveCharacters() {
+
+  for (var character in characters){
+    removeCharacter(characters[character].data)
+  }
 
 }
 
@@ -375,7 +502,7 @@ function showMenu(mesh) {
   var menu = mesh.menu
 
   menu.css('left', pos.x)
-  if(mesh.role === 'menu') menu.css('left', pos.x *3)
+  if (mesh.role === 'menu') menu.css('left', pos.x * 3)
   menu.show();
   isMenuDisplayed = true
 }

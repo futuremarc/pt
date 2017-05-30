@@ -4,6 +4,7 @@ var router = express.Router();
 var User = require('models/user/model')
 var async = require('async')
 var mongoose = require('mongoose')
+var ObjectId = require('mongoose').Types.ObjectId;
 
 
 if (app.get('env') === 'development') {
@@ -18,7 +19,7 @@ module.exports = function(passport) {
     .post(function(req, res) {
 
       var friendId = req.body.friendId
-      var userId = req.body.userId 
+      var userId = req.body.userId
 
       User
         .findByIdAndUpdate(friendId, {
@@ -234,11 +235,24 @@ module.exports = function(passport) {
 
   })
 
-  router.route('/user/:name')
+  router.route('/user/:id')
     .put(function(req, res) {
+
+     
+      var id = req.params.id;
+      var $or = [{
+        name: id
+      }];
+
+      if (ObjectId.isValid(id)) {
+        $or.push({
+          _id: ObjectId(id)
+        });
+      }
+
       User
         .findOne({
-          name: req.params.name
+          $or: $or
         })
         .exec(function(err, user) {
           if (err || !user) { //incase remote character wants to login to local
@@ -309,9 +323,21 @@ module.exports = function(passport) {
         })
     })
     .get(function(req, res) {
+
+      var id = req.params.id;
+      var $or = [{
+        name: id
+      }];
+
+      if (ObjectId.isValid(id)) {
+        $or.push({
+          _id: ObjectId(id)
+        });
+      }
+
       User
         .findOne({
-          name: req.params.name
+          $or: $or
         })
         .populate({
           path: 'friendRequests',
@@ -321,6 +347,8 @@ module.exports = function(passport) {
           }
         })
         .exec(function(err, user) {
+
+          console.log('USER', user)
 
           if (err) {
             return res.json({

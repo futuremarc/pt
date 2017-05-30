@@ -342,22 +342,6 @@ function addCharacterMenu(character, data) {
 }
 
 
-//
-
-
-function addLiveCharacters() {
-
-  updateCharacter(null, 'getRemote', function(character) {
-
-    character.friends.forEach(function(friend) {
-
-      var friend = friend.user
-      if (friend.isLive) createCharacter(friend)
-    })
-
-  })
-}
-
 
 //
 
@@ -369,22 +353,6 @@ function removeCharacter(data) {
   delete characters[data._id]
 }
 
-
-//
-
-
-function getLiveFriends() {
-
-  var liveFriends = {}
-
-  myCharacter.data.friends.forEach(function(friend) {
-
-    var friend = friend.user
-    if (friend.isLive) liveFriends[friend._id] = friend._id
-  })
-
-  return liveFriends
-}
 
 
 //

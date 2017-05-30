@@ -24,10 +24,11 @@ var socketEvents = {
   'action': function(data) {
     socketUpdateCharacter(data)
   },
-  'request':function(data){
+  'request': function(data) {
     console.log(data)
   },
-  'friend':function(data){
+  'friend': function(data) {
+    refreshMainMenu()
     console.log(data)
   }
 }
@@ -35,25 +36,40 @@ var socketEvents = {
 
 //
 
+var createdCharacters = {}
 
 function socketUpdateCharacter(data) {
 
   var friend = characters[data._id]
   var pos = data.position
   var rot = data.rotation
+  var action = data.action
 
-  if (!friend) {
+  if (!friend && !createdCharacters[data._id]) {
 
-    characters[data._id] = {} //dont let PT create same character before character is finished creating
+    createdCharacters[data._id] = true
 
-    createCharacter(data, function() {
+    //update live friends
 
-      var friend = characters[data._id]
+    setTimeout(function() {
 
-      friend.position.set(pos.x, pos.y, pos.z);
-      friend.rotation.set(rot.x, rot.y, rot.z);
+      updateCharacter(null, 'getRemote', function() {
 
-      if (data.action) friend[data.action](data)
+        characters[data._id] = {} //dont let PT create same character before character is finished creating
+
+        createCharacter(data, function() {
+
+          var friend = characters[data._id]
+
+          friend.position.set(pos.x, pos.y, pos.z);
+          friend.rotation.set(rot.x, rot.y, rot.z);
+
+          if (action) friend[action](data)
+
+        })
+      }, 2000)
+
+
     })
 
   } else {
@@ -61,7 +77,7 @@ function socketUpdateCharacter(data) {
     friend.position.set(pos.x, pos.y, pos.z);
     friend.rotation.set(rot.x, rot.y, rot.z);
 
-    if (data.action) friend[data.action](data)
+    if (action) friend[action](data)
 
   }
 }

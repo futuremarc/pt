@@ -105,7 +105,10 @@ function initPt() {
     if (user && user._id) var signedIntoExtension = user
     else var signedIntoExtension = false
 
+    console.log('initPt', data)
     updateCharacter(user, 'getRemote', function(user) {
+
+      console.log('updateCharacter', user)
 
       if (signedIntoExtension && signedIntoSite) signInFromExtension(user)
       initScene(user)
@@ -252,7 +255,6 @@ function onWindowMsg(data) {
   var event = data.data.event
   var action = data.data.action
   var friendId = data.data.friendId
-  var method = data.data.method
 
   //if (e.origin !== iframe.src) return;
 
@@ -329,7 +331,6 @@ function onWindowMsg(data) {
 
       emitMsgToBg(data)
 
-      console.log('extension emit socket', data)
       break;
 
     case 'request':
@@ -337,7 +338,6 @@ function onWindowMsg(data) {
       data = {
         'user': user,
         'event': event,
-        'method': method,
         'type': 'window',
         'friendId': friendId,
         'fromExtension': true,
@@ -349,6 +349,39 @@ function onWindowMsg(data) {
 
       console.log('extension sent windowMsg', data)
       console.log('extension emit socket', data)
+
+      if (action === 'accept') event = 'join'
+      else event = 'leave'
+
+      data = {
+        '_id': user._id,
+        'event': event,
+        'type': 'socket',
+        'position': user.position,
+        'rotation': user.rotation,
+        'name': user.name,
+        'friendId': friendId
+      }
+
+      emitMsgToBg(data)
+
+      console.log('extension emit socket', data)
+
+      var info = getFriendInfo(friendId, function(info) {
+
+        data = {
+          'position': info.position,
+          'rotation': info.rotation,
+          'name': info.name,
+          '_id': info._id,
+          'event': event,
+          'friendId': friendId
+        }
+
+        socketEvents[event](data)
+
+      })
+
       break;
 
     case 'logout':
@@ -359,11 +392,9 @@ function onWindowMsg(data) {
       break;
 
     case 'update':
-      updateCharacter(null, 'getRemote', function(character){
-        removeMainMenu()
-        addMainMenu(mesh, character)
-      })
-      console.log('updateUI', data)
+
+
+      refreshMainMenu()
 
       break;
 
