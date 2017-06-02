@@ -32,7 +32,6 @@ var isDirectionSet = false
 
 function onPan(e) {
 
-  console.log('onPan', direction, e.direction)
   if (e.velocityX < .2 && e.velocityX > -.2 && e.velocityY < .2 && e.velocityY > -.2) return
 
   if (direction !== e.direction) {
