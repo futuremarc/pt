@@ -50,8 +50,23 @@ function onPan(e) {
 }
 
 function onPanEnd(e) {
-  triggerKeyUp()
+  if (isTouchDown) triggerKeyUp()
 }
+
+var isTouchDown = false
+
+function onTouchStart(){
+  isTouchDown = true
+}
+
+
+function onTouchEnd(){
+  isTouchDown = false
+}
+
+
+document.addEventListener('touchstart', onTouchStart)
+document.addEventListener('touchend', onTouchEnd)
 
 hammer.on('panend', onPanEnd);
 hammer.on("pan", onPan);
