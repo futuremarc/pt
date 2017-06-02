@@ -219,7 +219,7 @@ function onVisibilityChange() {
 
 
 function addDomListeners() {
-  window.addEventListener('click', onDocumentClick)
+  $(document).on('click touchstart', onDocumentClick)
   document.addEventListener('keydown', onKeyDown)
   document.addEventListener('keyup', onKeyUp)
   window.addEventListener('visibilitychange', onVisibilityChange)
@@ -228,7 +228,7 @@ function addDomListeners() {
 }
 
 function removeDomListeners() {
-  window.removeEventListener('click', onDocumentClick)
+  $(document).off('click touchstart', onDocumentClick)
   document.removeEventListener('keydown', onKeyDown)
   document.removeEventListener('keyup', onKeyUp)
   window.removeEventListener('visibilitychange', onVisibilityChange)
