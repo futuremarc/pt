@@ -23,7 +23,7 @@ function emitMsg(data) {
 //
 
 function emitSocket(data) {
-  socket.emit(data)
+  socket.emit(data.event, data)
 }
 
 
