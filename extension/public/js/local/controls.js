@@ -6,63 +6,67 @@ var key = {
   right: false
 }
 
-var lastPan = {
-  keyCode: 38
-}
+function initTouch() {
 
-var hammer = new Hammer(document.body);
-hammer.get('pan').set({
-  'direction': Hammer.DIRECTION_ALL,
-  'threshold': 10
-});
-
-
-var direction = Hammer.DIRECTION_DOWN
-
-function triggerKeyUp() {
-
-  lastPan = {
-    keyCode: activeKey
+  var lastPan = {
+    keyCode: 38
   }
-  onKeyUp(lastPan)
-  direction = 0 //reset direction for onPan
 
-}
+  var hammer = new Hammer(document.body);
+  hammer.get('pan').set({
+    'direction': Hammer.DIRECTION_ALL,
+    'threshold': 10
+  });
 
-var isDirectionSet = false
 
-function onPan(e) {
+  var direction = Hammer.DIRECTION_DOWN
 
-  if (e.velocityX < .2 && e.velocityX > -.2 && e.velocityY < .2 && e.velocityY > -.2) return
-
-  if (direction !== e.direction) {
-
-    if (e.direction === Hammer.DIRECTION_LEFT) var keyCode = 37
-    else if (e.direction === Hammer.DIRECTION_RIGHT) var keyCode = 39
-    else if (e.direction === Hammer.DIRECTION_UP) var keyCode = 38
-    else if (e.direction === Hammer.DIRECTION_DOWN) var keyCode = 40
-
-    triggerKeyUp()
+  function triggerKeyUp() {
 
     lastPan = {
-      keyCode: keyCode
+      keyCode: activeKey
     }
-    onKeyDown(lastPan)
-    direction = e.direction
+    onKeyUp(lastPan)
+    direction = 0 //reset direction for onPan
+
+  }
+
+  function onPan(e) {
+
+    if (e.velocityX < .2 && e.velocityX > -.2 && e.velocityY < .2 && e.velocityY > -.2) return
+
+    if (direction !== e.direction) {
+
+      if (e.direction === Hammer.DIRECTION_LEFT) var keyCode = 37
+      else if (e.direction === Hammer.DIRECTION_RIGHT) var keyCode = 39
+      else if (e.direction === Hammer.DIRECTION_UP) var keyCode = 38
+      else if (e.direction === Hammer.DIRECTION_DOWN) var keyCode = 40
+
+      triggerKeyUp()
+
+      lastPan = {
+        keyCode: keyCode
+      }
+      onKeyDown(lastPan)
+      direction = e.direction
+    }
+
+
+  }
+
+  function onPanEnd(e) {
+    triggerKeyUp()
   }
 
 
+  hammer.on('panend', onPanEnd);
+  hammer.on('pan press', onPan);
+
+
 }
 
-function onPanEnd(e) {
-  triggerKeyUp()
-}
-
-
-hammer.on('panend', onPanEnd);
-hammer.on('pan press', onPan);
-
-//
+if (isMobile) initTouch()
+  //
 
 
 var controls = {
