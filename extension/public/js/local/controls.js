@@ -13,7 +13,7 @@ var lastPan = {
 var hammer = new Hammer(document.body);
 hammer.get('pan').set({
   'direction': Hammer.DIRECTION_ALL,
-  'threshold': 8
+  'threshold': 10
 });
 
 
@@ -30,7 +30,7 @@ function triggerKeyUp() {
 
 function onPan(e) {
 
-  if (e.deltaX < 4 && e.deltaX > -4 && e.deltaY < 4 && e.deltaY > -4) return
+  if (e.deltaX < 50 && e.deltaX > -50 && e.deltaY < 50 && e.deltaY > -50) return
 
   if (direction !== e.direction) {
     if (e.direction === Hammer.DIRECTION_LEFT) var keyCode = 37
@@ -52,7 +52,7 @@ function onPan(e) {
 }
 
 function onPanEnd(e) {
-  if (e.deltaX < 4 && e.deltaX > -4 && e.deltaY < 4 && e.deltaY > -4) return
+  if (e.deltaX < 50 && e.deltaX > -50 && e.deltaY < 50 && e.deltaY > -50) return
   triggerKeyUp()
 }
 
@@ -72,7 +72,7 @@ document.addEventListener('touchstart', onTouchStart)
 document.addEventListener('touchend', onTouchEnd)
 
 hammer.on('panend', onPanEnd);
-hammer.on("pan", onPan);
+hammer.on('pan', onPan);
 
 
 //
