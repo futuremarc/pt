@@ -50,7 +50,7 @@ function onPan(e) {
 }
 
 function onPanEnd(e) {
-  if (isTouchDown) triggerKeyUp()
+  if (!isTouchDown) triggerKeyUp()
 }
 
 var isTouchDown = false
