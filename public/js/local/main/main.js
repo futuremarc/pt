@@ -37,8 +37,12 @@ function render() {
 
 function animateMyChar() {
 
-  if (key.right && (activeKey === 39 || activeKey === 40 || activeKey === 38)) myCharacter.position.x += .065
-  if (key.left && myCharacter.position.x > .2 && (activeKey === 37 || activeKey === 40 || activeKey === 38)) myCharacter.position.x -= .065
+  if (key.right) myCharacter.position.x += .065
+  if (key.left) myCharacter.position.x -= .065
+
+   //if (key.right && (activeKey === 39 || activeKey === 40 || activeKey === 38)) myCharacter.position.x += .065
+  //if (key.left && myCharacter.position.x > .2 && (activeKey === 37 || activeKey === 40 || activeKey === 38)) myCharacter.position.x -= .065
+
 
   else if (myCharacter.position.x < .2 && sceneCharacters.visible) sceneCharacters.visible = false
   else if (myCharacter.position.x > .2 && !sceneCharacters.visible) sceneCharacters.visible = true

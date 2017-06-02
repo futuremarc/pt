@@ -6,37 +6,55 @@ var key = {
   right: false
 }
 
-
-
-function onPanLeft(){
-  onKeyDown({keyCode:37}) 
+var lastPan = {
+  keyCode: 38
 }
-
-function onPanRight(){
-  onKeyDown({keyCode:39}) 
-}
-
-function onPanUp(){
-  onKeyDown({keyCode:38}) 
-}
-
-function onPanDown(){
-  onKeyDown({keyCode:40}) 
-}
-
-function onPanEnd(){
-  onKeyUp({keyCode:37})
-}
-
 
 var hammer = new Hammer(document.body);
-hammer.get('pan').set({ direction: Hammer.DIRECTION_ALL });
-hammer.on('panleft', onPanLeft);
-hammer.on('panright', onPanRight);
-hammer.on('panup', onPanUp);
-hammer.on('pandown', onPanDown);
-hammer.on('panend', onPanEnd);
+hammer.get('pan').set({
+  'direction': Hammer.DIRECTION_ALL,
+  'threshold': 8
+});
 
+
+var direction = Hammer.DIRECTION_DOWN
+
+function triggerKeyUp() {
+
+  lastPan = {
+    keyCode: activeKey
+  }
+  onKeyUp(lastPan)
+
+}
+
+function onPan(e) {
+
+  if (direction !== e.direction) {
+    if (e.direction === Hammer.DIRECTION_LEFT) var keyCode = 37
+    else if (e.direction === Hammer.DIRECTION_RIGHT) var keyCode = 39
+    else if (e.direction === Hammer.DIRECTION_UP) var keyCode = 38
+    else if (e.direction === Hammer.DIRECTION_DOWN) var keyCode = 40
+
+    triggerKeyUp()
+
+    lastPan = {
+      keyCode: keyCode
+    }
+    onKeyDown(lastPan)
+    direction = e.direction
+
+    console.log('onPan', direction, keyCode)
+
+  }
+}
+
+function onPanEnd(e) {
+  triggerKeyUp()
+}
+
+hammer.on('panend', onPanEnd);
+hammer.on("pan", onPan);
 
 
 //
@@ -160,7 +178,6 @@ function onKeyDown(e) {
 
   if (activeKey === e.keyCode) return
 
-
   var keyCode = e.keyCode;
   activeKey = keyCode
 
@@ -175,7 +192,7 @@ function onKeyDown(e) {
     var info = getCharacterInfo()
 
     data = {
-      'type' : 'socket',
+      'type': 'socket',
       '_id': info._id,
       'position': info.position,
       'rotation': info.rotation,
@@ -199,7 +216,7 @@ function onKeyUp(e) {
 
   if (keyCode === 18) isAltKeyDown = false
 
-  if (keyCode !== 37 && keyCode !== 38 && keyCode !== 39 && keyCode !== 40 && keyCode !== 100) return
+  if (keyCode !== 37 && keyCode !== 38 && keyCode !== 39 && keyCode !== 40) return
 
   if (!isQuickGesture(keyCode)) putCharacter()
 
@@ -210,7 +227,7 @@ function onKeyUp(e) {
     var info = getCharacterInfo()
 
     data = {
-      'type' : 'socket',
+      'type': 'socket',
       '_id': info._id,
       'position': info.position,
       'rotation': info.rotation,
