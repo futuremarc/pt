@@ -3,7 +3,7 @@ var isIframe = window.parent !== window.self
 
 if (!isExtension && !isIframe) {
 
-  var socket = io('https://passti.me', {
+  var socket = io('http://localhost:5050', {
     'path': '/socket',
     'forceNew': true
   })
@@ -270,10 +270,10 @@ function addMainMenu(mesh, data) {
 
   menu.find('.pt-menu-hide-pt').click(closePt)
   menu.find('.pt-menu-friend, .pt-menu-settings, .pt-menu-home, .pt-menu-login, .pt-menu-signup, .pt-menu-logout').click(openIframe)
-  menu.click(function(e) {
+  menu.on('click touchstart', function(e) {
     e.stopPropagation()
   })
-  menu.find('div').click(function(e) {
+  menu.find('div').on('click touchstart',function(e) {
     hideMenu()
   })
 
@@ -338,7 +338,7 @@ function getFriendInfo(idOrName, cB) {
 
   $.ajax({
     method: 'GET',
-    url: 'https://passti.me/api/user/' + idOrName,
+    url: 'http://localhost:8080/api/user/' + idOrName,
     success: function(data) {
       console.log(data)
 
@@ -449,7 +449,7 @@ function openIframe(e) {
   var isMe = $(target).closest('ul').data('is-me')
   var role = $(target).find('div').data('role')
   var iframe = document.createElement('iframe')
-  var src = 'https://passti.me/' + role
+  var src = 'http://localhost:8080/' + role
 
 
   closeIframe()

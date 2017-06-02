@@ -270,10 +270,10 @@ function addMainMenu(mesh, data) {
 
   menu.find('.pt-menu-hide-pt').click(closePt)
   menu.find('.pt-menu-friend, .pt-menu-settings, .pt-menu-home, .pt-menu-login, .pt-menu-signup, .pt-menu-logout').click(openIframe)
-  menu.click(function(e) {
+  menu.on('click touchstart', function(e) {
     e.stopPropagation()
   })
-  menu.find('div').click(function(e) {
+  menu.find('div').on('click touchstart',function(e) {
     hideMenu()
   })
 
