@@ -28,11 +28,15 @@ function triggerKeyUp() {
 
 }
 
+var isDirectionSet = false
+
 function onPan(e) {
 
-  if (e.deltaX < 50 && e.deltaX > -50 && e.deltaY < 50 && e.deltaY > -50) return
+  console.log('onPan', direction, e.direction)
+  if (e.velocityX < .2 && e.velocityX > -.2 && e.velocityY < .2 && e.velocityY > -.2) return
 
   if (direction !== e.direction) {
+
     if (e.direction === Hammer.DIRECTION_LEFT) var keyCode = 37
     else if (e.direction === Hammer.DIRECTION_RIGHT) var keyCode = 39
     else if (e.direction === Hammer.DIRECTION_UP) var keyCode = 38
@@ -45,35 +49,19 @@ function onPan(e) {
     }
     onKeyDown(lastPan)
     direction = e.direction
-
-    console.log('onPan', e, direction, keyCode)
-
   }
+
+
 }
 
 function onPanEnd(e) {
-  if (e.deltaX < 50 && e.deltaX > -50 && e.deltaY < 50 && e.deltaY > -50) return
   triggerKeyUp()
+  direction = false //reset direction for onPan
 }
 
-var isTouchDown = false
-
-function onTouchStart(){
-  isTouchDown = true
-}
-
-
-function onTouchEnd(){
-  isTouchDown = false
-}
-
-
-document.addEventListener('touchstart', onTouchStart)
-document.addEventListener('touchend', onTouchEnd)
 
 hammer.on('panend', onPanEnd);
-hammer.on('pan', onPan);
-
+hammer.on('pan press', onPan);
 
 //
 
