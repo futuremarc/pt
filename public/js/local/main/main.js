@@ -37,11 +37,11 @@ function render() {
 
 function animateMyChar() {
 
-  if (key.right) myCharacter.position.x += .065
-  if (key.left) myCharacter.position.x -= .065
+  // if (key.right) myCharacter.position.x += .065
+  // if (key.left) myCharacter.position.x -= .065
 
-   //if (key.right && (activeKey === 39 || activeKey === 40 || activeKey === 38)) myCharacter.position.x += .065
-  //if (key.left && myCharacter.position.x > .2 && (activeKey === 37 || activeKey === 40 || activeKey === 38)) myCharacter.position.x -= .065
+   if (key.right && (activeKey === 39 || activeKey === 40 || activeKey === 38)) myCharacter.position.x += .065
+  if (key.left && myCharacter.position.x > .2 && (activeKey === 37 || activeKey === 40 || activeKey === 38)) myCharacter.position.x -= .065
 
 
   else if (myCharacter.position.x < .2 && sceneCharacters.visible) sceneCharacters.visible = false
@@ -247,7 +247,7 @@ function removeDomListeners() {
 
 function onWindowMsg(data) {
 
-  if (data.origin !== 'https://passti.me') return;
+  if (data.origin !== 'http://localhost:8080') return;
   console.log('extension received windowMsg', data)
 
   var source = data.source
@@ -384,7 +384,7 @@ function onWindowMsg(data) {
     case 'logout':
 
       logout(function() {
-        window.location.href = 'https://passti.me/logout'
+        window.location.href = 'http://localhost:8080/logout'
       })
       break;
 
