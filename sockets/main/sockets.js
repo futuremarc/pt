@@ -35,6 +35,8 @@ module.exports = function(io) {
 
     socket.on('join', function(data) { //store global associative list {userId : socketId}
 
+      if (!data) return
+
       var id = data._id;
       var socketId = socket.id;
       var friendId = data.friendId
@@ -49,6 +51,8 @@ module.exports = function(io) {
 
     socket.on('leave', function(data) {
 
+      if (!data) return
+
       var id = data._id;
       var socketId = socket.id;
       var friendId = data.friendId
@@ -62,7 +66,7 @@ module.exports = function(io) {
     })
 
     socket.on('friend', function(data) {
-
+      
       var id = data._id;
       var socketId = socket.id;
 
