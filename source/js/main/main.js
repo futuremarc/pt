@@ -58,8 +58,7 @@ $('document').ready(function() {
 
     'request': function(data) {
       console.log('iframe recieved', data)
-      console.log('MAIN.JS ADD FRIEND')
-
+ 
       var timeout = null
       var errorMessage = $('.error-message h3')
       var event = data.event

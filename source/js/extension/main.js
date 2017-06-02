@@ -273,8 +273,6 @@ function onWindowMsg(data) {
 
       source.postMessage(data, '*')
       console.log('extension sent windowMsg', data)
-      console.log('extension emit socket', data)
-
 
     })
   } else {
