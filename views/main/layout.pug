@@ -48,7 +48,7 @@ html
       div(id='pt-name-tag') #{userName}
     
     script.
-      if (chrome.app.isInstalled) document.getElementById('pt-install-tag').style.display = 'none';
+      if (chrome.app && chrome.app.isInstalled) document.getElementById('pt-install-tag').style.display = 'none';
 
   
     block javascript

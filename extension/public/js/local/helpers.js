@@ -1,9 +1,10 @@
 var isExtension = (chrome.storage !== undefined) //check if inside extension
 var isIframe = window.parent !== window.self
+var isMobile = (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent))
 
 if (!isExtension && !isIframe) {
 
-  var socket = io('https://passti.me', {
+  var socket = io('http://localhost:5050', {
     'path': '/socket',
     'forceNew': true
   })
@@ -11,6 +12,11 @@ if (!isExtension && !isIframe) {
   initSockets()
 
 }
+
+
+if (isMobile || isIframe) $('#pt-install-tag').hide()
+
+//
 
 
 function emitMsg(data) {
@@ -32,7 +38,7 @@ function emitSocket(data) {
 
 function initSockets() {
 
-  var events = ['chat', 'post', 'action', 'join', 'leave', 'connect', 'reconnect', 'disconnect','friend','request']
+  var events = ['chat', 'post', 'action', 'join', 'leave', 'connect', 'reconnect', 'disconnect', 'friend', 'request']
 
   events.forEach(function(event) {
 
@@ -273,7 +279,7 @@ function addMainMenu(mesh, data) {
   menu.on('click touchstart', function(e) {
     e.stopPropagation()
   })
-  menu.find('div').on('click touchstart',function(e) {
+  menu.find('div').on('click touchstart', function(e) {
     hideMenu()
   })
 
@@ -338,7 +344,7 @@ function getFriendInfo(idOrName, cB) {
 
   $.ajax({
     method: 'GET',
-    url: 'https://passti.me/api/user/' + idOrName,
+    url: 'http://localhost:8080/api/user/' + idOrName,
     success: function(data) {
       console.log(data)
 
@@ -449,7 +455,7 @@ function openIframe(e) {
   var isMe = $(target).closest('ul').data('is-me')
   var role = $(target).find('div').data('role')
   var iframe = document.createElement('iframe')
-  var src = 'https://passti.me/' + role
+  var src = 'http://localhost:8080/' + role
 
 
   closeIframe()

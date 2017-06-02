@@ -1,5 +1,6 @@
 var isExtension = (chrome.storage !== undefined) //check if inside extension
 var isIframe = window.parent !== window.self
+var isMobile = (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent))
 
 if (!isExtension && !isIframe) {
 
@@ -11,6 +12,11 @@ if (!isExtension && !isIframe) {
   initSockets()
 
 }
+
+
+if (isMobile || isIframe) $('#pt-install-tag').hide()
+
+//
 
 
 function emitMsg(data) {
@@ -32,7 +38,7 @@ function emitSocket(data) {
 
 function initSockets() {
 
-  var events = ['chat', 'post', 'action', 'join', 'leave', 'connect', 'reconnect', 'disconnect','friend','request']
+  var events = ['chat', 'post', 'action', 'join', 'leave', 'connect', 'reconnect', 'disconnect', 'friend', 'request']
 
   events.forEach(function(event) {
 
@@ -273,7 +279,7 @@ function addMainMenu(mesh, data) {
   menu.on('click touchstart', function(e) {
     e.stopPropagation()
   })
-  menu.find('div').on('click touchstart',function(e) {
+  menu.find('div').on('click touchstart', function(e) {
     hideMenu()
   })
 
