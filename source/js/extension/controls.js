@@ -8,6 +8,12 @@ var key = {
 
 function initTouch() {
 
+
+  document.ontouchmove = function(e) {
+    e.preventDefault();
+  }
+
+
   var lastPan = {
     keyCode: 38
   }
