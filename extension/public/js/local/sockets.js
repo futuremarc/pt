@@ -1,10 +1,10 @@
 var socketEvents = {
 
   'chat': function(data) {
-    console.log(data)
+
   },
   'post': function(data) {
-    console.log(data)
+
   },
   'disconnect': function(data) {
     emitLeaveMsg()
@@ -13,7 +13,7 @@ var socketEvents = {
     emitJoinMsg()
   },
   'connect': function(data) {
-    console.log(data)
+
   },
   'join': function(data) {
     socketUpdateCharacter(data)
@@ -25,11 +25,9 @@ var socketEvents = {
     socketUpdateCharacter(data)
   },
   'request': function(data) {
-    console.log(data)
   },
   'friend': function(data) {
     refreshMainMenu()
-    console.log(data)
   }
 }
 
@@ -52,7 +50,7 @@ function socketUpdateCharacter(data) {
 
     setTimeout(function() {
 
-      updateCharacter(null, 'getRemote', function() {
+      updateCharacter('getRemote', null, function() {
 
         createCharacter(data, function() {
 

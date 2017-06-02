@@ -1,8 +1,11 @@
 $(document).ready(function(){
 
+  console.log('HOME.JS')
+
   var isIframe = window.parent !== window.self
 
  if (loggedIn && isIframe) {
+
 
     var errorMessage = $(".error-message h3")
 

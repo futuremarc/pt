@@ -11,6 +11,8 @@ html
     block css
   body
     block content
+    script(src='/js/lib/three.min.js')
+    script(src='/js/lib/three.projector.js')
     script(src='/bower_components/jquery/dist/jquery.min.js')
     script(src='/bower_components/moment/min/moment.min.js')
     script(src='/bower_components/bootstrap/dist/js/bootstrap.min.js')
@@ -26,11 +28,26 @@ html
       ga('create', 'UA-42274048-2', 'auto');
       ga('send', 'pageview');
     script.
-      if (chrome.app.isInstalled) document.getElementById('install-tag').style.display = 'none';
+      if (chrome.app.isInstalled) document.getElementById('pt-install-tag').style.display = 'none';
+
+    script.
+      loggedIn = "#{loggedIn}";
+      name = "#{userName}";
+      _id = "#{userId}";
+
+    script(src='/js/local/auth/main.js')
+    script(src='/js/local/main/helpers.js')
+    script(src='/js/local/main/sockets.js')
+    script(src='/js/local/main/scene.js')
+    script(src='/js/local/main/character.js')
+    script(src='/js/local/main/controls.js')
+    script(src='/js/local/main/main.js')
+    script(src='/js/local/main/auth.js')
+     
     
-    a(id='install-tag', href='#', onclick='chrome.webstore.install()') Add to Chrome
-    div(class='info-tag')
-      div(id='name-tag') #{userName}
+    a(id='pt-install-tag', href='#', onclick='chrome.webstore.install()') Add to Chrome
+    div(class='pt-info-tag')
+      div(id='pt-name-tag') #{userName}
       
     
     div(class='container')

@@ -10,12 +10,12 @@ function signInFromExtension(data) {
 
   $.ajax({
     method: 'POST',
-    url: 'https://passti.me/api/login',
+    url: 'http://localhost:8080/api/login',
     data: data,
     success: function(data) {
       console.log(data)
 
-      console.log('LOG IN',data)
+      console.log('LOG IN', data)
       if (data.status === 'success') {
 
         errorMessage.html(data.message + ' <strong>' + data.data.name + '</strong>!')
@@ -33,8 +33,6 @@ function signInFromExtension(data) {
     }
   })
 }
-
-
 
 
 
@@ -60,19 +58,25 @@ $("body").on('submit', '#pt-auth-form', function(e) {
 
     return //clean this all up
 
-    myCharacter.data.subscriptions = subs
+    if (!isIframe)
+
+      if (!isIframe) {
+
+        myCharacter.data.subscriptions = subs
+
+        putCharacter(function(data) {
+          console.log(data)
+          errorMessage.html(data.message + ' settings!')
+          clearTimeout(timeout)
+
+          timeout = setTimeout(function() {
+            errorMessage.html('&nbsp;')
+          }, 2000)
+
+        })
+      }
+
     errorMessage.html('&nbsp;')
-
-    putCharacter(function(data) {
-      console.log(data)
-      errorMessage.html(data.message + ' settings!')
-      clearTimeout(timeout)
-
-      timeout = setTimeout(function() {
-        errorMessage.html('&nbsp;')
-      }, 2000)
-
-    })
 
     return
   }
@@ -90,16 +94,17 @@ $("body").on('submit', '#pt-auth-form', function(e) {
 
   $.ajax({
     method: 'POST',
-    url: 'https://passti.me/api/' + role,
+    url: 'http://localhost:8080/api/' + role,
     data: data,
     success: function(data) {
       console.log(data)
       if (data.status === 'success') {
 
         errorMessage.html(data.message + ' <strong>' + data.data.name + '</strong>!')
-        myCharacter.data = data.data
-
-        putCharacter()
+        if (!isIframe) {
+          myCharacter.data = data.data
+          putCharacter()
+        }
 
         setTimeout(function() {
           location.href = '/'
@@ -114,160 +119,3 @@ $("body").on('submit', '#pt-auth-form', function(e) {
     }
   })
 })
-
-
-
-
-
-
-//
-
-
-// $("body").on('submit', '#pt-friend-form', function(e) {
-
-//   e.preventDefault();
-
-//   var errorMessage = $(".error-message h3")
-//   var name = $('.auth-name').val();
-//   var userId = myCharacter.data._id
-//   var friendId = $(this).data('id')
-//   var action = $(this).data('action')
-
-//   var data = {
-//     userId: userId,
-//     friendId: friendId
-//   }
-
-//   $.ajax({
-//     method: 'POST',
-//     url: 'https://passti.me/api/user/friend/' + action,
-//     data: data,
-//     success: function(data) {
-//       console.log(data)
-//       if (data.status === 'success') {
-
-//         errorMessage.html(data.message + ' to <strong>' + data.data.name + '</strong>!')
-//         updateCharacter(null, 'getRemote')
-
-//       } else {
-//         errorMessage.html(data.message)
-//       }
-//     },
-//     error: function(err) {
-//       console.log(err)
-//     }
-//   })
-// })
-
-
-//
-
-
-// $('body').on('keyup', '#pt-friend-form', function(e) {
-
-//   if (e.keyCode === 13) return
-
-//   var errorMessage = $(".error-message h3")
-//   var name = $(this).find('input').val()
-//   var timeout = null
-
-//   if (!name) return
-
-//   clearTimeout(timeout)
-//   errorMessage.html('searching...')
-
-//   var self = this
-
-//   $.ajax({
-//     method: 'GET',
-//     url: 'https://passti.me/api/user/' + name,
-//     success: function(data) {
-//       console.log(data)
-//       clearTimeout(timeout)
-
-//       if (data.status === 'success') {
-
-//         if (data.data) errorMessage.html(data.message + ' <strong>' + data.data.name + '</strong>!')
-//         $(self).data('id', data.data._id)
-//         changeSubmitButton(false)
-
-//       } else if (data.status === 'not found') {
-//         changeSubmitButton(true)
-//           // timeout = setTimeout(function() {
-//           //   errorMessage.html('&nbsp;')
-//           // }, 2000)
-//       } else if (data.status === 'error') {
-//         errorMessage.html(data.message)
-//         changeSubmitButton(true)
-//       }
-//     },
-//     error: function(err) {
-//       console.log(err)
-//     }
-//   })
-// })
-
-//
-
-
-// $('body').on('click', '.friend-request-btn, .friends-list-btn', function(e) {
-
-//   e.preventDefault()
-//   var userId = myCharacter.data._id
-//   var friendId = $(this).data('id')
-//   var purpose = $(this).data('purpose')
-//   var action = $(this).data('action')
-
-//   if (action === 'accept' || action === 'reject') var method = 'PUT'
-//   else if (action === 'remove') var method = 'DELETE'
-
-//   var data = {
-//     friendId: friendId,
-//     userId: userId
-//   }
-
-//   console.log('add/remove friend', data)
-
-//   var self = this
-
-//   $.ajax({
-//     method: method,
-//     url: 'https://passti.me/api/user/friend/' + action,
-//     data: data,
-//     success: function(data) {
-//       console.log(data)
-
-//       updateCharacter(null, 'getRemote')
-
-//       var container = $('#friend-requests-parent')
-//       var reqs = data.data.friendRequests
-//       var html = Templates.auth.addFriendRequests(reqs)
-//       container.html(html)
-
-//       var container = $('#friends-list-parent')
-//       var friends = data.data.friends
-//       var html = Templates.auth.addFriendsList(friends)
-//       container.html(html)
-
-//     },
-//     error: function(data) {
-//       console.log(data)
-//     }
-//   })
-// })
-
-
-//
-
-
-// $('body').on('click', '.pt-menu-logout', function() {
-
-//   if (isRegistered()) emitLeaveMsg()
-
-//   chrome.storage.sync.set({
-//     'pt-user': {}
-//   }, function() {
-//     window.location.href = 'https://passti.me/logout'
-//   })
-
-// })

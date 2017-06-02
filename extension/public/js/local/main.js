@@ -34,28 +34,19 @@ function render() {
 //
 
 
+
 function animateMyChar() {
 
   if (key.right && (activeKey === 39 || activeKey === 40 || activeKey === 38)) myCharacter.position.x += .065
   if (key.left && myCharacter.position.x > .2 && (activeKey === 37 || activeKey === 40 || activeKey === 38)) myCharacter.position.x -= .065
 
-  else if (myCharacter.position.x < .2 && sceneCharacters.visible) {
-
-    sceneCharacters.visible = false
-      //mesh.position.set(.25, -.1, 0)
-      //mesh.material.transparent = true
-      //mesh.material.opacity = .20
-
-  } else if (myCharacter.position.x > .2 && !sceneCharacters.visible) {
-
-    sceneCharacters.visible = true
-      //mesh.position.set(.25, .85, 0)
-      //mesh.material.opacity = .8
-  }
+  else if (myCharacter.position.x < .2 && sceneCharacters.visible) sceneCharacters.visible = false
+  else if (myCharacter.position.x > .2 && !sceneCharacters.visible) sceneCharacters.visible = true
 
   if (myCharacter.isWalking && isNameDisplayed && isMouseHovering) hideNameTags()
   else if (!myCharacter.isWalking && !isNameDisplayed && isMouseHovering && !isMenuDisplayed && sceneCharacters.visible) showNameTags()
 }
+
 
 
 //
@@ -96,26 +87,28 @@ function initPt() {
   addCanvasToPage()
     //addMenuToPage()
 
-  chrome.storage.sync.get('pt-user', function(data) {
+  if (isExtension) var method = 'getLocal'
+  else var method = 'getRemote'
 
-    var name = $('#name-tag').html()
-    var signedIntoSite = name === ''
-    var user = data['pt-user']
+  updateCharacter(method, null, function(user) {
 
-    if (user && user._id) var signedIntoExtension = user
-    else var signedIntoExtension = false
+    var name = $('#pt-name-tag').html()
+    var signedIntoSite = (name !== '') //if nametag empty, server responded no user
 
-    console.log('initPt', data)
-    updateCharacter(user, 'getRemote', function(user) {
+    if (user && user._id) var hasUserData = true
+    else var hasUserData = false
 
-      console.log('updateCharacter', user)
+    console.log('initPt', user)
 
-      if (signedIntoExtension && signedIntoSite) signInFromExtension(user)
+    updateCharacter('getRemote', null, function(user) {
+
+      if (hasUserData && !signedIntoSite && isExtension) signInFromExtension(user)
       initScene(user)
     })
 
 
   })
+
 }
 
 
@@ -212,8 +205,13 @@ function onWindowResize() {
 
 
 function onVisibilityChange() {
-  if (document.visibilityState === 'visible')
-    if (isRegistered()) updateCharacter(null, 'getLocal')
+  if (document.visibilityState === 'visible') {
+
+    if (isExtension) var method = 'getLocal'
+    else var method = 'getRemote'
+
+    if (isRegistered()) updateCharacter(method)
+  }
 }
 
 
@@ -243,10 +241,9 @@ function removeDomListeners() {
 /*************from iframe*************/
 
 
-
 function onWindowMsg(data) {
 
-  if (data.origin !== 'https://passti.me') return;
+  if (data.origin !== 'http://localhost:8080') return;
   console.log('extension received windowMsg', data)
 
   var source = data.source
@@ -255,8 +252,6 @@ function onWindowMsg(data) {
   var event = data.data.event
   var action = data.data.action
   var friendId = data.data.friendId
-
-  //if (e.origin !== iframe.src) return;
 
   if (event === 'signup' || event === 'login' || event === 'refreshPage') {
     var user = {
@@ -267,7 +262,7 @@ function onWindowMsg(data) {
     var user = data.data.user
 
   } else if (event === 'initAuth') {
-    var user = updateCharacter(null, 'getRemote', function(user) {
+    var user = updateCharacter('getRemote', null, function(user) {
 
       var data = {
         'user': user,
@@ -329,7 +324,7 @@ function onWindowMsg(data) {
         'friendId': friendId
       }
 
-      emitMsgToBg(data)
+      emitMsg(data)
 
       break;
 
@@ -344,7 +339,7 @@ function onWindowMsg(data) {
         'action': action
       }
 
-      emitMsgToBg(data)
+      emitMsg(data)
       source.postMessage(data, '*')
 
       console.log('extension sent windowMsg', data)
@@ -363,7 +358,7 @@ function onWindowMsg(data) {
         'friendId': friendId
       }
 
-      emitMsgToBg(data)
+      emitMsg(data)
 
       console.log('extension emit socket', data)
 
@@ -387,7 +382,7 @@ function onWindowMsg(data) {
     case 'logout':
 
       logout(function() {
-        window.location.href = 'https://passti.me/logout'
+        window.location.href = 'http://localhost:8080/logout'
       })
       break;
 
@@ -418,7 +413,7 @@ function onWindowMsg(data) {
 //
 
 
-window.addEventListener("message", onWindowMsg, false);
+if (!isIframe) window.addEventListener("message", onWindowMsg, false);
 
 
 
@@ -447,7 +442,7 @@ function onIdleState(data) {
         'action': state
       }
 
-      emitMsgToBg(data)
+      emitMsg(data)
     }
 
 
@@ -487,7 +482,9 @@ function onBgMessage(data, sender, sendResponse) {
 }
 
 
+if (isExtension) chrome.runtime.onMessage.addListener(onBgMessage);
 
-//chrome.storage.onChanged.addListener(function(changes, namespace) {})
-chrome.runtime.onMessage.addListener(onBgMessage);
-initPt()
+var ptExists = $('.pt').length > 0
+var isIframe = window.parent !== window.self
+
+if (!ptExists && !isIframe) initPt()

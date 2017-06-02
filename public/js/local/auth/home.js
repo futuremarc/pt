@@ -1,14 +1,17 @@
 $(document).ready(function(){
 
+  console.log('HOME.JS')
+
   var isIframe = window.parent !== window.self
 
  if (loggedIn && isIframe) {
+
 
     var errorMessage = $(".error-message h3")
 
     $.ajax({
       method: 'GET',
-      url: 'https://passti.me/api/user/' + name,
+      url: 'http://localhost:8080/api/user/' + name,
       success: function(data) {
         console.log(data)
 

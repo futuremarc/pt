@@ -14,6 +14,38 @@ Handlebars.registerHelper('formatTime', function(date){
 	return moment(date).format('HH:mm')
 })
 
+Handlebars.registerHelper('getLength', function (obj) {
+ return obj.length;
+});
+
+Handlebars.registerHelper('ifCond', function (a, operator, b, options) {
+
+	switch (operator) {
+	    case '==':
+	        return (a == b) ? options.fn(this) : options.inverse(this);
+	    case '===':
+	        return (a === b) ? options.fn(this) : options.inverse(this);
+	    case '!=':
+	        return (a != b) ? options.fn(this) : options.inverse(this);
+	    case '!==':
+	        return (a !== b) ? options.fn(this) : options.inverse(this);
+	    case '<':
+	        return (a < b) ? options.fn(this) : options.inverse(this);
+	    case '<=':
+	        return (a <= b) ? options.fn(this) : options.inverse(this);
+	    case '>':
+	        return (a > b) ? options.fn(this) : options.inverse(this);
+	    case '>=':
+	        return (a >= b) ? options.fn(this) : options.inverse(this);
+	    case '&&':
+	        return (a && b) ? options.fn(this) : options.inverse(this);
+	    case '||':
+	        return (a || b) ? options.fn(this) : options.inverse(this);
+	    default:
+	        return options.inverse(this);
+	}
+});
+
 Handlebars.registerHelper('ifEqual', function(a,b, opts){
 	if(a==b){
 		return opts.fn(this)

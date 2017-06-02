@@ -11,7 +11,8 @@ module.exports = function() {
 
     return res.render('auth/home.pug', {
       loggedIn: true,
-      userName: req.user.name
+      userName: req.user.name,
+      userId:req.user._id
     })
 
   })
@@ -44,6 +45,7 @@ module.exports = function() {
       res.render('auth/settings.pug', {
         loggedIn: true,
         userName: req.user.name,
+        userId:req.user._id,
         subscriptions: subs
       })
 
@@ -62,7 +64,8 @@ module.exports = function() {
     if (!req.user) return res.render('auth/login.pug')
     res.render('auth/friend.pug', {
         loggedIn: true,
-        userName: req.user.name
+        userName: req.user.name,
+        userId:req.user._id
       })
 
   })

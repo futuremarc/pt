@@ -2,7 +2,7 @@ var textureLoader = new THREE.TextureLoader(),
   loader = new THREE.JSONLoader();
 
 var clock, container, camera, scene, light, renderer, controls = {};
-var myCharacter, hoveredMesh = undefined
+var hoveredMesh = undefined
 var projector = new THREE.Projector()
 var renderOrder = 0
 

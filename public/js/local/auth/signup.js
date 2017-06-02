@@ -4,6 +4,6 @@ $(document).ready(function() {
   var subs = JSON.parse(subscriptions) //from pug
 
   var html = Templates.auth.addSubscriptions({subscriptions : subs})
-  subsWrapper.html(html)
+  //subsWrapper.html(html)
 
 })

@@ -18,12 +18,6 @@
     "48": "public/img/brand/favicon-48.png",
     "128": "public/img/brand/favicon-128.png"
   },
-  "externally_connectable": {
-    "matches": [
-      "https://passti.me/*",
-      "http://localhost/*"
-    ]
-  },
   "browser_action": {
     "default_icon": "public/img/brand/favicon-38.png",
     "default_title": "Passtime"

@@ -1,4 +1,5 @@
-var sceneCharacters, characters = {}; //meshes, data
+var sceneCharacters = {}, characters = {}; //meshes, data
+var myCharacter = undefined
 
 //
 
@@ -25,7 +26,10 @@ function createMyCharacter(data) {
 
 function createCharacter(data, cB) {
 
-  loader.load(chrome.extension.getURL('public/models/eva-animated.json'), function(geometry, materials) {
+  if (isExtension) var path = chrome.extension.getURL('public/models/eva-animated.json')
+  else var path = '/models/eva-animated.json'
+
+  loader.load(path, function(geometry, materials) {
 
     materials.forEach(function(material) {
       material.skinning = true;
@@ -164,7 +168,7 @@ function createCharacter(data, cB) {
 //
 
 
-function updateCharacter(data, request, cB) {
+function updateCharacter(request, data, cB) {
 
   var pos, rot, data = data || {}
 
@@ -173,6 +177,7 @@ function updateCharacter(data, request, cB) {
   switch (request) {
 
     case 'getLocal':
+
       chrome.storage.sync.get('pt-user', function(data) {
 
         var user = data['pt-user']
@@ -182,10 +187,15 @@ function updateCharacter(data, request, cB) {
 
         if (!pos && !rot) return
 
-        myCharacter.position.set(pos.x, pos.y, pos.z)
-        myCharacter.rotation.set(rot.x, rot.y, rot.z)
-        myCharacter.data = user
-        if (cB) cB(data)
+        if (myCharacter) {
+
+          myCharacter.position.set(pos.x, pos.y, pos.z)
+          myCharacter.rotation.set(rot.x, rot.y, rot.z)
+          myCharacter.data = user
+
+        }
+
+        if (cB) cB(user)
       })
 
       break
@@ -196,7 +206,7 @@ function updateCharacter(data, request, cB) {
 
       $.ajax({
         method: 'PUT',
-        url: 'https://passti.me/api/user/' + name,
+        url: 'http://localhost:8080/api/user/' + name,
         data: data,
         success: function(data) {
           console.log(data)
@@ -227,21 +237,30 @@ function updateCharacter(data, request, cB) {
 
     case 'getRemote':
 
-      if (!data._id && !myCharacter) {
+      if (!_id && !data._id && !myCharacter) { //_id from pug, id from passed data, id from character
         if (cB) cB(null)
         return
       }
 
-      var name = data.name || myCharacter.data.name
+      var name = _id || data.name || myCharacter.data.name
       var errorMessage = $('.error-message h3')
 
       $.ajax({
         method: 'GET',
-        url: 'https://passti.me/api/user/' + name,
+        url: 'http://localhost:8080/api/user/' + name,
         success: function(data) {
           console.log(data)
 
           if (data.status === 'success') {
+
+            if (!isExtension) {
+
+              if (isRegistered()) myCharacter.data = data.data
+              if (cB) cB(data.data)
+              return
+
+            }
+
             chrome.storage.sync.set({
               'pt-user': data.data
 
@@ -278,8 +297,8 @@ function updateCharacter(data, request, cB) {
 
 function putCharacter(cB) {
 
-  updateCharacter(myCharacter.data, 'putLocal')
-  if (isRegistered()) updateCharacter(myCharacter.data, 'putRemote', cB)
+  if (isExtension) updateCharacter('putLocal', myCharacter.data)
+  if (isRegistered()) updateCharacter('putRemote', myCharacter.data, cB)
 }
 
 

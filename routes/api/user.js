@@ -15,10 +15,10 @@ if (app.get('env') === 'development') {
 
 module.exports = function(passport) {
 
-  router.route('/user/friend/request')
+  router.route('/user/friend/:id')
     .post(function(req, res) {
 
-      var friendId = req.body.friendId
+      var friendId = req.params.id
       var userId = req.body.userId
 
       User
@@ -45,7 +45,7 @@ module.exports = function(passport) {
     })
     .put(function(req, res) {
 
-      var friendId = req.body.friendId
+      var friendId = req.params.id
       var userId = req.body.userId
       var action = req.body.action
 
@@ -157,7 +157,7 @@ module.exports = function(passport) {
     })
 
   .delete(function(req, res) {
-    var friendId = req.body.friendId
+    var friendId = req.params.id
     var userId = req.body.userId
 
     User
@@ -347,8 +347,6 @@ module.exports = function(passport) {
           }
         })
         .exec(function(err, user) {
-
-          console.log('USER', user)
 
           if (err) {
             return res.json({

@@ -23,7 +23,7 @@ var controls = {
         if (key.left) myCharacter[data.action]()
         key.left = false;
 
-        if (isRegistered()) emitMsgToBg(data)
+        if (isRegistered()) emitMsg(data)
 
       } else {
 
@@ -35,7 +35,7 @@ var controls = {
 
           myCharacter[data.action](data)
 
-          if (isRegistered()) emitMsgToBg(data)
+          if (isRegistered()) emitMsg(data)
         }
 
         key.left = true;
@@ -58,7 +58,7 @@ var controls = {
 
     myCharacter[data.action]()
 
-    if (isRegistered()) emitMsgToBg(data)
+    if (isRegistered()) emitMsg(data)
   },
 
   39: function(data, keyUp) { //right arrow
@@ -74,7 +74,7 @@ var controls = {
         if (key.right) myCharacter[data.action]()
         key.right = false;
 
-        if (isRegistered()) emitMsgToBg(data)
+        if (isRegistered()) emitMsg(data)
       } else {
 
         if (!key.right) {
@@ -88,7 +88,7 @@ var controls = {
           if (isRegistered()) {
 
             putCharacter()
-            emitMsgToBg(data)
+            emitMsg(data)
           }
         }
 
@@ -112,7 +112,7 @@ var controls = {
 
     myCharacter[data.action]()
 
-    if (isRegistered()) emitMsgToBg(data)
+    if (isRegistered()) emitMsg(data)
   }
 }
 

@@ -1,10 +1,60 @@
-function emitMsgToBg(data) {
+var isExtension = (chrome.storage !== undefined) //check if inside extension
+var isIframe = window.parent !== window.self
+
+if (!isExtension && !isIframe) {
+
+  var socket = io('http://localhost:5050', {
+    'path': '/socket',
+    'forceNew': true
+  })
+
+  initSockets()
+
+}
+
+
+function emitMsg(data) {
   console.log('emit', data)
-  chrome.runtime.sendMessage(data);
+  if (isExtension) chrome.runtime.sendMessage(data);
+  else emitSocket(data)
 }
 
 
 //
+
+function emitSocket(data) {
+  socket.emit(data)
+}
+
+
+//
+
+
+function initSockets() {
+
+  var events = ['chat', 'post', 'action', 'join', 'leave', 'connect', 'reconnect', 'disconnect','friend','request']
+
+  events.forEach(function(event) {
+
+    socket.on(event, function(data) {
+
+      var data = data || {}
+
+      if (data === 'transport close' || event === 'reconnect') { //customize disconnect/reconnect messages
+        var data = {
+          event: event,
+          data: data
+        }
+      }
+
+      data.event = event
+      data.type = 'socket'
+      console.log(data)
+      onSocket(data)
+    })
+  })
+}
+
 
 
 function onSocket(data) {
@@ -19,6 +69,11 @@ function onSocket(data) {
 function logout(cB) {
 
   if (isRegistered()) emitLeaveMsg()
+
+  if (!isExtension) {
+    if (cB) cB()
+    return
+  }
 
   chrome.storage.sync.set({
     'pt-user': {}
@@ -49,7 +104,7 @@ function emitJoinMsg() {
       'liveFriends': info.liveFriends
     }
 
-    emitMsgToBg(data)
+    emitMsg(data)
   })
 }
 
@@ -71,7 +126,7 @@ function emitLeaveMsg() {
       'liveFriends': info.liveFriends
     }
 
-    emitMsgToBg(data)
+    emitMsg(data)
   })
 }
 
@@ -283,7 +338,7 @@ function getFriendInfo(idOrName, cB) {
 
   $.ajax({
     method: 'GET',
-    url: 'https://passti.me/api/user/' + idOrName,
+    url: 'http://localhost:8080/api/user/' + idOrName,
     success: function(data) {
       console.log(data)
 
@@ -300,24 +355,6 @@ function getFriendInfo(idOrName, cB) {
   })
 }
 
-
-//
-
-
-function getLiveFriends() {
-
-  var liveFriends = {}
-
-  myCharacter.data.friends.forEach(function(friend) {
-
-   console.log(friend)
-
-   if (!friend || !friend.user) return
-    var friend = friend.user
-    if (friend.isLive) liveFriends[friend._id] = friend._id
-  })
-  return liveFriends
-}
 
 
 //
@@ -343,7 +380,7 @@ function getRemoteLiveFriends(cB) {
 
   var liveFriends = {}
 
-  updateCharacter(null, 'getRemote', function(character) {
+  updateCharacter('getRemote', null, function(character) {
 
     console.log('getRemoteLiveFriends', character)
 
@@ -364,7 +401,7 @@ function getRemoteLiveFriends(cB) {
 
 function refreshMainMenu() {
 
-  updateCharacter(null, 'getRemote', function(character) {
+  updateCharacter('getRemote', null, function(character) {
     removeMainMenu()
     addMainMenu(mesh, character)
   })
@@ -377,7 +414,7 @@ function refreshMainMenu() {
 
 function addLiveCharacters() {
 
-  updateCharacter(null, 'getRemote', function(character) {
+  updateCharacter('getRemote', null, function(character) {
 
     console.log('addLiveCharacters', character, character.friends)
 
@@ -395,7 +432,7 @@ function addLiveCharacters() {
 
 function removeLiveCharacters() {
 
-  for (var character in characters){
+  for (var character in characters) {
     removeCharacter(characters[character].data)
   }
 
@@ -412,7 +449,7 @@ function openIframe(e) {
   var isMe = $(target).closest('ul').data('is-me')
   var role = $(target).find('div').data('role')
   var iframe = document.createElement('iframe')
-  var src = 'https://passti.me/' + role
+  var src = 'http://localhost:8080/' + role
 
 
   closeIframe()
@@ -425,12 +462,6 @@ function openIframe(e) {
   })
 
   $('body').append(iframe)
-
-  // iframe.onload = function() {
-  //   var content = $(iframe).contents()
-  //   content.find('form').on('submit', function(e) {})
-  //   content.find('form').on('keyup', function(e) {})
-  // }
 
 }
 

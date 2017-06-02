@@ -15,10 +15,5 @@ block content
       input(type='submit', class='btn btn-lg btn-block btn-custom', value='Update')
     
 block javascript
-  script.
-    subscriptions='!{subscriptions}';
-    loggedIn = "#{loggedIn}";
-    name = "#{userName}";
-  script(src='/js/local/auth/handlebar-helpers.js')
-  script(src='/js/local/main/main.js')
+
   script(src='/js/local/auth/settings.js')

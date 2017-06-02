@@ -1,4 +1,4 @@
-var socket = io('https://passti.me', {
+var socket = io('http://localhost:5050', {
   'path': '/socket',
   'forceNew': true
 })
@@ -147,10 +147,7 @@ function emitMsgToClient(data, sendResponse) {
     tabs.forEach(function(tab) {
       chrome.tabs.sendMessage(tab.id, data, function(response) {
 
-        if (sendResponse && response) {
-          console.log('background send to iframe', response)
-          sendResponse(response)
-        }
+        if (sendResponse && response) sendResponse(response)
 
       });
     })
