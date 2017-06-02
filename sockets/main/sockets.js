@@ -9,6 +9,8 @@ module.exports = function(io) {
 
     function broadcastToFriends(event, data) {
 
+      console.log('broadcastToFriends', event, data)
+
       var liveFriends = data.liveFriends
 
       for (var friend in liveFriends) {
