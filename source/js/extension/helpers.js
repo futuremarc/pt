@@ -14,7 +14,7 @@ if (!isExtension && !isIframe) {
 }
 
 
-if (!isMobile && !isIframe && chrome.app && !chrome.app.isInstalled) $('#pt-install-tag').show()
+if (!isMobile && !isIframe && !chrome.app.isInstalled) $('#pt-install-tag').show()
 
 //
 
