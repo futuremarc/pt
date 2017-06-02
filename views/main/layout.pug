@@ -7,12 +7,14 @@ html
     link(href='/css/local/commonStyles.css', rel='stylesheet')
     link(href='/css/local/bootstrapOverrides.css', rel='stylesheet')
     link(rel='chrome-webstore-item' href='https://chrome.google.com/webstore/detail/bgnidgoonglndlgocabmhdogbdniaiih')
-    meta(name='viewport', content='width=device-width, initial-scale=1')
+  
+
     block css
   body
     block content
     script(src='/js/lib/three.min.js')
     script(src='/js/lib/three.projector.js')
+    script(src='/js/lib/hammer.min.js')
     script(src='/bower_components/jquery/dist/jquery.min.js')
     script(src='/bower_components/moment/min/moment.min.js')
     script(src='/bower_components/bootstrap/dist/js/bootstrap.min.js')
@@ -43,7 +45,7 @@ html
     script(src='/js/local/main/auth.js')
      
     
-    a(id='pt-install-tag', href='#', style='display:none', onclick='chrome.webstore.install()') Add to Chrome
+    a(id='pt-install-tag', href='#', onclick='chrome.webstore.install()') Add to Chrome
     div(class='pt-info-tag')
       div(id='pt-name-tag') #{userName}
     

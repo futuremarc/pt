@@ -14,7 +14,13 @@ if (!isExtension && !isIframe) {
 }
 
 
-if (!isMobile && !isIframe && !chrome.app.isInstalled) $('#pt-install-tag').show()
+if (!isMobile && !isIframe && !chrome.app.isInstalled){
+  console.log('show tag!')
+  $('#pt-install-tag').show()
+}else{
+  console.log('hide tag!')
+  $('#pt-install-tag').hide()
+}
 
 //
 

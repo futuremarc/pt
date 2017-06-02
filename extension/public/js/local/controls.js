@@ -6,6 +6,39 @@ var key = {
   right: false
 }
 
+
+
+function onPanLeft(){
+  onKeyDown({keyCode:37}) 
+}
+
+function onPanRight(){
+  onKeyDown({keyCode:39}) 
+}
+
+function onPanUp(){
+  onKeyDown({keyCode:38}) 
+}
+
+function onPanDown(){
+  onKeyDown({keyCode:40}) 
+}
+
+function onPanEnd(){
+  onKeyUp({keyCode:37})
+}
+
+
+var hammer = new Hammer(document.body);
+hammer.get('pan').set({ direction: Hammer.DIRECTION_ALL });
+hammer.on('panleft', onPanLeft);
+hammer.on('panright', onPanRight);
+hammer.on('panup', onPanUp);
+hammer.on('pandown', onPanDown);
+hammer.on('panend', onPanEnd);
+
+
+
 //
 
 
@@ -166,7 +199,7 @@ function onKeyUp(e) {
 
   if (keyCode === 18) isAltKeyDown = false
 
-  if (keyCode !== 37 && keyCode !== 38 && keyCode !== 39 && keyCode !== 40) return
+  if (keyCode !== 37 && keyCode !== 38 && keyCode !== 39 && keyCode !== 40 && keyCode !== 100) return
 
   if (!isQuickGesture(keyCode)) putCharacter()
 
