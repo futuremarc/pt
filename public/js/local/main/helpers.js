@@ -14,7 +14,7 @@ if (!isExtension && !isIframe) {
 }
 
 
-if (isMobile || isIframe) $('#pt-install-tag').hide()
+if (!isMobile && !isIframe && chrome.app && !chrome.app.isInstalled) $('#pt-install-tag').hide()
 
 //
 
