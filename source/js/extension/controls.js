@@ -30,7 +30,7 @@ function triggerKeyUp() {
 
 function onPan(e) {
 
-  if (e.deltaX < 2 && e.deltaX > -2) return
+  if (e.deltaX < 2 && e.deltaX > -2 && e.deltaY < 2 && e.deltaY > -2) return
 
   if (direction !== e.direction) {
     if (e.direction === Hammer.DIRECTION_LEFT) var keyCode = 37
@@ -52,6 +52,7 @@ function onPan(e) {
 }
 
 function onPanEnd(e) {
+  if (e.deltaX < 2 && e.deltaX > -2 && e.deltaY < 2 && e.deltaY > -2) return
   triggerKeyUp()
 }
 
