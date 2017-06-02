@@ -25,6 +25,7 @@ function triggerKeyUp() {
     keyCode: activeKey
   }
   onKeyUp(lastPan)
+  direction = 0 //reset direction for onPan
 
 }
 
@@ -55,7 +56,6 @@ function onPan(e) {
 
 function onPanEnd(e) {
   triggerKeyUp()
-  direction = false //reset direction for onPan
 }
 
 
