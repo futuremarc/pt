@@ -38,7 +38,7 @@ function onPan(e) {
     else if (e.direction === Hammer.DIRECTION_UP) var keyCode = 38
     else if (e.direction === Hammer.DIRECTION_DOWN) var keyCode = 40
 
-    if (!touchIsDown) triggerKeyUp()
+    if (!isTouchDown) triggerKeyUp()
 
     lastPan = {
       keyCode: keyCode
@@ -53,7 +53,7 @@ function onPan(e) {
 
 function onPanEnd(e) {
   if (e.deltaX < 4 && e.deltaX > -4 && e.deltaY < 4 && e.deltaY > -4) return
-   if (!touchIsDown) triggerKeyUp()
+   if (!isTouchDown) triggerKeyUp()
 }
 
 var isTouchDown = false
