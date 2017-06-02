@@ -268,8 +268,8 @@ function addMainMenu(mesh, data) {
   $('body').append(menu)
   menu.html(html)
 
-  menu.find('.pt-menu-hide-pt').click(closePt)
-  menu.find('.pt-menu-friend, .pt-menu-settings, .pt-menu-home, .pt-menu-login, .pt-menu-signup, .pt-menu-logout').click(openIframe)
+  menu.find('.pt-menu-hide-pt').on('click touchstart', closePt)
+  menu.find('.pt-menu-friend, .pt-menu-settings, .pt-menu-home, .pt-menu-login, .pt-menu-signup, .pt-menu-logout').on('click touchstart', openIframe)
   menu.on('click touchstart', function(e) {
     e.stopPropagation()
   })
@@ -293,7 +293,7 @@ function addMenuIcon(data) {
   var requests = data.friendRequests || []
   var num_requests = requests.length
 
-  $(container).click(function(e) {
+  $(container).on('click touchstart', function(e) {
     e.stopPropagation()
   })
 
@@ -457,7 +457,7 @@ function openIframe(e) {
   $(iframe).attr('src', src)
   $(iframe).data('role', role)
   $(iframe).addClass('pt-iframe pt')
-  $(iframe).click(function(e) {
+  $(iframe).on('click touchstart', function(e) {
     e.stopPropagation()
   })
 
