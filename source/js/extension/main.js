@@ -90,10 +90,9 @@ function initPt() {
 
   addCanvasToPage()
 
-  //if (isExtension) var method = 'getLocal'
- // else var method = 'getRemote'
-  var method = 'getRemote'
-  
+  if (isExtension) var method = 'getLocal'
+  else var method = 'getRemote'
+
   updateCharacter(method, null, function(user) {
 
     var name = $('#pt-name-tag').html()
@@ -102,10 +101,14 @@ function initPt() {
     if (user && user._id) var hasUserData = true
     else var hasUserData = false
 
+    if (isExtension) updateCharacter('getRemote', user, function(user) {
+
       console.log('initPt', user)
 
       if (hasUserData && !signedIntoSite && isExtension) signInFromExtension(user)
       initScene(user)
+
+    })
 
   })
 
@@ -485,4 +488,10 @@ if (isExtension) chrome.runtime.onMessage.addListener(onBgMessage);
 var ptExists = $('.pt').length > 0
 var isIframe = window.parent !== window.self
 
-if (!ptExists && !isIframe) initPt()
+
+
+if (isChrome() && chrome.app && chrome.app.isInstalled) var isExtensionInstalled = true
+else isExtensionInstalled = false
+
+if (!ptExists && !isIframe && !isExtensionInstalled) initPt()
+

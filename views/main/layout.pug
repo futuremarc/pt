@@ -50,5 +50,6 @@ html
       div(id='pt-name-tag') #{userName}
     
 
-  
+    script.
+      if (chrome.app.isInstalled) document.getElementById('install-tag').style.display = 'none';
     block javascript
