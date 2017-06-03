@@ -8,7 +8,7 @@ function isChrome() {
     isIOSChrome = winNav.userAgent.match("CriOS");
 
   if(isIOSChrome){
-    return true;
+    return false;
   } else if(isChromium !== null && isChromium !== undefined && vendorName === "Google Inc." && isOpera == false && isIEedge == false) {
     return true;
   } else { 
@@ -18,7 +18,7 @@ function isChrome() {
 
 
 
-if (isChrome() && !isIOSChrome) var isExtension = (chrome && chrome.storage) //check if inside extension
+if (isChrome()) var isExtension = (chrome && chrome.storage) //check if inside extension
 else var isExtension = false
 
 var isIframe = window.parent !== window.self
