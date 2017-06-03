@@ -7,8 +7,6 @@ var key = {
 }
 
 
-function initTouch() {
-
   var lastPan = {
     keyCode: 38
   }
