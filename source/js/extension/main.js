@@ -89,7 +89,6 @@ function animateOtherChars() {
 function initPt() {
 
   addCanvasToPage()
-
   if (isExtension) var method = 'getLocal'
   else var method = 'getRemote'
 
@@ -488,6 +487,4 @@ if (isExtension) chrome.runtime.onMessage.addListener(onBgMessage);
 var ptExists = $('.pt').length > 0
 var isIframe = window.parent !== window.self
 
-
 if (!ptExists && !isIframe) initPt()
-
