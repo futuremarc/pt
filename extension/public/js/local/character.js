@@ -294,7 +294,6 @@ function updateCharacter(request, data, cB) {
       myCharacter.rotation.set(rot.x, rot.y, rot.z)
       myCharacter.data = data
 
-      console.log('update characterbefore put',)
   }
 
 }
