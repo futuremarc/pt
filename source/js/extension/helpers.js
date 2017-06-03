@@ -1,3 +1,5 @@
+chrome = chrome || null
+
 var isExtension = (chrome && chrome.storage !== undefined) //check if inside extension
 var isIframe = window.parent !== window.self
 
