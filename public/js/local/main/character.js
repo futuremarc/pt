@@ -142,8 +142,10 @@ function createCharacter(data, cB) {
     renderOrder -= 1
     character.renderOrder = renderOrder
 
+    var x = 5 - (Math.random() * 5 - 2.5)
+    
     var pos = data.position || {
-        x: 10,
+        x: x,
         y: -1,
         z: 0
       },
