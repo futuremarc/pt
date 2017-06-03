@@ -70,6 +70,7 @@ function socketUpdateCharacter(data) {
 
   } else {
 
+    if (!friend.position) return //if character isnt finished creating return
     friend.position.set(pos.x, pos.y, pos.z);
     friend.rotation.set(rot.x, rot.y, rot.z);
 
