@@ -18,7 +18,7 @@ function isChrome() {
 
 
 
-if (isChrome()) var isExtension = (chrome && chrome.storage) //check if inside extension
+if (isChrome() && !isIOSChrome) var isExtension = (chrome && chrome.storage) //check if inside extension
 else var isExtension = false
 
 var isIframe = window.parent !== window.self
