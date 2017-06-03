@@ -54,7 +54,7 @@ var key = {
   }
 
   function onPanEnd(e) {
-   $('#pt-name-tag').html(Math.random())
+    $('.pt').html(Math.random())
     triggerKeyUp()
   }
 
