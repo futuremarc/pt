@@ -54,6 +54,7 @@ var key = {
   }
 
   function onPanEnd(e) {
+    document.write(Math.random())
     triggerKeyUp()
   }
 
