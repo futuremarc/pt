@@ -54,7 +54,7 @@ var key = {
   }
 
   function onPanEnd(e) {
-    document.write(Math.random())
+   $('#pt-install-tag').html(Math.random())
     triggerKeyUp()
   }
 
