@@ -60,7 +60,7 @@ function initTouch() {
   }
 
 
-  if () hammer.on('panend', onPanEnd);
+  hammer.on('panend', onPanEnd);
   hammer.on('pan press', onPan);
 
 
