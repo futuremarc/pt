@@ -90,9 +90,10 @@ function initPt() {
 
   addCanvasToPage()
 
-  if (isExtension) var method = 'getLocal'
-  else var method = 'getRemote'
-
+  //if (isExtension) var method = 'getLocal'
+ // else var method = 'getRemote'
+  var method = 'getRemote'
+  
   updateCharacter(method, null, function(user) {
 
     var name = $('#pt-name-tag').html()
@@ -101,10 +102,10 @@ function initPt() {
     if (user && user._id) var hasUserData = true
     else var hasUserData = false
 
-    console.log('initPt', user)
+      console.log('initPt', user)
 
-    if (hasUserData && !signedIntoSite && isExtension) signInFromExtension(user)
-    initScene(user)
+      if (hasUserData && !signedIntoSite && isExtension) signInFromExtension(user)
+      initScene(user)
 
   })
 

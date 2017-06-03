@@ -184,10 +184,10 @@ function updateCharacter(request, data, cB) {
         var user = data['pt-user']
 
         if (!user){
-          updateCharacter('getRemote')
+          updateCharacter('getRemote',null,cB)
           return
         }
-        
+
         pos = user.position
         rot = user.rotation
 
