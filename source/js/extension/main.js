@@ -89,6 +89,7 @@ function animateOtherChars() {
 function initPt() {
 
   addCanvasToPage()
+
   if (isExtension) var method = 'getLocal'
   else var method = 'getRemote'
 
@@ -100,14 +101,10 @@ function initPt() {
     if (user && user._id) var hasUserData = true
     else var hasUserData = false
 
-    if (isExtension) updateCharacter('getRemote', user, function(user) {
+    console.log('initPt', user)
 
-      console.log('initPt', user)
-
-      if (hasUserData && !signedIntoSite && isExtension) signInFromExtension(user)
-      initScene(user)
-
-    })
+    if (hasUserData && !signedIntoSite && isExtension) signInFromExtension(user)
+    initScene(user)
 
   })
 
