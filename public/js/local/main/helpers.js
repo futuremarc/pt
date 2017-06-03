@@ -8,7 +8,7 @@ if(/(android|bb\d+|meego).+mobile|avantgo|bada\/|blackberry|blazer|compal|elaine
 
 if (!isExtension && !isIframe) {
 
-  var socket = io('http://localhost:5050', {
+  var socket = io('https://passti.me', {
     'path': '/socket',
     'forceNew': true
   })
@@ -354,7 +354,7 @@ function getFriendInfo(idOrName, cB) {
 
   $.ajax({
     method: 'GET',
-    url: 'http://localhost:8080/api/user/' + idOrName,
+    url: 'https://passti.me/api/user/' + idOrName,
     success: function(data) {
       console.log(data)
 
@@ -465,7 +465,7 @@ function openIframe(e) {
   var isMe = $(target).closest('ul').data('is-me')
   var role = $(target).find('div').data('role')
   var iframe = document.createElement('iframe')
-  var src = 'http://localhost:8080/' + role
+  var src = 'https://passti.me/' + role
 
 
   closeIframe()
