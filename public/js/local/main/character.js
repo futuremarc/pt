@@ -206,7 +206,7 @@ function updateCharacter(request, data, cB) {
 
       $.ajax({
         method: 'PUT',
-        url: 'https://passti.me/api/user/' + name,
+        url: 'http://localhost:8080/api/user/' + name,
         data: data,
         success: function(data) {
           console.log(data)
@@ -227,7 +227,7 @@ function updateCharacter(request, data, cB) {
       myCharacter.data.position = pos
       myCharacter.data.rotation = rot
 
-      chrome.storage.sync.set({
+      if (isExtension) chrome.storage.sync.set({
         'pt-user': myCharacter.data
       }, function() {
         if (cB) cB(data)
@@ -247,7 +247,7 @@ function updateCharacter(request, data, cB) {
 
       $.ajax({
         method: 'GET',
-        url: 'https://passti.me/api/user/' + name,
+        url: 'http://localhost:8080/api/user/' + name,
         success: function(data) {
           console.log(data)
 
@@ -287,6 +287,8 @@ function updateCharacter(request, data, cB) {
       myCharacter.position.set(pos.x, pos.y, pos.z)
       myCharacter.rotation.set(rot.x, rot.y, rot.z)
       myCharacter.data = data
+
+      console.log('update characterbefore put',)
   }
 
 }
@@ -297,7 +299,7 @@ function updateCharacter(request, data, cB) {
 
 function putCharacter(cB) {
 
-  if (isExtension) updateCharacter('putLocal', myCharacter.data)
+  updateCharacter('putLocal', myCharacter.data)
   if (isRegistered()) updateCharacter('putRemote', myCharacter.data, cB)
 }
 

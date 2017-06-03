@@ -152,8 +152,10 @@
 	width: 400px !important;
 	height: 400px !important;
 	@media(max-width: 768px){
-		width: 85%;
+		width: 85% !important;
+		height: 75% !important;
 	}
+		
 	z-index:2147483647 !important;
 	box-shadow: 8px 8px 8px rgba(0,0,0,0.15) !important;
 }
