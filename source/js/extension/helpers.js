@@ -1,5 +1,4 @@
-
-var isExtension = false
+var isExtension = (chrome && chrome.storage) //check if inside extension
 var isIframe = window.parent !== window.self
 
 var isMobile = false; //initiate as false
@@ -15,7 +14,6 @@ if (!isExtension && !isIframe) {
   })
 
   initSockets()
-  alert('initSockets')
 
 }
 

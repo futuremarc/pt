@@ -1,5 +1,4 @@
-
-var isExtension = false
+var isExtension = (chrome && chrome.storage) //check if inside extension
 var isIframe = window.parent !== window.self
 
 var isMobile = false; //initiate as false
@@ -9,13 +8,12 @@ if(/(android|bb\d+|meego).+mobile|avantgo|bada\/|blackberry|blazer|compal|elaine
 
 if (!isExtension && !isIframe) {
 
-  var socket = io('https://passti.me', {
+  var socket = io('http://localhost:5050', {
     'path': '/socket',
     'forceNew': true
   })
 
   initSockets()
-  alert('initSockets')
 
 }
 
@@ -356,7 +354,7 @@ function getFriendInfo(idOrName, cB) {
 
   $.ajax({
     method: 'GET',
-    url: 'https://passti.me/api/user/' + idOrName,
+    url: 'http://localhost:8080/api/user/' + idOrName,
     success: function(data) {
       console.log(data)
 
@@ -467,7 +465,7 @@ function openIframe(e) {
   var isMe = $(target).closest('ul').data('is-me')
   var role = $(target).find('div').data('role')
   var iframe = document.createElement('iframe')
-  var src = 'https://passti.me/' + role
+  var src = 'http://localhost:8080/' + role
 
 
   closeIframe()
