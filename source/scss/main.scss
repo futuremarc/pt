@@ -57,6 +57,10 @@
 	padding: 0px 3px 0px 3px !important;
 }
 
+#pt-install-tag{
+	display:none;
+}
+
 .pt-menu{
 	display:none;
 	margin:0px !important;
@@ -168,6 +172,11 @@
 	right: 0 !important;
 	width: 400px !important;
 	height: 400px !important;
+
+	@media(max-width: 768px){
+		width: 85%;
+	}
+		
 	z-index:2147483647 !important;
 	box-shadow: 8px 8px 8px rgba(0,0,0,0.15) !important;
 }
