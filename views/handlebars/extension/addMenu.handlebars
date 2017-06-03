@@ -44,9 +44,9 @@
 
   -->
 
-  {{#if isMe}}
+  {{#ifCond isMe '&&' isExtension}}
   	<li class='pt-menu-hide-pt'>
     	<div data-role='hide-pt'>hide pt</div>
   	</li>
-  {{/if}}
+  {{/ifCond}}
 </ul>

@@ -210,6 +210,7 @@ function onKeyDown(e) {
 
 //
 
+var putCharacterTimeout = null
 
 function onKeyUp(e) {
 
@@ -220,7 +221,12 @@ function onKeyUp(e) {
 
   if (keyCode !== 37 && keyCode !== 38 && keyCode !== 39 && keyCode !== 40) return
 
-  if (!isQuickGesture(keyCode)) putCharacter()
+  if (!isQuickGesture(keyCode)){
+    
+    clearTimeout(putCharacterTimeout)
+    putCharacterTimeout = setTimeout(putCharacter, 2000)
+
+  }
 
   var data = {}
 

@@ -40,7 +40,7 @@ function animateMyChar() {
   // if (key.right) myCharacter.position.x += .065
   // if (key.left) myCharacter.position.x -= .065
 
-   if (key.right && (activeKey === 39 || activeKey === 40 || activeKey === 38)) myCharacter.position.x += .065
+  if (key.right && (activeKey === 39 || activeKey === 40 || activeKey === 38)) myCharacter.position.x += .065
   if (key.left && myCharacter.position.x > .2 && (activeKey === 37 || activeKey === 40 || activeKey === 38)) myCharacter.position.x -= .065
 
 
@@ -89,7 +89,6 @@ function animateOtherChars() {
 function initPt() {
 
   addCanvasToPage()
-    //addMenuToPage()
 
   if (isExtension) var method = 'getLocal'
   else var method = 'getRemote'
@@ -104,12 +103,8 @@ function initPt() {
 
     console.log('initPt', user)
 
-    updateCharacter('getRemote', null, function(user) {
-
-      if (hasUserData && !signedIntoSite && isExtension) signInFromExtension(user)
-      initScene(user)
-    })
-
+    if (hasUserData && !signedIntoSite && isExtension) signInFromExtension(user)
+    initScene(user)
 
   })
 

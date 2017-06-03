@@ -39,13 +39,13 @@ if (!isExtension && !isIframe) {
 
 }
 
-if (!isMobile && !isIframe && isChrome()){
-  console.log('show tag!')
-  $('#pt-install-tag').show()
-}else{
-  console.log('hide tag!')
-  $('#pt-install-tag').remove()
-}
+// if (!isMobile && !isIframe && isChrome()){
+//   console.log('show tag!')
+//   $('#pt-install-tag').show()
+// }else{
+//   console.log('hide tag!')
+//   $('#pt-install-tag').remove()
+// }
 
 
 
@@ -298,6 +298,7 @@ function addMainMenu(mesh, data) {
 
   var html = Templates.extension.addMenu({
     isMe: isMainMenu,
+    isExtension: isExtension,
     data: data
   })
 

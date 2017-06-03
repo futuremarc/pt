@@ -332,7 +332,7 @@ $('document').ready(function() {
     if (e.keyCode === 13) return
 
     var errorMessage = $(".error-message h3")
-    var name = $(this).find('input').val()
+    var name = $(this).find('input').val().toLowerCase()
     var timeout = null
 
     if (!name) return
