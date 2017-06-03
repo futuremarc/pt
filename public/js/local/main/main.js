@@ -489,9 +489,5 @@ var ptExists = $('.pt').length > 0
 var isIframe = window.parent !== window.self
 
 
-
-if (isChrome() && chrome.app && chrome.app.isInstalled) var isExtensionInstalled = true
-else isExtensionInstalled = false
-
-if (!ptExists && !isIframe && !isExtensionInstalled) initPt()
+if (!ptExists && !isIframe) initPt()
 
