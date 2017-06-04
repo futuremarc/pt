@@ -12,6 +12,7 @@ function createMyCharacter(data) {
     myCharacter = character
     myCharacter.awake()
     setCameraZoom(character)
+    setCameraPos()
 
     if (isRegistered()) {
       addLiveCharacters()
@@ -143,7 +144,7 @@ function createCharacter(data, cB) {
     character.renderOrder = renderOrder
 
     var x = 5 - (Math.random() * 5 - 2.5)
-    
+
     var pos = data.position || {
         x: x,
         y: -1,

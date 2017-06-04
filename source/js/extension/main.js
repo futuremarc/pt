@@ -34,7 +34,6 @@ function render() {
 //
 
 
-
 function animateMyChar() {
 
   // if (key.right) myCharacter.position.x += .065
@@ -49,6 +48,9 @@ function animateMyChar() {
 
   if (myCharacter.isWalking && isNameDisplayed && isMouseHovering) hideNameTags()
   else if (!myCharacter.isWalking && !isNameDisplayed && isMouseHovering && !isMenuDisplayed && sceneCharacters.visible) showNameTags()
+
+
+ if (myCharacter.position.x > windowCenter.x) camera.position.x = myCharacter.position.x - windowCenter.x
 }
 
 
@@ -197,6 +199,7 @@ function onWindowResize() {
   camera.updateProjectionMatrix();
   renderer.setSize(container.offsetWidth, container.offsetHeight);
   setSceneOffset()
+  setCameraPos()
 }
 
 

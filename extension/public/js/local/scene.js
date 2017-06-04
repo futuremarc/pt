@@ -47,6 +47,18 @@ function initScene(data) {
 
 }
 
+var centerOfWindow
+
+
+//
+
+
+function setCameraPos(){
+
+  var vec = new THREE.Vector3(window.innerWidth, -1, 0)
+  windowCenter  = screenToWorld(vec)
+}
+
 
 //
 

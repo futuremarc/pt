@@ -224,7 +224,7 @@ function onKeyUp(e) {
   if (!isQuickGesture(keyCode)){
     
     clearTimeout(putCharacterTimeout)
-    putCharacterTimeout = setTimeout(putCharacter, 2000)
+    putCharacterTimeout = setTimeout(putCharacter, 1000)
 
   }
 
