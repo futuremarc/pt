@@ -276,7 +276,7 @@ function showNameTags() {
       var screenPos = worldToScreen(worldPos)
 
       var x = screenPos.x - user.nameTagWidth / 2 //center nametag to user pos
-      var y = Math.abs(screenPos.y) * (zoom * .8) //align nametag to height of user based on zoom
+      var y = Math.abs(screenPos.y) * (zoom) //align nametag to height of user based on zoom
 
       user.nameTag.css({'left': x, 'bottom' : y})
 
