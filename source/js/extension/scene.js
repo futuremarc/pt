@@ -55,7 +55,7 @@ var centerOfWindow
 
 function setCameraPos(){
 
-  var vec = new THREE.Vector3(window.innerWidth, -1, 0)
+  var vec = new THREE.Vector3(window.innerWidth, -1, 0) //divided by zoom
   windowCenter  = screenToWorld(vec)
 }
 
@@ -73,14 +73,14 @@ function setCameraZoom(data) {
     'opacity': .8
   }))
 
+  box.computeBoundingBox()
+  mesh.geometry = box
   mesh.role = 'menu'
   mesh.position.set(0, -2, 0)
   mesh.renderOrder = 1
   mesh.visible = false
 
   scene.add(mesh)
-  addMainMenu(mesh,data.data)
-
   sceneCharacters.position.set(0, 1, 0);
 
   var box = new THREE.Box3().setFromObject(mesh);

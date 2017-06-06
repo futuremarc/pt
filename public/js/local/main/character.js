@@ -13,6 +13,8 @@ function createMyCharacter(data) {
     myCharacter.awake()
     setCameraZoom(character)
     setCameraPos()
+    addMainMenu(mesh,character)
+
 
     if (isRegistered()) {
       addLiveCharacters()
@@ -46,6 +48,7 @@ function createCharacter(data, cB) {
 
     var nameTag = character.nameTag
     $('body').prepend(nameTag)
+    character.nameTagWidth = nameTag.width()
 
 
     var isMe = (renderOrder === 0)
@@ -61,6 +64,16 @@ function createCharacter(data, cB) {
     character.mixer;
     character.animations = ['idle', 'walk', 'run', 'hello', 'pose'];
     character.activeState = 'idle';
+
+
+    character.scale.set(zoom,zoom,zoom) //zoom is globally defined in helpers
+
+    geometry.computeBoundingBox();
+    character.geometry = geometry
+
+    character.height = geometry.boundingBox.max.y - geometry.boundingBox.min.y
+    character.width = geometry.boundingBox.max.x - geometry.boundingBox.min.x 
+
 
     character.walk = function(data) {
       var direction = data.direction
@@ -215,7 +228,7 @@ function updateCharacter(request, data, cB) {
 
       $.ajax({
         method: 'PUT',
-        url: 'https://passti.me/api/user/' + name,
+        url: 'http://localhost:8080/api/user/' + name,
         data: data,
         success: function(data) {
           console.log(data)
@@ -256,7 +269,7 @@ function updateCharacter(request, data, cB) {
 
       $.ajax({
         method: 'GET',
-        url: 'https://passti.me/api/user/' + name,
+        url: 'http://localhost:8080/api/user/' + name,
         success: function(data) {
           console.log(data)
 

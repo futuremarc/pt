@@ -33,6 +33,7 @@ function render() {
 
 //
 
+var left_wall_x = -.1
 
 function animateMyChar() {
 
@@ -40,11 +41,11 @@ function animateMyChar() {
   // if (key.left) myCharacter.position.x -= .065
 
   if (key.right && (activeKey === 39 || activeKey === 40 || activeKey === 38)) myCharacter.position.x += .065
-  if (key.left && myCharacter.position.x > .2 && (activeKey === 37 || activeKey === 40 || activeKey === 38)) myCharacter.position.x -= .065
+  if (key.left && myCharacter.position.x > left_wall_x && (activeKey === 37 || activeKey === 40 || activeKey === 38)) myCharacter.position.x -= .065
 
 
-  else if (myCharacter.position.x < .2 && sceneCharacters.visible) sceneCharacters.visible = false
-  else if (myCharacter.position.x > .2 && !sceneCharacters.visible) sceneCharacters.visible = true
+  else if (myCharacter.position.x < left_wall_x && sceneCharacters.visible) sceneCharacters.visible = false
+  else if (myCharacter.position.x > left_wall_x && !sceneCharacters.visible) sceneCharacters.visible = true
 
   if (myCharacter.isWalking && isNameDisplayed && isMouseHovering) hideNameTags()
   else if (!myCharacter.isWalking && !isNameDisplayed && isMouseHovering && !isMenuDisplayed && sceneCharacters.visible) showNameTags()
@@ -71,12 +72,12 @@ function animateOtherChars() {
       if (character.isWalking) {
 
         if (character.isWalking === 'right') character.position.x += .065
-        else if (character.position.x > 0) character.position.x -= .065
+        else if (character.position.x > left_wall_x) character.position.x -= .065
 
       }
 
-      if (character.position.x < .2 && character.visible) character.visible = false
-      else if (character.position.x > .2 && !character.visible) character.visible = true
+      if (character.position.x < left_wall_x && character.visible) character.visible = false
+      else if (character.position.x > left_wall_x && !character.visible) character.visible = true
 
       else if (character.isWalking && isNameDisplayed && isMouseHovering) hideNameTags()
       else if (!character.isWalking && !isNameDisplayed && isMouseHovering && sceneCharacters.visible && !isMenuDisplayed) showNameTags()

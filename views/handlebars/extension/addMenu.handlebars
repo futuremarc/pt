@@ -44,6 +44,18 @@
 
   -->
 
+  {{#if isMe}}
+    <li class='pt-menu-zoom'>
+      <div data-role='zoom-in'>zoom in</div>
+    </li>
+  {{/if}}
+
+  {{#if isMe}}
+    <li class='pt-menu-zoom'>
+      <div data-role='zoom-out'>zoom out</div>
+    </li>
+  {{/if}}
+
   {{#ifCond isMe '&&' isExtension}}
   	<li class='pt-menu-hide-pt'>
     	<div data-role='hide-pt'>hide pt</div>
