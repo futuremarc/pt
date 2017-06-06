@@ -10,7 +10,7 @@ function signInFromExtension(data) {
 
   $.ajax({
     method: 'POST',
-    url: 'https://passti.me/api/login',
+    url: 'http://localhost:8080/api/login',
     data: data,
     success: function(data) {
       console.log(data)
@@ -94,7 +94,7 @@ $("body").on('submit', '#pt-auth-form', function(e) {
 
   $.ajax({
     method: 'POST',
-    url: 'https://passti.me/api/' + role,
+    url: 'http://localhost:8080/api/' + role,
     data: data,
     success: function(data) {
       console.log(data)
