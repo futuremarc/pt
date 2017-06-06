@@ -275,8 +275,8 @@ function showNameTags() {
       var worldPos = new THREE.Vector3(user.position.x, user.height, user.position.z)
       var screenPos = worldToScreen(worldPos)
 
-      var x = screenPos.x - user.nameTagWidth / 2
-      var y = Math.abs(screenPos.y) * (zoom * .8)
+      var x = screenPos.x - user.nameTagWidth / 2 //center nametag to user pos
+      var y = Math.abs(screenPos.y) * (zoom * .8) //align nametag to height of user based on zoom
 
       user.nameTag.css({'left': x, 'bottom' : y})
 
