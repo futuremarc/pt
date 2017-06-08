@@ -37,6 +37,7 @@ function initScene(data) {
   camera.position.set(0, 1.25, 2)
 
   light = new THREE.AmbientLight(0xffffff, 1);
+  //light.position.set(0,1.25,2)
   scene.add(light);
 
   sceneCharacters = new THREE.Object3D();
@@ -116,6 +117,8 @@ function addHome(cB) {
 
     object.role = 'home'
     object.position.set(2, -2, 0)
+    object.rotation.set(0, Math.PI, 0)
+
     object.renderOrder = 1
 
     scene.add(object)

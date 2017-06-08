@@ -15,13 +15,17 @@ function createMyCharacter(data) {
     computeWindowCenter()
     addMainMenu(mesh,character)
 
+    //addHome(function(){
 
-    if (isRegistered()) {
+       if (isRegistered()) {
       addLiveCharacters()
       emitJoinMsg()
     }
     animate()
-  })
+
+    })
+   
+  //})
 }
 
 
