@@ -334,7 +334,7 @@ function addMainMenu(mesh, data) {
 
   menu.find('.pt-menu-hide-pt').on('click touchstart', closePt)
   menu.find('.pt-menu-zoom').on('click touchstart', zoomPt)
-  menu.find('.pt-menu-friend, .pt-menu-settings, .pt-menu-home, .pt-menu-login, .pt-menu-signup, .pt-menu-logout').on('click touchstart', openIframe)
+  menu.find('.pt-menu-item').on('click touchstart', openIframe)
   menu.on('click touchstart', function(e) {
     e.stopPropagation()
   })

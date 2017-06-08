@@ -1,3 +1,101 @@
+Handlebars.registerHelper('upper', function(str) {
+	return str.toUpperCase()
+});
+
+Handlebars.registerHelper('firstUpper', function(str) {
+	return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
+});
+
+Handlebars.registerHelper('formatDate', function(date){
+	return moment(date).format('MM/DD/YYYY HH:mm')
+})
+
+Handlebars.registerHelper('formatTime', function(date){
+	return moment(date).format('HH:mm')
+})
+
+Handlebars.registerHelper('getLength', function (obj) {
+ return obj.length;
+});
+
+Handlebars.registerHelper('ifCond', function (a, operator, b, options) {
+
+	switch (operator) {
+	    case '==':
+	        return (a == b) ? options.fn(this) : options.inverse(this);
+	    case '===':
+	        return (a === b) ? options.fn(this) : options.inverse(this);
+	    case '!=':
+	        return (a != b) ? options.fn(this) : options.inverse(this);
+	    case '!==':
+	        return (a !== b) ? options.fn(this) : options.inverse(this);
+	    case '<':
+	        return (a < b) ? options.fn(this) : options.inverse(this);
+	    case '<=':
+	        return (a <= b) ? options.fn(this) : options.inverse(this);
+	    case '>':
+	        return (a > b) ? options.fn(this) : options.inverse(this);
+	    case '>=':
+	        return (a >= b) ? options.fn(this) : options.inverse(this);
+	    case '&&':
+	        return (a && b) ? options.fn(this) : options.inverse(this);
+	    case '||':
+	        return (a || b) ? options.fn(this) : options.inverse(this);
+	    default:
+	        return options.inverse(this);
+	}
+});
+
+Handlebars.registerHelper('ifEqual', function(a,b, opts){
+	if(a==b){
+		return opts.fn(this)
+	}
+	else {
+		return opts.inverse(this)
+	}
+})
+
+Handlebars.registerHelper('ifNotEqual', function(a,b, opts){
+	if(a!=b){
+		return opts.fn(this)
+	}
+	else {
+		return opts.inverse(this)
+	}
+})
+
+Handlebars.registerHelper('ifIn', function(a,b,opts){
+	if(b.indexOf(a) > -1){
+		return opts.fn(this)
+	}
+	else {
+		return opts.inverse(this)
+	}
+})
+
+Handlebars.registerHelper('ifHasPast', function(date, opts){
+	if(moment(date).isAfter(moment())){
+		return opts.inverse(this)
+	} else {
+		return opts.fn(this)
+	}
+})
+
+Handlebars.registerHelper('eachSlice', function(array, opts){
+
+	var slice = 10
+	var s = ''
+
+	if(array.length<10){
+		slice = array.length
+	}
+	
+	for(var i=array.length-1; i>=array.length-slice;i--){
+		s+=opts.fn(array[i])
+	}
+
+	return s;
+})
 $('document').ready(function() {
 
   var myCharacter = {}
@@ -25,7 +123,7 @@ $('document').ready(function() {
 
       $.ajax({
         method: 'POST',
-        url: 'https://passti.me/api/user/friend/'+ friendId, // + event
+        url: 'http://localhost:8080/api/users/friend/' + friendId, // + event
         data: data,
         success: function(data) {
           console.log(data)
@@ -79,7 +177,7 @@ $('document').ready(function() {
 
       $.ajax({
         method: method,
-        url: 'https://passti.me/api/user/friend/' + friendId, //+ event,
+        url: 'http://localhost:8080/api/users/friend/' + friendId, //+ event,
         data: data,
         success: function(data) {
           console.log(data)
@@ -127,7 +225,7 @@ $('document').ready(function() {
 
       $.ajax({
         method: 'PUT',
-        url: 'https://passti.me/api/user/' + name,
+        url: 'http://localhost:8080/api/users/' + name,
         data: data,
         success: function(data) {
           console.log(data)
@@ -157,7 +255,15 @@ $('document').ready(function() {
         }
       })
     },
-    default: function(data) {
+    login: function(data) {
+      this['default'](data)
+    },
+    signup: function(data){
+       this['default'](data)
+    },
+    default:function(data){
+
+
 
       //not in use
       var timeout = null
@@ -180,14 +286,13 @@ $('document').ready(function() {
 
       $.ajax({
         method: 'POST',
-        url: 'https://passti.me/api/' + event,
+        url: 'http://localhost:8080/api/' + event,
         data: data,
         success: function(data) {
           console.log(data)
           if (data.status === 'success') {
 
             errorMessage.html(data.message + ' <strong>' + data.data.name + '</strong>!')
-
 
             setTimeout(function() {
               location.href = '/'
@@ -213,7 +318,6 @@ $('document').ready(function() {
           console.log(err)
         }
       })
-
 
     }
   }
@@ -245,7 +349,7 @@ $('document').ready(function() {
     e.preventDefault();
 
     var role = $(this).data('role')
-    if (role !== 'settings') return
+      //if (role !== 'settings') return
 
     window.name = $('.auth-name').val();
     window.email = $('.auth-email').val();
@@ -332,7 +436,7 @@ $('document').ready(function() {
     if (e.keyCode === 13) return
 
     var errorMessage = $(".error-message h3")
-    var name = $(this).find('input').val()
+    var name = $(this).find('input').val().toLowerCase()
     var timeout = null
 
     if (!name) return
@@ -369,7 +473,7 @@ $('document').ready(function() {
 
     $.ajax({
       method: 'GET',
-      url: 'https://passti.me/api/user/' + name,
+      url: 'http://localhost:8080/api/users/' + name,
       success: function(data) {
         console.log(data)
 
@@ -428,40 +532,6 @@ $('document').ready(function() {
 
   if (isIframe) window.parent.postMessage(data, '*')
 
-
- if (loggedIn && isIframe) {
-
-    var errorMessage = $(".error-message h3")
-
-    $.ajax({
-      method: 'GET',
-      url: 'https://passti.me/api/user/' + name,
-      success: function(data) {
-        console.log(data)
-
-        if (data.status === 'success') {
-
-          var container = $('#friend-requests-parent')
-          var reqs = data.data.friendRequests
-          var html = Templates.auth.addFriendRequests(reqs)
-          container.html(html)
-
-          var container = $('#friends-list-parent')
-          var friends = data.data.friends
-          var html = Templates.auth.addFriendsList(friends)
-          container.html(html)
-
-        } else {
-          errorMessage.html(data.message)
-        }
-      },
-      error: function(err) {
-        console.log(err)
-      }
-    })
-  }
-
-
 })
 
 
@@ -478,25 +548,3 @@ function changeSubmitButton(disable, replaceText, id) {
   }
   btn.attr('disabled', disable)
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

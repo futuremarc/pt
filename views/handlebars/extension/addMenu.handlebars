@@ -9,8 +9,16 @@
 
   -->
 
+    {{#if isMe}}
+      <li class='pt-menu-suggestions pt-menu-item'>
+        <div data-role='suggestions'>suggested friends</div>
+      </li>
+   {{/if}}
+
+
+
 	{{#if isMe}}
-		  <li class='pt-menu-home'>
+		  <li class='pt-menu-home pt-menu-item'>
 		    <div data-role='home'>friend requests</div>
         {{#ifCond data.friendRequests.length '>' 0}}
           <span class='pt-notification-counter' style='display:block'>{{data.friendRequests.length}}</span>
@@ -21,7 +29,7 @@
 	 {{/if}}
 
  	{{#if isMe}}
-  		<li class='pt-menu-friend' >
+  		<li class='pt-menu-friend pt-menu-item' >
     		<div data-role='friend'>add friend</div>
   		</li>
   {{/if}}
@@ -33,15 +41,6 @@
         <div class='pt-menu-share' data-role='share'>share this page</div>
       </li>
   {{/if}}
-  -->
-
-<!--
-  {{#if isMe}}
-  	<li class='pt-menu-home'>
-    	<div data-role='settings'>settings</div>
-  	</li>
-  {{/if}}
-
   -->
 
   {{#if isMe}}
@@ -56,9 +55,18 @@
     </li>
   {{/if}}
 
+
+  {{#if isMe}}
+    <li class='pt-menu-home pt-menu-item'>
+      <div data-role='settings'>settings</div>
+    </li>
+  {{/if}}
+
   {{#ifCond isMe '&&' isExtension}}
   	<li class='pt-menu-hide-pt'>
     	<div data-role='hide-pt'>hide pt</div>
   	</li>
   {{/ifCond}}
+
+
 </ul>

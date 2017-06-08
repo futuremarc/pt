@@ -70,7 +70,7 @@ gulp.task('auth-scripts', function(){
 gulp.task('main-scripts', function(){
   gulp.src('source/js/main/*.js')
     .pipe(concat('main.js'))
-    .pipe(gulp.dest('public/js/local/main/'))
+    .pipe(gulp.dest('public/js/local/auth/'))
 })
 
 gulp.task('mobile-scripts', function(){

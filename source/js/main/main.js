@@ -25,7 +25,7 @@ $('document').ready(function() {
 
       $.ajax({
         method: 'POST',
-        url: 'http://localhost:8080/api/users/friend/'+ friendId, // + event
+        url: 'http://localhost:8080/api/users/friend/' + friendId, // + event
         data: data,
         success: function(data) {
           console.log(data)
@@ -58,7 +58,7 @@ $('document').ready(function() {
 
     'request': function(data) {
       console.log('iframe recieved', data)
- 
+
       var timeout = null
       var errorMessage = $('.error-message h3')
       var event = data.event
@@ -157,7 +157,15 @@ $('document').ready(function() {
         }
       })
     },
-    default: function(data) {
+    login: function(data) {
+      this['default'](data)
+    },
+    signup: function(data){
+       this['default'](data)
+    },
+    default:function(data){
+
+
 
       //not in use
       var timeout = null
@@ -188,7 +196,6 @@ $('document').ready(function() {
 
             errorMessage.html(data.message + ' <strong>' + data.data.name + '</strong>!')
 
-
             setTimeout(function() {
               location.href = '/'
             }, 0)
@@ -213,7 +220,6 @@ $('document').ready(function() {
           console.log(err)
         }
       })
-
 
     }
   }
@@ -245,7 +251,7 @@ $('document').ready(function() {
     e.preventDefault();
 
     var role = $(this).data('role')
-    if (role !== 'settings') return
+      //if (role !== 'settings') return
 
     window.name = $('.auth-name').val();
     window.email = $('.auth-email').val();
@@ -444,6 +450,3 @@ function changeSubmitButton(disable, replaceText, id) {
   }
   btn.attr('disabled', disable)
 }
-
-
-
