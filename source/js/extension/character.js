@@ -33,6 +33,7 @@ function createCharacter(data, cB) {
   if (isExtension) var path = chrome.extension.getURL('public/models/character/eva-animated.json')
   else var path = '/models/character/eva-animated.json'
 
+    var loader = new THREE.JSONLoader()
   loader.load(path, function(geometry, materials) {
 
     materials.forEach(function(material) {

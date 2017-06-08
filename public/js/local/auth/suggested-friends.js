@@ -6,7 +6,7 @@ $(document).ready(function() {
 
     $.ajax({
       method: 'GET',
-      url: 'http://localhost:8080/api/users/',
+      url: 'https://passti.me/api/users/',
       success: function(data) {
         console.log(data)
         if (data.status === 'success') {

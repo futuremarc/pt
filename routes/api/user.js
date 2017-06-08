@@ -15,7 +15,7 @@ if (app.get('env') === 'development') {
 
 module.exports = function(passport) {
 
-  router.route('/user/friend/:id')
+  router.route('/users/friend/:id')
     .post(function(req, res) {
 
       var friendId = req.params.id
@@ -235,10 +235,10 @@ module.exports = function(passport) {
 
   })
 
-  router.route('/user/:id')
+  router.route('/users/:id')
     .put(function(req, res) {
 
-     
+
       var id = req.params.id;
       var $or = [{
         name: id
@@ -397,6 +397,29 @@ module.exports = function(passport) {
 
           })
 
+
+        })
+    })
+
+  router.route('/users')
+    .get(function(req, res) {
+
+      User
+        .find({})
+        .select('-password -friendRequests')
+        .exec(function(err, result) {
+
+          if (err) return res.json({
+            status: "error",
+            data: null,
+            message: "Couldn't find users"
+          })
+
+          return res.json({
+            status: "success",
+            data: result,
+            message: "Found users"
+          })
 
         })
     })
