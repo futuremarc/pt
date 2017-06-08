@@ -15,14 +15,32 @@ module.exports = function() {
       })
     }
 
-    Subscription.find({}).exec(function(err, result) {
 
-      var subs = JSON.stringify(result)
-      res.render('auth/signup.pug', {
-        subscriptions: subs
+    //JUST TO PREVENT REFRESH - REMOVE FOR PRODUCTION
+    
+    User.findOne({name:'marc'}, function(err, user) {
+     if (err) {
+       throw err
+     }
+
+      return res.render('auth/home.pug', {
+        loggedIn: true,
+        userName: user.name,
+        userId: user._id
       })
 
     })
+
+    //TIL HERE
+
+    // Subscription.find({}).exec(function(err, result) {
+
+    //   var subs = JSON.stringify(result)
+    //   res.render('auth/signup.pug', {
+    //     subscriptions: subs
+    //   })
+
+    // })
 
   })
 
@@ -78,6 +96,19 @@ module.exports = function() {
     })
 
   })
+
+   router.get('/suggestions', function(req, res, next) {
+
+    if (!req.user) return res.render('auth/login.pug')
+      
+    res.render('auth/suggestions.pug', {
+      loggedIn: true,
+      userName: req.user.name,
+      userId: req.user._id
+    })
+
+  })
+
 
   router.get('/forgot', function(req, res) {
     res.render('auth/forgot.pug', {

@@ -34,14 +34,19 @@ function render() {
 //
 
 var left_wall_x = -.1
+var walk_speed = .045
+var run_speed = .075
+
+
+var isCameraAligned = true
 
 function animateMyChar() {
 
-  // if (key.right) myCharacter.position.x += .065
-  // if (key.left) myCharacter.position.x -= .065
+  // if (key.right) myCharacter.position.x += walk_speed
+  // if (key.left) myCharacter.position.x -= walk_speed
 
-  if (key.right && (activeKey === 39 || activeKey === 40 || activeKey === 38)) myCharacter.position.x += .065
-  if (key.left && myCharacter.position.x > left_wall_x && (activeKey === 37 || activeKey === 40 || activeKey === 38)) myCharacter.position.x -= .065
+  if (key.right && (activeKey === 39 || activeKey === 40 || activeKey === 38)) myCharacter.position.x += walk_speed
+  if (key.left && myCharacter.position.x > left_wall_x && (activeKey === 37 || activeKey === 40 || activeKey === 38)) myCharacter.position.x -= walk_speed
 
 
   else if (myCharacter.position.x < left_wall_x && sceneCharacters.visible) sceneCharacters.visible = false
@@ -50,8 +55,13 @@ function animateMyChar() {
   if (myCharacter.isWalking && isNameDisplayed && isMouseHovering) hideNameTags()
   else if (!myCharacter.isWalking && !isNameDisplayed && isMouseHovering && !isMenuDisplayed && sceneCharacters.visible) showNameTags()
 
+  if (myCharacter.position.x > windowCenter.x && camera.position.x !== myCharacter.position.x - windowCenter.x){ //follow character, align if not aligned
 
- if (myCharacter.position.x > windowCenter.x) camera.position.x = myCharacter.position.x - windowCenter.x
+    console.log('realign camera')
+    camera.position.x = myCharacter.position.x - windowCenter.x
+    //console.log(myCharacter.position.x, windowCenter.x, camera.position.x, myCharacter.position.x > windowCenter.x)
+  }
+
 }
 
 
@@ -71,8 +81,8 @@ function animateOtherChars() {
 
       if (character.isWalking) {
 
-        if (character.isWalking === 'right') character.position.x += .065
-        else if (character.position.x > left_wall_x) character.position.x -= .065
+        if (character.isWalking === 'right') character.position.x += walk_speed
+        else if (character.position.x > left_wall_x) character.position.x -= walk_speed
 
       }
 
@@ -179,7 +189,7 @@ function onMouseMove(e) {
   mouseX = e.clientX
   mouseY = e.clientY
 
-  isMouseHovering = (mouseY > window.innerHeight - 85)
+  isMouseHovering = (mouseY > window.innerHeight - canvas_height)
 
   detectMeshHover()
   onCanvasHover()
@@ -188,8 +198,11 @@ function onMouseMove(e) {
 
 //
 
-
 function onWindowResize() {
+
+      console.log('resize window')
+
+  isCameraAligned  = false
 
   camera.left = container.offsetWidth / -2
   camera.right = container.offsetWidth / 2
@@ -200,7 +213,13 @@ function onWindowResize() {
   camera.updateProjectionMatrix();
   renderer.setSize(container.offsetWidth, container.offsetHeight);
   setSceneOffset()
-  setCameraPos()
+
+  computeWindowCenter()
+
+  showNameTags() //reset name tags
+  hideNameTags()
+
+  isCameraAligned = true
 }
 
 
@@ -223,20 +242,22 @@ function onVisibilityChange() {
 
 function addDomListeners() {
   $(document).on('click touchstart', onDocumentClick)
-  document.addEventListener('keydown', onKeyDown)
-  document.addEventListener('keyup', onKeyUp)
-  window.addEventListener('visibilitychange', onVisibilityChange)
-  window.addEventListener('mousemove', onMouseMove)
-  window.addEventListener('resize', onWindowResize)
+  $(document).on('keydown', onKeyDown)
+  $(document).on('keyup', onKeyUp)
+  $(window).on('visibilitychange', onVisibilityChange)
+  $(window).on('mousemove', onMouseMove)
+  $(window).on('resize', onWindowResize)
+  $(window).on('orientationchange', onWindowResize)
 }
 
 function removeDomListeners() {
   $(document).off('click touchstart', onDocumentClick)
-  document.removeEventListener('keydown', onKeyDown)
-  document.removeEventListener('keyup', onKeyUp)
-  window.removeEventListener('visibilitychange', onVisibilityChange)
-  window.removeEventListener('mousemove', onMouseMove)
-  window.removeEventListener('resize', onWindowResize)
+  $(document).off('keydown', onKeyDown)
+  $(document).off('keyup', onKeyUp)
+  $(window).off('visibilitychange', onVisibilityChange)
+  $(window).off('mousemove', onMouseMove)
+  $(window).off('resize', onWindowResize)
+  $(window).off('orientationchange', onWindowResize)
 }
 
 

@@ -1,5 +1,3 @@
-var textureLoader = new THREE.TextureLoader(),
-  loader = new THREE.JSONLoader();
 
 var clock, container, camera, scene, light, renderer, controls = {};
 var hoveredMesh = undefined
@@ -8,6 +6,7 @@ var renderOrder = 0
 
 //
 
+var canvas_height
 
 function initScene(data) {
 
@@ -26,6 +25,7 @@ function initScene(data) {
   renderer = isWebGL() ? new THREE.WebGLRenderer(options) : new THREE.CanvasRenderer(options);
 
   container = document.getElementById('pt-container');
+  canvas_height = $(container).height()
 
   renderer.setPixelRatio(window.devicePixelRatio);
   renderer.setSize(container.offsetWidth, container.offsetHeight);
@@ -47,16 +47,20 @@ function initScene(data) {
 
 }
 
-var centerOfWindow
+var windowCenter
 
 
 //
 
 
-function setCameraPos(){
+function computeWindowCenter() {
 
-  var vec = new THREE.Vector3(window.innerWidth, -1, 0) //divided by zoom
-  windowCenter  = screenToWorld(vec)
+  var vec = new THREE.Vector3(window.innerWidth, -1, 0)
+  windowCenter = screenToWorld(vec)
+
+  console.log('computeWindowCenter', windowCenter)
+  return windowCenter
+
 }
 
 
@@ -99,6 +103,32 @@ function setCameraZoom(data) {
 
 }
 
+var home
+
+function addHome(cB) {
+
+  if (isExtension) var path = chrome.extension.getURL('public/models/home/house.json')
+  else var path = '/models/home/house.json'
+
+
+  var loader = new THREE.ObjectLoader();
+  loader.load(path, function(object) {
+
+    object.role = 'home'
+    object.position.set(2, -2, 0)
+    object.renderOrder = 1
+
+    scene.add(object)
+
+    object.scale.set(.1, .1, .1)
+
+    home = object
+
+    if (cB) cB()
+
+  })
+}
+
 
 //
 
@@ -109,26 +139,4 @@ function setSceneOffset() {
   var screenOffset = screenToWorld(newOrigin)
   scene.position.set(screenOffset.x, 0, 0)
 
-}
-
-
-//
-
-
-function zoomInScene() {
-  $(container).addClass('pt-enlarge')
-  $(renderer.domElement).addClass('pt-enlarge')
-  setCameraZoom(data)
-  onWindowResize()
-}
-
-
-//
-
-
-function zoomOutScene() {
-  $(renderer.domElement).removeClass('pt-enlarge')
-  $(container).removeClass('pt-enlarge')
-  setCameraZoom()
-  onWindowResize()
 }

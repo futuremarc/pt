@@ -28,7 +28,7 @@ if (/(android|bb\d+|meego).+mobile|avantgo|bada\/|blackberry|blazer|compal|elain
 
 if (!isExtension && !isIframe) {
 
-  var socket = io('https://passti.me', {
+  var socket = io('http://localhost:5050', {
     'path': '/socket',
     'forceNew': true
   })
@@ -58,8 +58,8 @@ function zoomPt() {
   if (role === 'zoom-out' && zoom > .25) zoom -= .25
   else if (role === 'zoom-in' && zoom < 1.25) zoom += .25
 
-  sceneCharacters.children.forEach(function(child){
-    child.scale.set(zoom,zoom,zoom)
+  sceneCharacters.children.forEach(function(child) {
+    child.scale.set(zoom, zoom, zoom)
   })
 
   showNameTags() //reset nametag location
@@ -279,7 +279,12 @@ function showNameTags() {
       var x = screenPos.x - (user.nameTagWidth / 2) - name_tag_x_offset //center nametag to user pos
       var y = Math.abs(screenPos.y) * (zoom) //align nametag to height of user based on zoom
 
-      user.nameTag.css({'left': x, 'bottom' : y})
+      var options = {
+        'left': x,
+        'bottom': y
+      }
+
+      user.nameTag.css(options)
 
     } else {
       user.nameTag.hide()
@@ -401,7 +406,7 @@ function getFriendInfo(idOrName, cB) {
 
   $.ajax({
     method: 'GET',
-    url: 'https://passti.me/api/user/' + idOrName,
+    url: 'http://localhost:8080/api/users/' + idOrName,
     success: function(data) {
       console.log(data)
 
@@ -512,7 +517,7 @@ function openIframe(e) {
   var isMe = $(target).closest('ul').data('is-me')
   var role = $(target).find('div').data('role')
   var iframe = document.createElement('iframe')
-  var src = 'https://passti.me/' + role
+  var src = 'http://localhost:8080/' + role
 
 
   closeIframe()
@@ -525,6 +530,7 @@ function openIframe(e) {
   })
 
   $('body').append(iframe)
+  myCharacter.faceBackward()
 
 }
 

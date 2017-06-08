@@ -1,0 +1,18 @@
+extends ../main/layout
+
+block css
+
+block content
+
+  div(class='pt-auth-container')
+
+    form(id='pt-auth-form', class='pt-form', data-role='suggestions')
+
+      div(class='error-message')
+        h3
+      div(id="auth-suggestions-parent")
+
+    
+block javascript
+
+  script(src='/js/local/auth/suggestions.js')

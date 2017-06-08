@@ -1,0 +1,37 @@
+
+<h3>Suggested Friends</h3>
+
+<div class='pt-auth-container'>
+
+  {{#if this}} 
+
+    <form id='pt-suggestions-form'>
+
+      <ul>
+        {{#each this}}
+
+          <li data-id='{{_id}}'>
+
+            <div>
+              {{name}}
+            </div>
+            
+            <ul class="list-inline">
+              <li>
+                <input type='submit' data-action='request', data-role='friend', data-name='{{name}}', data-id='{{_id}}', class='btn btn-custom friend-request-btn', value='Add'>
+              </li>
+            </ul>
+
+          </li>
+          <br/>
+
+        {{/each}}
+      </ul>
+      
+    </form>
+
+  {{else}}
+    <span>None</span>
+  {{/if}}
+
+</div>

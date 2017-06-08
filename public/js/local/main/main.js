@@ -1,491 +1,547 @@
-var isNameDisplayed = false,
-  mouseX = 0,
-  mouseY = 0,
-  isMouseHovering = false,
-  isMousePointer = false
+Handlebars.registerHelper('upper', function(str) {
+	return str.toUpperCase()
+});
 
+Handlebars.registerHelper('firstUpper', function(str) {
+	return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
+});
 
-//
+Handlebars.registerHelper('formatDate', function(date){
+	return moment(date).format('MM/DD/YYYY HH:mm')
+})
 
+Handlebars.registerHelper('formatTime', function(date){
+	return moment(date).format('HH:mm')
+})
 
-function animate() {
+Handlebars.registerHelper('getLength', function (obj) {
+ return obj.length;
+});
 
-  animateMyChar()
-  if (isRegistered()) animateOtherChars()
-  requestAnimationFrame(animate);
-  render();
-}
+Handlebars.registerHelper('ifCond', function (a, operator, b, options) {
 
+	switch (operator) {
+	    case '==':
+	        return (a == b) ? options.fn(this) : options.inverse(this);
+	    case '===':
+	        return (a === b) ? options.fn(this) : options.inverse(this);
+	    case '!=':
+	        return (a != b) ? options.fn(this) : options.inverse(this);
+	    case '!==':
+	        return (a !== b) ? options.fn(this) : options.inverse(this);
+	    case '<':
+	        return (a < b) ? options.fn(this) : options.inverse(this);
+	    case '<=':
+	        return (a <= b) ? options.fn(this) : options.inverse(this);
+	    case '>':
+	        return (a > b) ? options.fn(this) : options.inverse(this);
+	    case '>=':
+	        return (a >= b) ? options.fn(this) : options.inverse(this);
+	    case '&&':
+	        return (a && b) ? options.fn(this) : options.inverse(this);
+	    case '||':
+	        return (a || b) ? options.fn(this) : options.inverse(this);
+	    default:
+	        return options.inverse(this);
+	}
+});
 
-//
+Handlebars.registerHelper('ifEqual', function(a,b, opts){
+	if(a==b){
+		return opts.fn(this)
+	}
+	else {
+		return opts.inverse(this)
+	}
+})
 
+Handlebars.registerHelper('ifNotEqual', function(a,b, opts){
+	if(a!=b){
+		return opts.fn(this)
+	}
+	else {
+		return opts.inverse(this)
+	}
+})
 
-function render() {
+Handlebars.registerHelper('ifIn', function(a,b,opts){
+	if(b.indexOf(a) > -1){
+		return opts.fn(this)
+	}
+	else {
+		return opts.inverse(this)
+	}
+})
 
-  var delta = clock.getDelta();
+Handlebars.registerHelper('ifHasPast', function(date, opts){
+	if(moment(date).isAfter(moment())){
+		return opts.inverse(this)
+	} else {
+		return opts.fn(this)
+	}
+})
 
-  for (var character in characters) {
-    if (characters[character].mixer) characters[character].mixer.update(delta); //sometimes render is in middle of iterating when character is removed
-  }
-  renderer.render(scene, camera);
-}
+Handlebars.registerHelper('eachSlice', function(array, opts){
 
+	var slice = 10
+	var s = ''
 
-//
+	if(array.length<10){
+		slice = array.length
+	}
+	
+	for(var i=array.length-1; i>=array.length-slice;i--){
+		s+=opts.fn(array[i])
+	}
 
-var left_wall_x = -.1
+	return s;
+})
+$('document').ready(function() {
 
-function animateMyChar() {
+  var myCharacter = {}
 
-  // if (key.right) myCharacter.position.x += .065
-  // if (key.left) myCharacter.position.x -= .065
+  var submitData = {
 
-  if (key.right && (activeKey === 39 || activeKey === 40 || activeKey === 38)) myCharacter.position.x += .065
-  if (key.left && myCharacter.position.x > left_wall_x && (activeKey === 37 || activeKey === 40 || activeKey === 38)) myCharacter.position.x -= .065
+    'initAuth': function(data) {
 
+      console.log('iframe initAuth', data)
+      myCharacter.data = data.user
+    },
 
-  else if (myCharacter.position.x < left_wall_x && sceneCharacters.visible) sceneCharacters.visible = false
-  else if (myCharacter.position.x > left_wall_x && !sceneCharacters.visible) sceneCharacters.visible = true
+    'friend': function(data) {
 
-  if (myCharacter.isWalking && isNameDisplayed && isMouseHovering) hideNameTags()
-  else if (!myCharacter.isWalking && !isNameDisplayed && isMouseHovering && !isMenuDisplayed && sceneCharacters.visible) showNameTags()
+      var errorMessage = $('.error-message h3')
+      var event = data.event
+      var action = data.action
+      var userId = data.user._id
+      var friendId = data.friendId
 
-
- if (myCharacter.position.x > windowCenter.x) camera.position.x = myCharacter.position.x - windowCenter.x
-}
-
-
-
-//
-
-
-function animateOtherChars() {
-
-  for (var character in characters) {
-
-    var character = characters[character]
-
-    var hasData = character.data
-
-    if (hasData && character.data._id !== myCharacter.data._id) {
-
-      if (character.isWalking) {
-
-        if (character.isWalking === 'right') character.position.x += .065
-        else if (character.position.x > left_wall_x) character.position.x -= .065
-
+      data = {
+        userId: userId,
+        action: action
       }
 
-      if (character.position.x < left_wall_x && character.visible) character.visible = false
-      else if (character.position.x > left_wall_x && !character.visible) character.visible = true
+      $.ajax({
+        method: 'POST',
+        url: 'http://localhost:8080/api/user/friend/'+ friendId, // + event
+        data: data,
+        success: function(data) {
+          console.log(data)
+          if (data.status === 'success') {
 
-      else if (character.isWalking && isNameDisplayed && isMouseHovering) hideNameTags()
-      else if (!character.isWalking && !isNameDisplayed && isMouseHovering && sceneCharacters.visible && !isMenuDisplayed) showNameTags()
+            var user = data.data
+            myCharacter.data = user
+
+            errorMessage.html(data.message + '!')
+            changeSubmitButton(true)
+
+          } else {
+            errorMessage.html(data.message)
+            changeSubmitButton(true)
+          }
+
+          data = {
+            'event': 'update',
+            'type': 'window',
+            'user': user
+          }
+          window.parent.postMessage(data, '*')
+
+        },
+        error: function(err) {
+          console.log(err)
+        }
+      })
+    },
+
+    'request': function(data) {
+      console.log('iframe recieved', data)
+ 
+      var timeout = null
+      var errorMessage = $('.error-message h3')
+      var event = data.event
+      var action = data.action
+      var userId = data.user._id
+      var friendId = data.friendId
+
+      if (action === 'accept' || action === 'reject') var method = 'PUT'
+      else if (action === 'remove') var method = 'DELETE'
+
+
+      data = {
+        userId: userId,
+        action: action
+      }
+
+      var self = this
+
+      $.ajax({
+        method: method,
+        url: 'http://localhost:8080/api/user/friend/' + friendId, //+ event,
+        data: data,
+        success: function(data) {
+          console.log(data)
+
+          var user = data.data
+
+          var container = $('#friend-requests-parent')
+          var html = Templates.auth.addFriendRequests(user.friendRequests)
+          container.html(html)
+
+          var container = $('#friends-list-parent')
+          var html = Templates.auth.addFriendsList(user.friends)
+          container.html(html)
+
+          data = {
+            'event': 'update',
+            'type': 'window',
+            'user': user
+          }
+
+          window.parent.postMessage(data, '*')
+
+        },
+        error: function(data) {
+          console.log(data)
+        }
+      })
+
+    },
+
+    'settings': function(data) {
+
+      var timeout = null
+      var errorMessage = $('.error-message h3')
+      var event = data.event
+      var userId = data.user._id
+      var name = data.user.name
+
+      var subs = []
+      $("#pt-auth-form input:checkbox:checked").each(function() {
+        var sub = $(this).data('id')
+        subs.push(sub)
+      });
+      data.subscriptions = subs
+
+      $.ajax({
+        method: 'PUT',
+        url: 'http://localhost:8080/api/user/' + name,
+        data: data,
+        success: function(data) {
+          console.log(data)
+          if (data.status === 'success') {
+
+            clearTimeout(timeout)
+            timeout = setTimeout(function() {
+              changeSubmitButton(false, 'Update')
+            }, 1000)
+
+            changeSubmitButton(true, data.message + ' settings!')
+
+            data = {
+              'event': 'update',
+              'type': 'window',
+              'user': user
+            }
+
+            window.parent.postMessage(data, '*')
+
+          } else {
+            changeSubmitButton(true, data.message)
+          }
+        },
+        error: function(err) {
+          console.log(err)
+        }
+      })
+    },
+    default: function(data) {
+
+      //not in use
+      var timeout = null
+      var errorMessage = $('.error-message h3')
+      var pos = data.user.position
+      var rot = data.user.rotation
+      var event = data.event
+      var userId = data.user._id
+
+      data = {
+        email: email,
+        password: pass,
+        name: name,
+        position: pos,
+        rotation: rot,
+        subscriptions: subs
+      }
+
+      console.log('signup/login', data)
+
+      $.ajax({
+        method: 'POST',
+        url: 'http://localhost:8080/api/' + event,
+        data: data,
+        success: function(data) {
+          console.log(data)
+          if (data.status === 'success') {
+
+            errorMessage.html(data.message + ' <strong>' + data.data.name + '</strong>!')
+
+
+            setTimeout(function() {
+              location.href = '/'
+            }, 0)
+
+            return
+
+            data = {
+              'event': 'refreshPage',
+              'name': name,
+              'user': data.data,
+              'type': 'window'
+            }
+
+            console.log('iframe sent', data)
+            window.parent.postMessage(data, '*')
+
+          } else {
+            errorMessage.html(data.message)
+          }
+        },
+        error: function(err) {
+          console.log(err)
+        }
+      })
+
+
     }
   }
-}
 
 
-//
+  //
+
+  function onWindowMsg(data) {
+
+    console.log('iframe random msg', data)
+
+    if (data.data.fromExtension) {
+
+      console.log('iframe recieved from extension', data)
+
+      var event = data.data.event
+      data = data.data
+
+      submitData[event](data)
+
+    }
+  }
 
 
-function initPt() {
+  window.addEventListener("message", onWindowMsg, false);
 
-  addCanvasToPage()
 
-  if (isExtension) var method = 'getLocal'
-  else var method = 'getRemote'
+  $("body").on('submit', '#pt-auth-form', function(e) {
+    e.preventDefault();
 
-  updateCharacter(method, null, function(user) {
+    var role = $(this).data('role')
+    if (role !== 'settings') return
 
-    var name = $('#pt-name-tag').html()
-    var signedIntoSite = (name !== '') //if nametag empty, server responded no user
+    window.name = $('.auth-name').val();
+    window.email = $('.auth-email').val();
+    window.pass = $('.auth-password').val();
+    window.subs = []
 
-    if (user && user._id) var hasUserData = true
-    else var hasUserData = false
+    $("#pt-auth-form input:checkbox:checked").each(function() {
 
-    console.log('initPt', user)
+      var sub = $(this).data('id')
+      subs.push(sub)
+    });
 
-    if (hasUserData && !signedIntoSite && isExtension) signInFromExtension(user)
-    initScene(user)
+
+    var user = {
+      name: name
+    }
+    var data = {
+      'event': role,
+      'user': user,
+      'type': 'window'
+    }
+
+    console.log('iframe sent', data)
+    window.parent.postMessage(data, '*')
 
   })
 
-}
 
 
-/*************global listeners*************/
+  $('body').on('click', '.pt-menu-logout', function() {
+
+    var role = $(this).data('role')
+    var data = {
+      'event': role,
+      'type': 'window'
+    }
+
+    console.log('iframe sent', data)
+    window.parent.postMessage(data, '*')
+
+  })
 
 
-function detectMeshHover(e) {
+  //
 
-  if (!isMouseHovering && isMousePointer) {
-    hidePointer()
+
+  $('body').on('click', '.friend-request-btn, .friends-list-btn', function(e) {
+
+    e.preventDefault()
+
+    var role = $(this).data('role')
+    var action = $(this).data('action')
+    var friendId = $(this).data('id')
+
+    //if i accept friend request, get otehr guys info and 'join'
+
+    var data = {
+      'event': role,
+      'action': action,
+      'friendId': friendId,
+      'type': 'window'
+    }
+
+    // data = {
+    //     'user': myCharacter.data,
+    //     'event': role,
+    //     'type': 'window',
+    //     'friendId': friendId,
+    //     'fromExtension': true,
+    //     'action': action
+    //   }
+
+    //submitData[role](data)
+
+    console.log('iframe sent', data)
+    window.parent.postMessage(data, '*')
     return
-  } else if (!isMouseHovering) return
 
-  var x = (mouseX / window.innerWidth) * 2 - 1;
-  var y = -(mouseY / window.innerHeight) * 2 + 1;
-  var raycaster = new THREE.Raycaster();
+  })
 
-  raycaster.setFromCamera(new THREE.Vector2(x, y), camera);
 
-  var intersects = raycaster.intersectObjects(scene.children, true);
+  $('body').on('keyup', '#pt-friend-form', function(e) {
 
-  if (intersects.length > 0 && isMouseHovering) {
+    if (e.keyCode === 13) return
 
-    if (!hoveredMesh) {
+    var errorMessage = $(".error-message h3")
+    var name = $(this).find('input').val().toLowerCase()
+    var timeout = null
 
-      hoveredMesh = intersects[0].object;
-      if (hoveredMesh.hasPointer) showPointer()
-      if (hoveredMesh.hasMenu) {
-        hideNameTags()
-        showMenu(hoveredMesh)
+    if (!name) return
+
+    clearTimeout(timeout)
+    errorMessage.html('searching...')
+
+    var friends = myCharacter.data.friends
+    var friendExists = false
+
+    friends.some(function(friend) {
+      if (friend.user.name === name) {
+
+        friendExists = true
+        return friend
+
       }
-    }
-
-  } else {
-
-    if (hoveredMesh) {
-      hoveredMesh = undefined;
-      hidePointer()
-    }
-  }
-}
-
-
-//
-
-
-function onCanvasHover(e) {
-
-  if (isMouseHovering && !isNameDisplayed && sceneCharacters.visible && !isMenuDisplayed) {
-    showNameTags()
-      // zoomInScene()
-      // showSceneBg()
-  } else if (!isMouseHovering && isNameDisplayed) {
-    hideNameTags()
-      // zoomOutScene()
-      // hideSceneBg()
-  }
-}
-
-
-//
-
-
-function onMouseMove(e) {
-
-  mouseX = e.clientX
-  mouseY = e.clientY
-
-  isMouseHovering = (mouseY > window.innerHeight - 85)
-
-  detectMeshHover()
-  onCanvasHover()
-}
-
-
-//
-
-
-function onWindowResize() {
-
-  camera.left = container.offsetWidth / -2
-  camera.right = container.offsetWidth / 2
-  camera.top = container.offsetHeight / 2
-  camera.bottom = container.offsetHeight / -2
-  camera.near = .1
-  camera.far = 1000;
-  camera.updateProjectionMatrix();
-  renderer.setSize(container.offsetWidth, container.offsetHeight);
-  setSceneOffset()
-  setCameraPos()
-}
-
-
-//
-
-
-function onVisibilityChange() {
-  if (document.visibilityState === 'visible') {
-
-    if (isExtension) var method = 'getLocal'
-    else var method = 'getRemote'
-
-    if (isRegistered()) updateCharacter(method)
-  }
-}
-
-
-//
-
-
-function addDomListeners() {
-  $(document).on('click touchstart', onDocumentClick)
-  document.addEventListener('keydown', onKeyDown)
-  document.addEventListener('keyup', onKeyUp)
-  window.addEventListener('visibilitychange', onVisibilityChange)
-  window.addEventListener('mousemove', onMouseMove)
-  window.addEventListener('resize', onWindowResize)
-}
-
-function removeDomListeners() {
-  $(document).off('click touchstart', onDocumentClick)
-  document.removeEventListener('keydown', onKeyDown)
-  document.removeEventListener('keyup', onKeyUp)
-  window.removeEventListener('visibilitychange', onVisibilityChange)
-  window.removeEventListener('mousemove', onMouseMove)
-  window.removeEventListener('resize', onWindowResize)
-}
-
-
-
-/*************from iframe*************/
-
-
-function onWindowMsg(data) {
-
-  if (data.origin !== 'https://passti.me') return;
-  console.log('extension received windowMsg', data)
-
-  var source = data.source
-  var origin = data.origin
-  var iframe = $('.pt-iframe')[0]
-  var event = data.data.event
-  var action = data.data.action
-  var friendId = data.data.friendId
-
-  if (event === 'signup' || event === 'login' || event === 'refreshPage') {
-    var user = {
-      name: data.data.name
-    }
-
-  } else if (event === 'update') {
-    var user = data.data.user
-
-  } else if (event === 'initAuth') {
-    var user = updateCharacter('getRemote', null, function(user) {
-
-      var data = {
-        'user': user,
-        'event': event,
-        'type': 'window',
-        'fromExtension': true
-      }
-
-      source.postMessage(data, '*')
-      console.log('extension sent windowMsg', data)
-
     })
-  } else {
-    var info = getCharacterInfo()
-    var user = {
-      '_id': info._id,
-      'position': info.position,
-      'rotation': info.rotation,
-      'name': info.name
-    }
-  }
 
-  switch (event) {
+    if (friendExists) {
 
-    case 'refreshPage':
+      errorMessage.html('<b>' + name + '</b> is already your friend')
+      changeSubmitButton(true, 'Add friend')
 
-      window.reload()
-      break;
+      return
+    } else if (name === myCharacter.data.name) {
+      errorMessage.html('... that\'s you...')
+      changeSubmitButton(true, 'Add friend')
 
-    case 'initAuth':
+      return
+    } else changeSubmitButton()
 
-      // above
-      break;
+    var self = this
 
-    case 'closeIframe':
+    $.ajax({
+      method: 'GET',
+      url: 'http://localhost:8080/api/user/' + name,
+      success: function(data) {
+        console.log(data)
 
-      closeIframe()
-      break;
+        clearTimeout(timeout)
 
-    case 'friend':
+        if (data.status === 'success') {
 
-      data = {
-        'user': user,
-        'event': event,
-        'type': 'window',
-        'friendId': friendId,
-        'fromExtension': true
-      }
+          if (data.data) errorMessage.html(data.message + ' <strong>' + data.data.name + '</strong>!')
+          $(self).data('id', data.data._id)
+          changeSubmitButton(false)
 
-      source.postMessage(data, '*')
-      console.log('extension sent windowMsg', data)
-
-      data = {
-        '_id': user._id,
-        'event': event,
-        'type': 'socket',
-        'friendId': friendId
-      }
-
-      emitMsg(data)
-
-      break;
-
-    case 'request':
-
-      data = {
-        'user': user,
-        'event': event,
-        'type': 'window',
-        'friendId': friendId,
-        'fromExtension': true,
-        'action': action
-      }
-
-      emitMsg(data)
-      source.postMessage(data, '*')
-
-      console.log('extension sent windowMsg', data)
-      console.log('extension emit socket', data)
-
-      if (action === 'accept') event = 'join'
-      else event = 'leave'
-
-      data = {
-        '_id': user._id,
-        'event': event,
-        'type': 'socket',
-        'position': user.position,
-        'rotation': user.rotation,
-        'name': user.name,
-        'friendId': friendId
-      }
-
-      emitMsg(data)
-
-      console.log('extension emit socket', data)
-
-      var info = getFriendInfo(friendId, function(info) {
-
-        data = {
-          'position': info.position,
-          'rotation': info.rotation,
-          'name': info.name,
-          '_id': info._id,
-          'event': event,
-          'friendId': friendId
+        } else if (data.status === 'not found') {
+          changeSubmitButton(true)
+            // timeout = setTimeout(function() {
+            //   errorMessage.html('&nbsp;')
+            // }, 2000)
+        } else if (data.status === 'error') {
+          errorMessage.html(data.message)
+          changeSubmitButton(true)
         }
-
-        socketEvents[event](data)
-
-      })
-
-      break;
-
-    case 'logout':
-
-      logout(function() {
-        window.location.href = 'https://passti.me/logout'
-      })
-      break;
-
-    case 'update':
-
-
-      refreshMainMenu()
-
-      break;
-
-    default:
-
-      data = {
-        'user': user,
-        'event': event,
-        'type': 'window',
-        'fromExtension': true
+      },
+      error: function(err) {
+        console.log(err)
       }
-      console.log('extension sent windowMsg', data)
-      source.postMessage(data, '*')
-
-      break;
-  }
-
-}
+    })
+  })
 
 
-//
+  //
 
 
-if (!isIframe) window.addEventListener("message", onWindowMsg, false);
+  $("body").on('submit', '#pt-friend-form', function(e) {
 
+    e.preventDefault();
 
+    var role = $(this).data('role')
+    var friendId = $(this).data('id')
+    var userId = myCharacter.data._id
 
-/*************from background*************/
-
-
-function onIdleState(data) {
-
-  var state = data.data
-
-  if (state === 'idle') {
-
-    state = 'sleep'
-    myCharacter[state]()
-
-    if (isRegistered()) {
-
-      var info = getCharacterInfo()
-      var data = {
-        '_id': info._id,
-        'position': info.position,
-        'rotation': info.rotation,
-        'liveFriends': info.liveFriends,
-        'event': 'action',
-        'type': 'socket',
-        'action': state
-      }
-
-      emitMsg(data)
+    var data = {
+      'friendId': friendId,
+      'type': 'window',
+      'event': role
     }
 
+    window.parent.postMessage(data, '*')
 
-  } else if (state === 'active') {
+  })
 
-    state = 'awake'
-    myCharacter[state]()
 
-    if (isRegistered()) emitJoinMsg()
-
-  } else { //if locked
-    state = 'sleep'
-
-    myCharacter[state]()
-    if (isRegistered()) emitLeaveMsg()
+  var isIframe = (window.parent !== window.self)
+  var data = {
+    'event': 'initAuth',
+    'type': 'window'
   }
-}
+
+  if (isIframe) window.parent.postMessage(data, '*')
+
+})
+
 
 //
 
 
-function onBgMessage(data, sender, sendResponse) {
-  console.log('extension recieved', data)
+function changeSubmitButton(disable, replaceText, id) {
+  if (!id) var btn = $("input[type='submit']")
+  else var btn = $(id)
 
-  switch (data.type) {
-
-    case 'idleState':
-      onIdleState(data)
-      break;
-    case 'socket':
-      onSocket(data)
-      break;
-    case 'external':
-      onExternalMsg(data, sender, sendResponse)
-      break;
+  if (replaceText) {
+    if (!btn.val()) btn.html(replaceText)
+    else btn.val(replaceText)
   }
+  btn.attr('disabled', disable)
 }
 
 
-if (isExtension) chrome.runtime.onMessage.addListener(onBgMessage);
 
-var ptExists = $('.pt').length > 0
-var isIframe = window.parent !== window.self
-
-if (!ptExists && !isIframe) initPt()

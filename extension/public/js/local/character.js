@@ -12,7 +12,7 @@ function createMyCharacter(data) {
     myCharacter = character
     myCharacter.awake()
     setCameraZoom(character)
-    setCameraPos()
+    computeWindowCenter()
     addMainMenu(mesh,character)
 
 
@@ -30,8 +30,8 @@ function createMyCharacter(data) {
 
 function createCharacter(data, cB) {
 
-  if (isExtension) var path = chrome.extension.getURL('public/models/eva-animated.json')
-  else var path = '/models/eva-animated.json'
+  if (isExtension) var path = chrome.extension.getURL('public/models/character/eva-animated.json')
+  else var path = '/models/character/eva-animated.json'
 
   loader.load(path, function(geometry, materials) {
 
@@ -228,7 +228,7 @@ function updateCharacter(request, data, cB) {
 
       $.ajax({
         method: 'PUT',
-        url: 'https://passti.me/api/user/' + name,
+        url: 'http://localhost:8080/api/users/' + name,
         data: data,
         success: function(data) {
           console.log(data)
@@ -269,7 +269,7 @@ function updateCharacter(request, data, cB) {
 
       $.ajax({
         method: 'GET',
-        url: 'https://passti.me/api/user/' + name,
+        url: 'http://localhost:8080/api/users/' + name,
         success: function(data) {
           console.log(data)
 
