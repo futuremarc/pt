@@ -53,7 +53,7 @@ var zoom = .75
 
 function zoomPt() {
 
-  var role = $(this).find('div').data('role')
+  var role = $(this).data('role')
 
   if (role === 'zoom-out' && zoom > .25) zoom -= .25
   else if (role === 'zoom-in' && zoom < 1.25) zoom += .25

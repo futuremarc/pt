@@ -1,6 +1,6 @@
 var sceneCharacters = {}, characters = {}; //meshes, data
 var myCharacter = undefined
-var _id = _id
+var _id = _id //from pug
 
 //
 

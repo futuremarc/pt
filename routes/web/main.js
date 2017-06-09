@@ -109,6 +109,19 @@ module.exports = function() {
 
   })
 
+   router.get('/feedback', function(req, res, next) {
+
+    if (!req.user) return res.render('auth/feedback.pug')
+      
+    res.render('auth/feedback.pug', {
+      loggedIn: true,
+      userName: req.user.name,
+      userId: req.user._id
+    })
+
+  })
+
+
 
   router.get('/forgot', function(req, res) {
     res.render('auth/forgot.pug', {

@@ -401,6 +401,55 @@ module.exports = function(passport) {
         })
     })
 
+  router.route('/users/live/')
+    .get(function(req, res) {
+
+      User
+        .find({
+          'isLive': true
+        })
+        .select('-password -friendRequests')
+        .exec(function(err, result) {
+
+          if (err) return res.json({
+            status: "error",
+            data: null,
+            message: "Couldn't find live users"
+          })
+
+          return res.json({
+            status: "success",
+            data: result,
+            message: "Found live users"
+          })
+
+        })
+    })
+
+  router.route('/users/:id/suggestions')
+    .get(function(req, res) {
+
+      User
+        .find({})
+        .select('-password -friendRequests')
+        .exec(function(err, result) {
+
+          if (err) return res.json({
+            status: "error",
+            data: null,
+            message: "Couldn't find suggested users"
+          })
+
+          return res.json({
+            status: "success",
+            data: result,
+            message: "Found suggested users"
+          })
+
+        })
+    })
+
+
   router.route('/users')
     .get(function(req, res) {
 
@@ -423,8 +472,6 @@ module.exports = function(passport) {
 
         })
     })
-
-
 
   return router
 }

@@ -1,0 +1,19 @@
+extends ../main/layout
+
+block css
+
+block content
+
+  div(class='pt-auth-container')
+    form(id='pt-feedback-form', class='pt-form' data-role='feedback')
+
+      div(class='error-message')
+        h3 Feedback
+      br
+      div(id='suggestions-parent')
+        textarea(class='input-lg form-control input-block', placeholder='Any suggestions, feedback, or bugs to report? Thanks!')
+      br
+   
+      input(type='submit', disabled="true", class='btn btn-lg btn-block btn-custom', value='Submit')
+
+block javascript

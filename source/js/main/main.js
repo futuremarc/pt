@@ -1,5 +1,8 @@
 $('document').ready(function() {
 
+
+  var isIframe = (window.parent !== window.self)
+
   var myCharacter = {}
 
   var submitData = {
@@ -143,7 +146,7 @@ $('document').ready(function() {
             data = {
               'event': 'update',
               'type': 'window',
-              'user': user
+              'user': data.data
             }
 
             window.parent.postMessage(data, '*')
@@ -158,13 +161,12 @@ $('document').ready(function() {
       })
     },
     login: function(data) {
-      this['default'](data)
+      if (isIframe) this['default'](data)
     },
-    signup: function(data){
-       this['default'](data)
+    signup: function(data) {
+      if (isIframe) this['default'](data)
     },
-    default:function(data){
-
+    default: function(data) {
 
 
       //not in use
@@ -426,7 +428,6 @@ $('document').ready(function() {
   })
 
 
-  var isIframe = (window.parent !== window.self)
   var data = {
     'event': 'initAuth',
     'type': 'window'
