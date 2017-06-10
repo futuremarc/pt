@@ -364,7 +364,7 @@ function addMainMenu(mesh, data) {
 
 function returnHome(){
 
-  myCharacter.position.x = 5
+  myCharacter.position.x = 1
   camera.position.x = 0
   myCharacter.faceForward()
   putCharacter(hideNameTags)
