@@ -298,7 +298,8 @@ function showNameTags() {
         'bottom': y
       }
 
-      user.nameTag.css(options)
+    if (x && y) user.nameTag.css(options)
+    else hideNameTags()
 
     } else {
       user.nameTag.hide()
@@ -349,6 +350,7 @@ function addMainMenu(mesh, data) {
   menu.find('.pt-menu-hide-pt').on('click touchstart', closePt)
   menu.find('.pt-menu-zoom').on('click touchstart', zoomPt)
   menu.find('.pt-menu-item').on('click touchstart', openIframe)
+  menu.find('.pt-return-home').on('click touchstart', returnHome)
   menu.on('click touchstart', function(e) {
     e.stopPropagation()
   })
@@ -360,7 +362,14 @@ function addMainMenu(mesh, data) {
 }
 
 
+function returnHome(){
 
+  myCharacter.position.x = 5
+  camera.position.x = 0
+  myCharacter.faceForward()
+  putCharacter(hideNameTags)
+
+}
 //
 
 var mainMenuIconWidth

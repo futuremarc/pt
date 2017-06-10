@@ -28,7 +28,7 @@ if (/(android|bb\d+|meego).+mobile|avantgo|bada\/|blackberry|blazer|compal|elain
 
 if (!isExtension && !isIframe) {
 
-  var socket = io('https://passti.me', {
+  var socket = io('http://localhost:5050', {
     'path': '/socket',
     'forceNew': true
   })
@@ -298,7 +298,8 @@ function showNameTags() {
         'bottom': y
       }
 
-      user.nameTag.css(options)
+    if (x && y) user.nameTag.css(options)
+    else hideNameTags()
 
     } else {
       user.nameTag.hide()
@@ -349,6 +350,7 @@ function addMainMenu(mesh, data) {
   menu.find('.pt-menu-hide-pt').on('click touchstart', closePt)
   menu.find('.pt-menu-zoom').on('click touchstart', zoomPt)
   menu.find('.pt-menu-item').on('click touchstart', openIframe)
+  menu.find('.pt-return-home').on('click touchstart', returnHome)
   menu.on('click touchstart', function(e) {
     e.stopPropagation()
   })
@@ -360,7 +362,14 @@ function addMainMenu(mesh, data) {
 }
 
 
+function returnHome(){
 
+  myCharacter.position.x = 5
+  camera.position.x = 0
+  myCharacter.faceForward()
+  putCharacter(hideNameTags)
+
+}
 //
 
 var mainMenuIconWidth
@@ -422,7 +431,7 @@ function getFriendInfo(idOrName, cB) {
 
   $.ajax({
     method: 'GET',
-    url: 'https://passti.me/api/users/' + idOrName,
+    url: 'http://localhost:8080/api/users/' + idOrName,
     success: function(data) {
       console.log(data)
 
@@ -533,7 +542,7 @@ function openIframe(e) {
   var isMe = $(target).closest('ul').data('is-me')
   var role = $(target).find('div').data('role')
   var iframe = document.createElement('iframe')
-  var src = 'https://passti.me/' + role
+  var src = 'http://localhost:8080/' + role
 
 
   closeIframe()

@@ -48,24 +48,31 @@
   {{/if}}
 
   {{#if isMe}}
-    <li class='pt-menu-home pt-menu-item'>
-      <div data-role='settings'>Settings</div>
-    </li>
-  {{/if}}
-
-  {{#if isMe}}
     <li>
       <div data-role='zoom-out' class='pt-menu-zoom' style='display:inline' >🔍 -</div> <span> / </span>
       <div data-role='zoom-in' class='pt-menu-zoom' style='display:inline' >🔍 +</div>
     </li>
   {{/if}}
 
-
   {{#ifCond isMe '&&' isExtension}}
   	<li class='pt-menu-hide-pt'>
     	<div data-role='hide-pt'>Hide pt</div>
   	</li>
   {{/ifCond}}
+
+
+  {{#if isMe}}
+    <li class='pt-menu-item'>
+      <div data-role='settings'>Settings</div>
+    </li>
+  {{/if}}
+
+
+  {{#if isMe}}
+    <li>
+      <div class='pt-return-home', style='display:none', data-role='return-home'>Return home</div>
+    </li>
+  {{/if}}
 
 
 </ul>

@@ -13,9 +13,10 @@ function createMyCharacter(data) {
     myCharacter.awake()
     setCameraZoom(character)
     computeWindowCenter()
-    addMainMenu(mesh,character)
-
+ 
     addHome(function(){
+      
+      addMainMenu(mesh,character)
 
        if (isRegistered()) {
       addLiveCharacters()

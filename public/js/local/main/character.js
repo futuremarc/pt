@@ -13,9 +13,10 @@ function createMyCharacter(data) {
     myCharacter.awake()
     setCameraZoom(character)
     computeWindowCenter()
-    addMainMenu(mesh,character)
-
+ 
     addHome(function(){
+      
+      addMainMenu(mesh,character)
 
        if (isRegistered()) {
       addLiveCharacters()
@@ -240,7 +241,7 @@ function updateCharacter(request, data, cB) {
 
       $.ajax({
         method: 'PUT',
-        url: 'https://passti.me/api/users/' + name,
+        url: 'http://localhost:8080/api/users/' + name,
         data: data,
         success: function(data) {
           console.log(data)
@@ -281,7 +282,7 @@ function updateCharacter(request, data, cB) {
 
       $.ajax({
         method: 'GET',
-        url: 'https://passti.me/api/users/' + name,
+        url: 'http://localhost:8080/api/users/' + name,
         success: function(data) {
           console.log(data)
 

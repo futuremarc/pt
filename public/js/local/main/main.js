@@ -39,6 +39,7 @@ var run_speed = .075
 
 
 var isCameraAligned = true
+var isAwayFromHome = false
 
 function animateMyChar() {
 
@@ -55,9 +56,17 @@ function animateMyChar() {
   if (myCharacter.isWalking && isNameDisplayed && isMouseHovering) hideNameTags()
   else if (!myCharacter.isWalking && !isNameDisplayed && isMouseHovering && !isMenuDisplayed && scene.visible) showNameTags()
 
-  if (myCharacter.position.x > windowCenter.x && camera.position.x !== myCharacter.position.x - windowCenter.x){ //follow character, align if not aligned
+    if (myCharacter.position.x > windowCenter.x && !isAwayFromHome){
+      isAwayFromHome = true
+       $('.pt-return-home').show()
+    }
+    else if (myCharacter.position.x < windowCenter.x && isAwayFromHome){
+      isAwayFromHome = false
+       $('.pt-return-home').hide()
+    }
 
-    console.log('realign camera')
+  if (isAwayFromHome && camera.position.x !== myCharacter.position.x - windowCenter.x){ //follow character, align if not aligned
+
     camera.position.x = myCharacter.position.x - windowCenter.x
     //console.log(myCharacter.position.x, windowCenter.x, camera.position.x, myCharacter.position.x > windowCenter.x)
   }
@@ -267,7 +276,7 @@ function removeDomListeners() {
 
 function onWindowMsg(data) {
 
-  if (data.origin !== 'https://passti.me') return;
+  if (data.origin !== 'http://localhost:8080') return;
   console.log('extension received windowMsg', data)
 
   var source = data.source
@@ -404,7 +413,7 @@ function onWindowMsg(data) {
     case 'logout':
 
       logout(function() {
-        window.location.href = 'https://passti.me/logout'
+        window.location.href = 'http://localhost:8080/logout'
       })
       break;
 
