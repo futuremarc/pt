@@ -338,7 +338,7 @@ function addMainMenu(mesh, data) {
   menu.on('click touchstart', function(e) {
     e.stopPropagation()
   })
-  menu.find('div').on('click touchstart', function(e) {
+  menu.find('div').not('.pt-menu-zoom').on('click touchstart', function(e) {
     hideMenu()
   })
 
@@ -615,6 +615,8 @@ function showMenu(_mesh) {
   menu.css('left', x)
 
   menu.show();
+
+  $('.pt-menu-icon').addClass('pt-menu-open')
 }
 
 
@@ -623,6 +625,7 @@ function showMenu(_mesh) {
 
 function hideMenu() {
   $('.pt-menu').hide();
+  $('.pt-menu-icon').removeClass('pt-menu-open')
   isMenuDisplayed = false
 }
 

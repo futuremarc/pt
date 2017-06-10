@@ -36,12 +36,6 @@
   -->
 
   {{#if isMe}}
-    <li class='pt-menu-home pt-menu-item'>
-      <div data-role='settings'>Settings</div>
-    </li>
-  {{/if}}
-
-  {{#if isMe}}
       <li class='pt-menu-suggestions pt-menu-item'>
         <div data-role='suggestions'>People you might know</div>
       </li>
@@ -53,6 +47,11 @@
     </li>
   {{/if}}
 
+  {{#if isMe}}
+    <li class='pt-menu-home pt-menu-item'>
+      <div data-role='settings'>Settings</div>
+    </li>
+  {{/if}}
 
   {{#if isMe}}
     <li>

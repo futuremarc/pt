@@ -33,7 +33,7 @@ function render() {
 
 //
 
-var left_wall_x = -.1
+var left_wall_x = .5
 var walk_speed = .045
 var run_speed = .075
 
@@ -49,11 +49,11 @@ function animateMyChar() {
   if (key.left && myCharacter.position.x > left_wall_x && (activeKey === 37 || activeKey === 40 || activeKey === 38)) myCharacter.position.x -= walk_speed
 
 
-  else if (myCharacter.position.x < left_wall_x && sceneCharacters.visible) sceneCharacters.visible = false
-  else if (myCharacter.position.x > left_wall_x && !sceneCharacters.visible) sceneCharacters.visible = true
+  else if (myCharacter.position.x < left_wall_x && scene.visible) scene.visible = false
+  else if (myCharacter.position.x > left_wall_x && !scene.visible) scene.visible = true
 
   if (myCharacter.isWalking && isNameDisplayed && isMouseHovering) hideNameTags()
-  else if (!myCharacter.isWalking && !isNameDisplayed && isMouseHovering && !isMenuDisplayed && sceneCharacters.visible) showNameTags()
+  else if (!myCharacter.isWalking && !isNameDisplayed && isMouseHovering && !isMenuDisplayed && scene.visible) showNameTags()
 
   if (myCharacter.position.x > windowCenter.x && camera.position.x !== myCharacter.position.x - windowCenter.x){ //follow character, align if not aligned
 
@@ -90,7 +90,7 @@ function animateOtherChars() {
       else if (character.position.x > left_wall_x && !character.visible) character.visible = true
 
       else if (character.isWalking && isNameDisplayed && isMouseHovering) hideNameTags()
-      else if (!character.isWalking && !isNameDisplayed && isMouseHovering && sceneCharacters.visible && !isMenuDisplayed) showNameTags()
+      else if (!character.isWalking && !isNameDisplayed && isMouseHovering && scene.visible && !isMenuDisplayed) showNameTags()
     }
   }
 }
@@ -169,7 +169,7 @@ function detectMeshHover(e) {
 
 function onCanvasHover(e) {
 
-  if (isMouseHovering && !isNameDisplayed && sceneCharacters.visible && !isMenuDisplayed) {
+  if (isMouseHovering && !isNameDisplayed && scene.visible && !isMenuDisplayed) {
     showNameTags()
       // zoomInScene()
       // showSceneBg()

@@ -15,7 +15,7 @@ function createMyCharacter(data) {
     computeWindowCenter()
     addMainMenu(mesh,character)
 
-    //addHome(function(){
+    addHome(function(){
 
        if (isRegistered()) {
       addLiveCharacters()
@@ -25,7 +25,7 @@ function createMyCharacter(data) {
 
     })
    
-  //})
+  })
 }
 
 

@@ -36,9 +36,12 @@ function initScene(data) {
   camera = new THREE.OrthographicCamera(container.offsetWidth / -2, container.offsetWidth / 2, container.offsetHeight / 2, container.offsetHeight / -2, .1, 1000);
   camera.position.set(0, 1.25, 2)
 
-  light = new THREE.AmbientLight(0xffffff, 1);
-  //light.position.set(0,1.25,2)
-  scene.add(light);
+  dLight = new THREE.DirectionalLight(0xffffff, .1);
+  dLight.position.set(0,0,10)
+  scene.add(dLight);
+
+  aLight = new THREE.AmbientLight(0xffffff, 1);
+  scene.add(aLight);
 
   sceneCharacters = new THREE.Object3D();
   scene.add(sceneCharacters);
@@ -108,22 +111,24 @@ var home
 
 function addHome(cB) {
 
-  if (isExtension) var path = chrome.extension.getURL('public/models/home/house.json')
-  else var path = '/models/home/house.json'
+  if (isExtension) var path = chrome.extension.getURL('public/models/house/house.json')
+  else var path = '/models/house/house.json'
 
 
   var loader = new THREE.ObjectLoader();
   loader.load(path, function(object) {
 
     object.role = 'home'
-    object.position.set(2, -2, 0)
-    object.rotation.set(0, Math.PI, 0)
+    object.position.set(-.5, 0, 0)
+    object.rotation.set(0, (Math.PI * 3) /2, 0)
 
-    object.renderOrder = 1
-
+    object.traverse(function(child){
+      child.renderOrder = 100
+      if (child.name === 'HemisphereLight') object.remove(child)
+    })
     scene.add(object)
 
-    object.scale.set(.1, .1, .1)
+    object.scale.set(.5, .5, .5)
 
     home = object
 
