@@ -136,6 +136,7 @@ var controls = {
           data.action = 'walk'
           data.direction = 'right'
 
+          console.log(myCharacter, data)
           myCharacter[data.action](data)
 
           if (isRegistered()) {

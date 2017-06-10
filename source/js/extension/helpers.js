@@ -298,8 +298,8 @@ function showNameTags() {
         'bottom': y
       }
 
-    if (x && y) user.nameTag.css(options)
-    else hideNameTags()
+      if (x && y) user.nameTag.css(options)
+      else hideNameTags()
 
     } else {
       user.nameTag.hide()
@@ -362,11 +362,18 @@ function addMainMenu(mesh, data) {
 }
 
 
-function returnHome(){
+function returnHome() {
 
   myCharacter.position.x = 2
   camera.position.x = 0
   myCharacter.faceForward()
+
+  //simulate key down
+  var keyCode = {
+    'keyCode': 40
+  }
+  onKeyUp(keyCode)
+
   putCharacter(hideNameTags)
 
 }
