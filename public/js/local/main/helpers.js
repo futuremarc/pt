@@ -15,7 +15,7 @@ function isChrome() {
   }
 }
 
-
+delete Hammer.defaults.cssProps.userSelect; //allow user select on desktop
 
 if (isChrome()) var isExtension = (chrome && chrome.storage) //check if inside extension
 else var isExtension = false
