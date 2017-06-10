@@ -85,7 +85,6 @@ function setCameraZoom(data) {
   mesh.geometry = box
   mesh.role = 'menu'
   mesh.position.set(0, -2, 0)
-  mesh.renderOrder = 1
   mesh.visible = false
 
   scene.add(mesh)
@@ -119,7 +118,7 @@ function addHome(cB) {
   loader.load(path, function(object) {
 
     object.role = 'home'
-    object.position.set(-.5, 0, 0)
+    object.position.set(0, 0, 0)
     object.rotation.set(0, (Math.PI * 3) /2, 0)
 
     object.traverse(function(child){
@@ -128,7 +127,15 @@ function addHome(cB) {
     })
     scene.add(object)
 
-    object.scale.set(.5, .5, .5)
+    object.x_scale = .3
+    object.y_scale = .6
+    object.z_scale = .5
+
+    var xZoom = object.x_scale * zoom
+    var yZoom = object.y_scale * zoom
+    var zZoom = object.z_scale * zoom
+
+    object.scale.set(xZoom, yZoom, zZoom)
 
     home = object
 

@@ -58,8 +58,22 @@ function zoomPt() {
   if (role === 'zoom-out' && zoom > .25) zoom -= .25
   else if (role === 'zoom-in' && zoom < 1.25) zoom += .25
 
-  sceneCharacters.children.forEach(function(child) {
-    child.scale.set(zoom, zoom, zoom)
+  $('.pt-menu-icon').css('zoom', zoom)
+
+  scene.traverse(function(child) {
+
+    var isZoomable = child.x_scale
+
+    if (isZoomable) {
+
+      var xZoom = child.x_scale * zoom
+      var yZoom = child.y_scale * zoom
+      var zZoom = child.z_scale * zoom
+
+      child.scale.set(xZoom, yZoom, zZoom)
+
+    }
+
   })
 
   showNameTags() //reset nametag location
@@ -375,6 +389,8 @@ function addMenuIcon(data) {
   container.append(badge)
   $('body').append(container)
 
+  $('.pt-menu-icon').css('zoom', zoom)
+
   mainMenuIconWidth = container.width()
 
   if (num_requests > 0) badge.show()
@@ -593,7 +609,7 @@ function closeIframe() {
 
 //
 var isMenuDisplayed = false
-var main_menu_offset = 5
+var main_menu_offset = 8
 
 function showMenu(_mesh) {
 

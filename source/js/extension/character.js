@@ -70,8 +70,15 @@ function createCharacter(data, cB) {
     character.animations = ['idle', 'walk', 'run', 'hello', 'pose'];
     character.activeState = 'idle';
 
+    character.x_scale = 1
+    character.y_scale = 1
+    character.z_scale = 1
 
-    character.scale.set(zoom,zoom,zoom) //zoom is globally defined in helpers
+    var xZoom = character.x_scale * zoom
+    var yZoom = character.y_scale * zoom
+    var zZoom = character.z_scale * zoom
+
+    character.scale.set(xZoom, yZoom, zZoom)
 
     geometry.computeBoundingBox();
     character.geometry = geometry

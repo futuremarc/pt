@@ -28,7 +28,7 @@ if (/(android|bb\d+|meego).+mobile|avantgo|bada\/|blackberry|blazer|compal|elain
 
 if (!isExtension && !isIframe) {
 
-  var socket = io('http://localhost:5050', {
+  var socket = io('https://passti.me', {
     'path': '/socket',
     'forceNew': true
   })
@@ -58,8 +58,22 @@ function zoomPt() {
   if (role === 'zoom-out' && zoom > .25) zoom -= .25
   else if (role === 'zoom-in' && zoom < 1.25) zoom += .25
 
-  sceneCharacters.children.forEach(function(child) {
-    child.scale.set(zoom, zoom, zoom)
+  $('.pt-menu-icon').css('zoom', zoom)
+
+  scene.traverse(function(child) {
+
+    var isZoomable = child.x_scale
+
+    if (isZoomable) {
+
+      var xZoom = child.x_scale * zoom
+      var yZoom = child.y_scale * zoom
+      var zZoom = child.z_scale * zoom
+
+      child.scale.set(xZoom, yZoom, zZoom)
+
+    }
+
   })
 
   showNameTags() //reset nametag location
@@ -375,6 +389,8 @@ function addMenuIcon(data) {
   container.append(badge)
   $('body').append(container)
 
+  $('.pt-menu-icon').css('zoom', zoom)
+
   mainMenuIconWidth = container.width()
 
   if (num_requests > 0) badge.show()
@@ -406,7 +422,7 @@ function getFriendInfo(idOrName, cB) {
 
   $.ajax({
     method: 'GET',
-    url: 'http://localhost:8080/api/users/' + idOrName,
+    url: 'https://passti.me/api/users/' + idOrName,
     success: function(data) {
       console.log(data)
 
@@ -517,7 +533,7 @@ function openIframe(e) {
   var isMe = $(target).closest('ul').data('is-me')
   var role = $(target).find('div').data('role')
   var iframe = document.createElement('iframe')
-  var src = 'http://localhost:8080/' + role
+  var src = 'https://passti.me/' + role
 
 
   closeIframe()
@@ -593,7 +609,7 @@ function closeIframe() {
 
 //
 var isMenuDisplayed = false
-var main_menu_offset = 5
+var main_menu_offset = 8
 
 function showMenu(_mesh) {
 

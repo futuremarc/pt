@@ -267,7 +267,7 @@ function removeDomListeners() {
 
 function onWindowMsg(data) {
 
-  if (data.origin !== 'http://localhost:8080') return;
+  if (data.origin !== 'https://passti.me') return;
   console.log('extension received windowMsg', data)
 
   var source = data.source
@@ -404,7 +404,7 @@ function onWindowMsg(data) {
     case 'logout':
 
       logout(function() {
-        window.location.href = 'http://localhost:8080/logout'
+        window.location.href = 'https://passti.me/logout'
       })
       break;
 
