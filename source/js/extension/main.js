@@ -518,4 +518,4 @@ if (isExtension) chrome.runtime.onMessage.addListener(onBgMessage);
 var ptExists = $('.pt').length > 0
 var isIframe = window.parent !== window.self
 
-if (!ptExists && !isIframe) initPt()
+if (!ptExists) initPt()
