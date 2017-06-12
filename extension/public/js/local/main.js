@@ -65,7 +65,7 @@ function animateMyChar() {
        $('.pt-return-home').hide()
     }
 
-  if (isAwayFromHome && camera.position.x !== myCharacter.position.x - windowCenter.x){ //follow character, align if not aligned
+  if (isAwayFromHome && isMobile && camera.position.x !== myCharacter.position.x - windowCenter.x){ //follow character, align if not aligned
 
     camera.position.x = myCharacter.position.x - windowCenter.x
     //console.log(myCharacter.position.x, windowCenter.x, camera.position.x, myCharacter.position.x > windowCenter.x)
@@ -209,8 +209,6 @@ function onMouseMove(e) {
 
 function onWindowResize() {
 
-      console.log('resize window')
-
   isCameraAligned  = false
 
   camera.left = container.offsetWidth / -2
@@ -276,7 +274,7 @@ function removeDomListeners() {
 
 function onWindowMsg(data) {
 
-  if (data.origin !== 'https://passti.me') return;
+  if (data.origin !== 'http://localhost:8080') return;
   console.log('extension received windowMsg', data)
 
   var source = data.source
@@ -413,7 +411,7 @@ function onWindowMsg(data) {
     case 'logout':
 
       logout(function() {
-        window.location.href = 'https://passti.me/logout'
+        window.location.href = 'http://localhost:8080/logout'
       })
       break;
 
@@ -518,4 +516,11 @@ if (isExtension) chrome.runtime.onMessage.addListener(onBgMessage);
 var ptExists = $('.pt').length > 0
 var isIframe = window.parent !== window.self
 
+var id = 'bgnidgoonglndlgocabmhdogbdniaiih' //chrome extension id
+
+//detectExtensionInstalled(id, function(hasPt){
+//   console.log('hasPt',hasPt)
+// })
+
 if (!ptExists && !isIframe) initPt()
+

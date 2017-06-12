@@ -3,6 +3,8 @@ var app = express()
 var router = express.Router();
 var User = require('models/user/model')
 var async = require('async')
+var sgTransport = require('nodemailer-sendgrid-transport')
+var nodemailer = require('nodemailer')
 
 
 if (app.get('env') === 'development') {
@@ -108,6 +110,34 @@ module.exports = function(passport) {
         message: "logout successful"
       })
     })
+
+
+  router.route('/feedback')
+    .post(function(req, res) {
+
+      var feedback = req.body.feedback
+      var name = req.body.userName
+
+      var html = '<div style="font-family:helvetica"><div style="font-size:15px"><p><b>' + name + '</b> says: ' + feedback + '. </p></div></div>'
+      var mailer = nodemailer.createTransport(sgTransport(config.sendgrid))
+      var mailOptions = {
+        to: 'sirmarcus@gmail.com',
+        from: 'pt-feedback@passti.me',
+        subject: name + ' has some feedback for Passtime!',
+        html: html
+      }
+      mailer.sendMail(mailOptions, function(res) {
+        console.log("SENDGRID RESPONSE", res)
+      })
+
+      return res.json({
+        status: 'success',
+        message: 'Thanks for your feedback'
+      })
+
+    })
+
+
 
 
   return router

@@ -7,59 +7,61 @@ var key = {
 }
 
 
-  var lastPan = {
-    keyCode: 38
+var lastPan = {
+  keyCode: 38
+}
+
+delete Hammer.defaults.cssProps.userSelect; //allow user select on desktop
+
+var hammer = new Hammer(document.body);
+hammer.get('pan').set({
+  'direction': Hammer.DIRECTION_ALL,
+  'threshold': 10
+});
+
+
+var direction = Hammer.DIRECTION_DOWN
+
+function triggerKeyUp() {
+
+  lastPan = {
+    keyCode: activeKey
   }
+  onKeyUp(lastPan)
+  direction = 0 //reset direction for onPan
 
-  var hammer = new Hammer(document.body);
-  hammer.get('pan').set({
-    'direction': Hammer.DIRECTION_ALL,
-    'threshold': 10
-  });
+}
 
+function onPan(e) {
 
-  var direction = Hammer.DIRECTION_DOWN
+  if (e.velocityX < .2 && e.velocityX > -.2 && e.velocityY < .2 && e.velocityY > -.2) return
 
-  function triggerKeyUp() {
+  if (direction !== e.direction) {
+
+    if (e.direction === Hammer.DIRECTION_LEFT) var keyCode = 37
+    else if (e.direction === Hammer.DIRECTION_RIGHT) var keyCode = 39
+    else if (e.direction === Hammer.DIRECTION_UP) var keyCode = 38
+    else if (e.direction === Hammer.DIRECTION_DOWN) var keyCode = 40
+
+    triggerKeyUp()
 
     lastPan = {
-      keyCode: activeKey
+      keyCode: keyCode
     }
-    onKeyUp(lastPan)
-    direction = 0 //reset direction for onPan
-
-  }
-
-  function onPan(e) {
-
-    if (e.velocityX < .2 && e.velocityX > -.2 && e.velocityY < .2 && e.velocityY > -.2) return
-
-    if (direction !== e.direction) {
-
-      if (e.direction === Hammer.DIRECTION_LEFT) var keyCode = 37
-      else if (e.direction === Hammer.DIRECTION_RIGHT) var keyCode = 39
-      else if (e.direction === Hammer.DIRECTION_UP) var keyCode = 38
-      else if (e.direction === Hammer.DIRECTION_DOWN) var keyCode = 40
-
-      triggerKeyUp()
-
-      lastPan = {
-        keyCode: keyCode
-      }
-      onKeyDown(lastPan)
-      direction = e.direction
-    }
-
-
-  }
-
-  function onPanEnd(e) {
-    triggerKeyUp()
+    onKeyDown(lastPan)
+    direction = e.direction
   }
 
 
-  hammer.on('panend', onPanEnd);
-  hammer.on('pan press', onPan);
+}
+
+function onPanEnd(e) {
+  triggerKeyUp()
+}
+
+
+hammer.on('panend', onPanEnd);
+hammer.on('pan press', onPan);
 
 
 var controls = {
@@ -222,8 +224,8 @@ function onKeyUp(e) {
 
   if (keyCode !== 37 && keyCode !== 38 && keyCode !== 39 && keyCode !== 40) return
 
-  if (!isQuickGesture(keyCode)){
-    
+  if (!isQuickGesture(keyCode)) {
+
     clearTimeout(putCharacterTimeout)
     putCharacterTimeout = setTimeout(putCharacter, 1000)
 

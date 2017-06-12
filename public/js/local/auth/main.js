@@ -111,6 +111,44 @@ $('document').ready(function() {
       myCharacter.data = data.user
     },
 
+    'feedback': function(data) {
+
+      var errorMessage = $('.error-message h3')
+      var event = data.event
+      var userName = data.user.name
+      var feedback = $('textarea').val()
+
+      if (!feedback) return
+
+      data = {
+        userName: userName,
+        feedback: feedback
+      }
+
+      $.ajax({
+        method: 'POST',
+        url: 'http://localhost:8080/api/feedback/', // + event
+        data: data,
+        success: function(data) {
+          console.log(data)
+          if (data.status === 'success') {
+
+            errorMessage.html(data.message + '!')
+            changeSubmitButton(true)
+
+          } else {
+            errorMessage.html(data.message)
+            changeSubmitButton(true)
+          }
+
+        },
+        error: function(err) {
+          console.log(err)
+        }
+      })
+
+    },
+
     'friend': function(data) {
 
       var errorMessage = $('.error-message h3')
@@ -126,7 +164,7 @@ $('document').ready(function() {
 
       $.ajax({
         method: 'POST',
-        url: 'https://passti.me/api/users/friend/' + friendId, // + event
+        url: 'http://localhost:8080/api/users/friend/' + friendId, // + event
         data: data,
         success: function(data) {
           console.log(data)
@@ -180,7 +218,7 @@ $('document').ready(function() {
 
       $.ajax({
         method: method,
-        url: 'https://passti.me/api/users/friend/' + friendId, //+ event,
+        url: 'http://localhost:8080/api/users/friend/' + friendId, //+ event,
         data: data,
         success: function(data) {
           console.log(data)
@@ -228,7 +266,7 @@ $('document').ready(function() {
 
       $.ajax({
         method: 'PUT',
-        url: 'https://passti.me/api/users/' + name,
+        url: 'http://localhost:8080/api/users/' + name,
         data: data,
         success: function(data) {
           console.log(data)
@@ -288,7 +326,7 @@ $('document').ready(function() {
 
       $.ajax({
         method: 'POST',
-        url: 'https://passti.me/api/' + event,
+        url: 'http://localhost:8080/api/' + event,
         data: data,
         success: function(data) {
           console.log(data)
@@ -376,6 +414,36 @@ $('document').ready(function() {
 
     console.log('iframe sent', data)
     window.parent.postMessage(data, '*')
+
+  })
+
+
+
+  $("body").on('submit', '#pt-feedback-form', function(e) {
+    e.preventDefault();
+
+    var role = $(this).data('role')
+
+    var data = {
+      'event': role,
+      'type': 'window'
+    }
+
+    console.log('iframe sent', data)
+    window.parent.postMessage(data, '*')
+
+  })
+
+
+  $('body').on('keyup', '#pt-feedback-form', function(e) {
+
+    if (e.keyCode === 13) return
+
+    var errorMessage = $(".error-message h3")
+    var feedback = $(this).find('textarea').val()
+
+    if (feedback) changeSubmitButton(false)
+    else changeSubmitButton(true)
 
   })
 
@@ -475,7 +543,7 @@ $('document').ready(function() {
 
     $.ajax({
       method: 'GET',
-      url: 'https://passti.me/api/users/' + name,
+      url: 'http://localhost:8080/api/users/' + name,
       success: function(data) {
         console.log(data)
 

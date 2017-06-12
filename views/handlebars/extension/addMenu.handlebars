@@ -13,7 +13,7 @@
 		  <li class='pt-menu-home pt-menu-item'>
 		    <div data-role='home'>Friend requests</div>
         {{#ifCond data.friendRequests.length '>' 0}}
-          <span class='pt-notification-counter' style='display:block'>{{data.friendRequests.length}}</span>
+          <span class='cleanslate pt-notification-counter' style='display:block'>{{data.friendRequests.length}}</span>
         {{else}}
            <span class='pt-notification-counter'>{{data.friendRequests.length}}</span>
         {{/ifCond}}

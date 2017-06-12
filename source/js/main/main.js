@@ -13,6 +13,44 @@ $('document').ready(function() {
       myCharacter.data = data.user
     },
 
+    'feedback': function(data) {
+
+      var errorMessage = $('.error-message h3')
+      var event = data.event
+      var userName = data.user.name
+      var feedback = $('textarea').val()
+
+      if (!feedback) return
+
+      data = {
+        userName: userName,
+        feedback: feedback
+      }
+
+      $.ajax({
+        method: 'POST',
+        url: 'http://localhost:8080/api/feedback/', // + event
+        data: data,
+        success: function(data) {
+          console.log(data)
+          if (data.status === 'success') {
+
+            errorMessage.html(data.message + '!')
+            changeSubmitButton(true)
+
+          } else {
+            errorMessage.html(data.message)
+            changeSubmitButton(true)
+          }
+
+        },
+        error: function(err) {
+          console.log(err)
+        }
+      })
+
+    },
+
     'friend': function(data) {
 
       var errorMessage = $('.error-message h3')
@@ -278,6 +316,36 @@ $('document').ready(function() {
 
     console.log('iframe sent', data)
     window.parent.postMessage(data, '*')
+
+  })
+
+
+
+  $("body").on('submit', '#pt-feedback-form', function(e) {
+    e.preventDefault();
+
+    var role = $(this).data('role')
+
+    var data = {
+      'event': role,
+      'type': 'window'
+    }
+
+    console.log('iframe sent', data)
+    window.parent.postMessage(data, '*')
+
+  })
+
+
+  $('body').on('keyup', '#pt-feedback-form', function(e) {
+
+    if (e.keyCode === 13) return
+
+    var errorMessage = $(".error-message h3")
+    var feedback = $(this).find('textarea').val()
+
+    if (feedback) changeSubmitButton(false)
+    else changeSubmitButton(true)
 
   })
 

@@ -65,7 +65,7 @@ function animateMyChar() {
        $('.pt-return-home').hide()
     }
 
-  if (isAwayFromHome && camera.position.x !== myCharacter.position.x - windowCenter.x){ //follow character, align if not aligned
+  if (isAwayFromHome && isMobile && camera.position.x !== myCharacter.position.x - windowCenter.x){ //follow character, align if not aligned
 
     camera.position.x = myCharacter.position.x - windowCenter.x
     //console.log(myCharacter.position.x, windowCenter.x, camera.position.x, myCharacter.position.x > windowCenter.x)
@@ -208,8 +208,6 @@ function onMouseMove(e) {
 //
 
 function onWindowResize() {
-
-      console.log('resize window')
 
   isCameraAligned  = false
 
@@ -518,4 +516,11 @@ if (isExtension) chrome.runtime.onMessage.addListener(onBgMessage);
 var ptExists = $('.pt').length > 0
 var isIframe = window.parent !== window.self
 
+var id = 'bgnidgoonglndlgocabmhdogbdniaiih' //chrome extension id
+
+//detectExtensionInstalled(id, function(hasPt){
+//   console.log('hasPt',hasPt)
+// })
+
 if (!ptExists && !isIframe) initPt()
+

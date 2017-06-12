@@ -1,3 +1,20 @@
+function detectExtensionInstalled(id, cB) {
+    var base = 'chrome-extension://' + id
+    var s = document.createElement('script');
+
+    s.onerror = function(){
+      cB(false)
+    };
+
+    s.onload = function(){
+      cB(true)
+    };
+
+    document.body.appendChild(s);
+    s.src = base + '/manifest.json';
+}
+
+
 function isChrome() {
   var isChromium = window.chrome,
     winNav = window.navigator,
@@ -15,7 +32,6 @@ function isChrome() {
   }
 }
 
-delete Hammer.defaults.cssProps.userSelect; //allow user select on desktop
 
 if (isChrome()) var isExtension = (chrome && chrome.storage) //check if inside extension
 else var isExtension = false
