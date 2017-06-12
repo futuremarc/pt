@@ -18,29 +18,29 @@ module.exports = function() {
 
     //JUST TO PREVENT REFRESH - REMOVE FOR PRODUCTION
     
-    User.findOne({name:'marc'}, function(err, user) {
-     if (err) {
-       throw err
-     }
+    // User.findOne({name:'marc'}, function(err, user) {
+    //  if (err) {
+    //    throw err
+    //  }
 
-      return res.render('auth/home.pug', {
-        loggedIn: true,
-        userName: user.name,
-        userId: user._id
-      })
-
-    })
-
-    //TIL HERE
-
-    // Subscription.find({}).exec(function(err, result) {
-
-    //   var subs = JSON.stringify(result)
-    //   res.render('auth/signup.pug', {
-    //     subscriptions: subs
+    //   return res.render('auth/home.pug', {
+    //     loggedIn: true,
+    //     userName: user.name,
+    //     userId: user._id
     //   })
 
     // })
+
+    //TIL HERE
+
+    Subscription.find({}).exec(function(err, result) {
+
+      var subs = JSON.stringify(result)
+      res.render('auth/signup.pug', {
+        subscriptions: subs
+      })
+
+    })
 
   })
 

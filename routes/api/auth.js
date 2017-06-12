@@ -118,7 +118,7 @@ module.exports = function(passport) {
       var feedback = req.body.feedback
       var name = req.body.userName
 
-      var html = '<div style="font-family:helvetica"><div style="font-size:15px"><p><b>' + name + '</b> says: ' + feedback + '. </p></div></div>'
+      var html = '<div style="font-family:helvetica"><div style="font-size:15px"><p><b>' + name + '</b> says: "' + feedback + '"</p></div></div>'
       var mailer = nodemailer.createTransport(sgTransport(config.sendgrid))
       var mailOptions = {
         to: 'sirmarcus@gmail.com',
