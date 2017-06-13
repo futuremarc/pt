@@ -510,17 +510,13 @@ function onBgMessage(data, sender, sendResponse) {
   }
 }
 
+if (isExtension) console.log('extension!')
+else console.log('not extension!')
 
 if (isExtension) chrome.runtime.onMessage.addListener(onBgMessage);
 
 var ptExists = $('.pt').length > 0
 var isIframe = window.parent !== window.self
-
-var id = 'bgnidgoonglndlgocabmhdogbdniaiih' //chrome extension id
-
-//detectExtensionInstalled(id, function(hasPt){
-//   console.log('hasPt',hasPt)
-// })
 
 if (!ptExists && !isIframe) initPt()
 
