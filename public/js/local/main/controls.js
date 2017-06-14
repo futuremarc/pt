@@ -13,18 +13,23 @@ var lastPan = {
 
 var direction = Hammer.DIRECTION_DOWN
 
-function triggerKeyUp() {
+function triggerKeyUp(key) {
 
-  lastPan = {
-    keyCode: activeKey
+  if (key) key = key.keyCode
+  else key = activeKey
+
+  keyCode = {
+    keyCode: key
   }
-  onKeyUp(lastPan)
+  onKeyUp(keyCode)
   direction = 0 //reset direction for onPan
+
+  console.log('')
 
 }
 
 function onPan(e) {
-
+ 
   if (e.velocityX < .2 && e.velocityX > -.2 && e.velocityY < .2 && e.velocityY > -.2) return
 
   if (direction !== e.direction) {
@@ -39,6 +44,7 @@ function onPan(e) {
     lastPan = {
       keyCode: keyCode
     }
+
     onKeyDown(lastPan)
     direction = e.direction
   }
@@ -50,7 +56,30 @@ function onPanEnd(e) {
   triggerKeyUp()
 }
 
+function onDoubleTap(e){
 
+    var keyCode = {
+      keyCode: 18
+    }
+    onKeyDown(keyCode)
+
+    keyCode = {
+      keyCode: 38
+    }
+    onKeyDown(keyCode)
+
+    keyCode = {
+      keyCode: 18
+    }
+
+    triggerKeyUp(keyCode)
+
+     keyCode = {
+      keyCode: 38
+    }
+    
+    triggerKeyUp(keyCode)
+}
 var controls = {
 
   37: function(data, keyUp) { //left arrow
@@ -105,7 +134,6 @@ var controls = {
 
   39: function(data, keyUp) { //right arrow
 
-
     if (!isAltKeyDown) {
 
       if (keyUp) {
@@ -125,7 +153,6 @@ var controls = {
           data.action = 'walk'
           data.direction = 'right'
 
-          console.log(myCharacter, data)
           myCharacter[data.action](data)
 
           if (isRegistered()) {

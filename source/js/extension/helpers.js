@@ -63,10 +63,8 @@ if (!isExtension && !isIframe) {
 function setInstallBtn() {
 
   if (!isMobile && !isIframe && isChrome() && !isExtension && !hasExtension) {
-    console.log('show tag!')
     $('#pt-install-tag').show()
   } else {
-    console.log('hide tag!')
     $('#pt-install-tag').remove()
   }
 
@@ -166,9 +164,7 @@ function logout(cB) {
     return
   }
 
-  chrome.storage.sync.set({
-    'pt-user': {}
-  }, function() {
+  chrome.storage.sync.remove('pt-user', function() {
     if (cB) cB()
   })
 
@@ -300,7 +296,8 @@ function hideSceneBg() {
 
 //
 
-var name_tag_x_offset = 3
+
+var name_tag_y = 85
 
 function showNameTags() {
 
@@ -315,8 +312,8 @@ function showNameTags() {
       var worldPos = new THREE.Vector3(user.position.x, user.height, user.position.z)
       var screenPos = worldToScreen(worldPos)
 
-      var x = screenPos.x - (user.nameTagWidth / 2) - name_tag_x_offset //center nametag to user pos
-      var y = Math.abs(screenPos.y) * (zoomFactor) //align nametag to height of user based on zoom
+      var x = screenPos.x - (user.nameTagWidth / 2) //center nametag to user pos
+      var y = name_tag_y * zoomFactor //align nametag to height of user based on zoom
 
       var options = {
         'left': x,

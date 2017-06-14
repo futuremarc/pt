@@ -214,8 +214,8 @@ function updateCharacter(request, data, cB) {
         chrome.storage.sync.get('pt-user', function(data) {
 
           var user = data['pt-user']
-
           if (!user) {
+
             updateCharacter('getRemote', null, cB)
             return
           }
@@ -270,7 +270,7 @@ function updateCharacter(request, data, cB) {
 
       $.ajax({
         method: 'PUT',
-        url: 'https://passti.me/api/users/' + name,
+        url: 'http://localhost:8080/api/users/' + name,
         data: data,
         success: function(data) {
           console.log(data)
@@ -308,6 +308,15 @@ function updateCharacter(request, data, cB) {
     case 'getRemote':
 
       if (!_id && !data._id && !myCharacter) { //_id from pug, id from passed data, id from character
+
+        data = localStorage.getItem('pt-user')
+        var user = JSON.parse(data)
+
+        if (user) {
+          updateCharacter('getLocal', null, cB)
+          return
+        }
+
         if (cB) cB(null)
         return
       }
@@ -317,7 +326,7 @@ function updateCharacter(request, data, cB) {
 
       $.ajax({
         method: 'GET',
-        url: 'https://passti.me/api/users/' + name,
+        url: 'http://localhost:8080/api/users/' + name,
         success: function(data) {
           console.log(data)
 

@@ -122,7 +122,7 @@ module.exports = function(passport) {
       var mailer = nodemailer.createTransport(sgTransport(config.sendgrid))
       var mailOptions = {
         to: 'sirmarcus@gmail.com',
-        from: 'pt-feedback@passti.me',
+        from: 'feedback@passti.me',
         subject: name + ' has some feedback for Passtime!',
         html: html
       }

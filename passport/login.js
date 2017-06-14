@@ -5,18 +5,18 @@ module.exports = function(passport) {
 
 	passport.use('login', new LocalStrategy({
 			passReqToCallback: true,
-			usernameField: 'email'
-		}, function(req, email, password, done) {
+			usernameField: 'name'
+		}, function(req, name, password, done) {
 
 			User.findOne({
-          email: email
+          name: name
         }).exec(function(err, user) {
 					if (err) {
 						return done(err)
 					}
 
 					if (!user) {
-						console.log("User not found with this email")
+						console.log("User not found with this name")
 						return done(null, false, {
 							message: 'User not found'
 						})

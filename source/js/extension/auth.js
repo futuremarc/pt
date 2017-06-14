@@ -70,7 +70,7 @@ function initAuth() {
 
           errorMessage.html(data.message + ' <strong>' + data.data.name + '</strong>!')
           if (!isIframe) {
-            debugger
+            
             myCharacter.data = data.data
             putCharacter(function() {
                 location.href = '/'

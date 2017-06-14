@@ -5,16 +5,14 @@ module.exports = function(passport) {
 
 	passport.use('signup', new LocalStrategy({
 		passReqToCallback: true,
-		usernameField: 'email',
+		usernameField: 'name',
 
 	}, function(req, email, password, done) {
 
 		findOrCreateUser = function() {
 			
 			User.findOne({
-				$or: [{
-					email: req.body.email
-				}, {
+				$or: [ {
 					name: req.body.name
 				}]
 			}, function(err, user) {
@@ -36,11 +34,7 @@ module.exports = function(passport) {
 						return done(null, false, {
 							message: 'Please choose a name'
 						})
-					} else if (!req.body.email) {
-						return done(null, false, {
-							message: 'Please enter your email'
-						})
-					}
+					} 
 
 					for (var prop in req.body) {
             newUser[prop] = req.body[prop]

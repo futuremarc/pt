@@ -114,7 +114,11 @@ function initPt() {
   if (isExtension) var method = 'getLocal'
   else var method = 'getRemote'
 
+  console.log('initPt', method)
+
   updateCharacter(method, null, function(user) {
+
+    console.log('initPt', user)
 
     var name = $('#pt-name-tag').html()
     var signedIntoSite = (name !== '') //if nametag empty, server responded no user
@@ -122,10 +126,12 @@ function initPt() {
     if (user && user._id) var hasUserData = true
     else var hasUserData = false
 
-    console.log('initPt', user)
-
     if (hasUserData && !signedIntoSite && isExtension) signInFromExtension(user)
-    initScene(user)
+    if (user) initScene(user)
+    else if (method === 'getLocal') updateCharacter('getRemote', null, function(user) {
+      initScene(user)
+    })
+
 
   })
 
@@ -248,12 +254,17 @@ function onVisibilityChange() {
 
 delete Hammer.defaults.cssProps.userSelect; //allow user select on desktop
 
-var hammer = new Hammer(document.body);
-hammer.get('pan').set({
-  'direction': Hammer.DIRECTION_ALL,
-  'threshold': 10
-});
+var hammer = new Hammer.Manager(document.body);
 
+hammer.add(new Hammer.Pan({
+  direction: Hammer.DIRECTION_ALL,
+  threshold: 10
+}));
+hammer.add(new Hammer.Press());
+hammer.add(new Hammer.Tap({
+  event: 'doubletap',
+  taps: 2
+}));
 
 function addDomListeners() {
   $(document).on('click touchstart', onDocumentClick)
@@ -265,7 +276,8 @@ function addDomListeners() {
   $(window).on('orientationchange', onWindowResize)
   hammer.on('panend', onPanEnd);
   hammer.on('pan press', onPan);
-
+  hammer.on('doubletap', onDoubleTap);
+  window.addEventListener("message", onWindowMsg, false);
 }
 
 function removeDomListeners() {
@@ -278,7 +290,8 @@ function removeDomListeners() {
   $(window).off('orientationchange', onWindowResize)
   hammer.off('panend', onPanEnd);
   hammer.off('pan press', onPan);
-
+  hammer.off('doubletap', onDoubleTap);
+  window.removeEventListener("message", onWindowMsg, false);
 }
 
 
@@ -431,9 +444,7 @@ function onWindowMsg(data) {
 
     case 'update':
 
-
       refreshMainMenu()
-
       break;
 
     default:
@@ -454,10 +465,6 @@ function onWindowMsg(data) {
 
 
 //
-
-
-if (!isIframe) window.addEventListener("message", onWindowMsg, false);
-
 
 
 /*************from background*************/
@@ -524,10 +531,7 @@ function onBgMessage(data, sender, sendResponse) {
   }
 }
 
-if (isExtension) console.log('extension!')
-else console.log('not extension!')
-
-var ptExists = $('.pt').length > 0
+var ptExists = ($('.pt').length > 0)
 var isIframe = window.parent !== window.self
 
 if (isExtension && !ptExists) chrome.runtime.onMessage.addListener(onBgMessage);

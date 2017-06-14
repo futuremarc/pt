@@ -51,7 +51,7 @@ if (/(android|bb\d+|meego).+mobile|avantgo|bada\/|blackberry|blazer|compal|elain
 
 if (!isExtension && !isIframe) {
 
-  var socket = io('https://passti.me', {
+  var socket = io('http://localhost:5050', {
     'path': '/socket',
     'forceNew': true
   })
@@ -63,10 +63,8 @@ if (!isExtension && !isIframe) {
 function setInstallBtn() {
 
   if (!isMobile && !isIframe && isChrome() && !isExtension && !hasExtension) {
-    console.log('show tag!')
     $('#pt-install-tag').show()
   } else {
-    console.log('hide tag!')
     $('#pt-install-tag').remove()
   }
 
@@ -166,9 +164,7 @@ function logout(cB) {
     return
   }
 
-  chrome.storage.sync.set({
-    'pt-user': {}
-  }, function() {
+  chrome.storage.sync.remove('pt-user', function() {
     if (cB) cB()
   })
 
@@ -300,7 +296,8 @@ function hideSceneBg() {
 
 //
 
-var name_tag_x_offset = 3
+
+var name_tag_y = 85
 
 function showNameTags() {
 
@@ -315,8 +312,8 @@ function showNameTags() {
       var worldPos = new THREE.Vector3(user.position.x, user.height, user.position.z)
       var screenPos = worldToScreen(worldPos)
 
-      var x = screenPos.x - (user.nameTagWidth / 2) - name_tag_x_offset //center nametag to user pos
-      var y = Math.abs(screenPos.y) * (zoomFactor) //align nametag to height of user based on zoom
+      var x = screenPos.x - (user.nameTagWidth / 2) //center nametag to user pos
+      var y = name_tag_y * zoomFactor //align nametag to height of user based on zoom
 
       var options = {
         'left': x,
@@ -463,7 +460,7 @@ function getFriendInfo(idOrName, cB) {
 
   $.ajax({
     method: 'GET',
-    url: 'https://passti.me/api/users/' + idOrName,
+    url: 'http://localhost:8080/api/users/' + idOrName,
     success: function(data) {
       console.log(data)
 
@@ -574,7 +571,7 @@ function openIframe(e) {
   var isMe = $(target).closest('ul').data('is-me')
   var role = $(target).find('div').data('role')
   var iframe = document.createElement('iframe')
-  var src = 'https://passti.me/' + role
+  var src = 'http://localhost:8080/' + role
 
 
   closeIframe()

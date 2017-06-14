@@ -214,8 +214,8 @@ function updateCharacter(request, data, cB) {
         chrome.storage.sync.get('pt-user', function(data) {
 
           var user = data['pt-user']
-
           if (!user) {
+
             updateCharacter('getRemote', null, cB)
             return
           }
@@ -308,6 +308,15 @@ function updateCharacter(request, data, cB) {
     case 'getRemote':
 
       if (!_id && !data._id && !myCharacter) { //_id from pug, id from passed data, id from character
+
+        data = localStorage.getItem('pt-user')
+        var user = JSON.parse(data)
+
+        if (user) {
+          updateCharacter('getLocal', null, cB)
+          return
+        }
+
         if (cB) cB(null)
         return
       }

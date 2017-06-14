@@ -37,7 +37,7 @@ module.exports = function() {
     type: "article"
   })
 
-  subscriptions.push(sub)
+  //subscriptions.push(sub)
 
   subscriptions.forEach(function(sub) {
     sub.save(function(err, doc) {

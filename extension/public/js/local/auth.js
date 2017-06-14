@@ -10,7 +10,7 @@ function signInFromExtension(data) {
 
   $.ajax({
     method: 'POST',
-    url: 'https://passti.me/api/login',
+    url: 'http://localhost:8080/api/login',
     data: data,
     success: function(data) {
       console.log(data)
@@ -62,7 +62,7 @@ function initAuth() {
 
     $.ajax({
       method: 'POST',
-      url: 'https://passti.me/api/' + role,
+      url: 'http://localhost:8080/api/' + role,
       data: data,
       success: function(data) {
         console.log(data)
@@ -70,7 +70,7 @@ function initAuth() {
 
           errorMessage.html(data.message + ' <strong>' + data.data.name + '</strong>!')
           if (!isIframe) {
-            debugger
+            
             myCharacter.data = data.data
             putCharacter(function() {
                 location.href = '/'

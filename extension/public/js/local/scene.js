@@ -143,6 +143,7 @@ function addHome(cB) {
     object.scale.set(xZoom, yZoom, zZoom)
 
     home = object
+    home.visible = false
 
     if (cB) cB()
 

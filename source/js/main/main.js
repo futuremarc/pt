@@ -35,8 +35,8 @@ $('document').ready(function() {
           console.log(data)
           if (data.status === 'success') {
 
-            errorMessage.html(data.message + '!')
-            changeSubmitButton(true)
+            //errorMessage.html(data.message + '!')
+            changeSubmitButton(true, data.message + '!')
 
           } else {
             errorMessage.html(data.message)
