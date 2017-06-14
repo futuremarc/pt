@@ -541,7 +541,8 @@ var isIframe = window.parent !== window.self
 
 if (isExtension && !ptExists) chrome.runtime.onMessage.addListener(onBgMessage);
 
-var id = 'bgnidgoonglndlgocabmhdogbdniaiih' // malhbgmooogkoheilhpjnlimhmnmlpii
+//var id = 'bgnidgoonglndlgocabmhdogbdniaiih'
+var id = 'malhbgmooogkoheilhpjnlimhmnmlpii'
 
 detectExtensionInstalled(id, function(hasPt) {
 
