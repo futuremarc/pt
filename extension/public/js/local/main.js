@@ -265,6 +265,7 @@ function addDomListeners() {
   $(window).on('orientationchange', onWindowResize)
   hammer.on('panend', onPanEnd);
   hammer.on('pan press', onPan);
+
 }
 
 function removeDomListeners() {
@@ -277,6 +278,7 @@ function removeDomListeners() {
   $(window).off('orientationchange', onWindowResize)
   hammer.off('panend', onPanEnd);
   hammer.off('pan press', onPan);
+
 }
 
 
@@ -525,9 +527,25 @@ function onBgMessage(data, sender, sendResponse) {
 if (isExtension) console.log('extension!')
 else console.log('not extension!')
 
-if (isExtension) chrome.runtime.onMessage.addListener(onBgMessage);
-
 var ptExists = $('.pt').length > 0
 var isIframe = window.parent !== window.self
 
-if (!ptExists && !isIframe) initPt()
+if (isExtension && !ptExists) chrome.runtime.onMessage.addListener(onBgMessage);
+
+var id = 'malhbgmooogkoheilhpjnlimhmnmlpii'
+
+detectExtensionInstalled(id, function(hasPt) {
+
+
+  window.hasExtension = hasPt
+
+  console.log(isExtension, hasExtension, isIframe , ptExists)
+  console.log((!hasExtension && !isExtension && !isIframe && !ptExists), !hasExtension,'NOT INSTALLED INIT')
+  console.log((!isIframe && !ptExists && hasExtension && isExtension), 'INSTALLED INIT')
+  var doRun = (!hasExtension && !isExtension && !isIframe && !ptExists) || (!isIframe && !ptExists && hasExtension && isExtension)
+  if (doRun) initPt()
+
+})
+
+
+// if (!ptExists && !isIframe && !hasExtension) initPt()

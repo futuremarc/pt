@@ -1,4 +1,5 @@
-var sceneCharacters = {}, characters = {}; //meshes, data
+var sceneCharacters = {},
+  characters = {}; //meshes, data
 var myCharacter = undefined
 var _id = _id //from pug
 
@@ -11,21 +12,21 @@ function createMyCharacter(data) {
 
     myCharacter = character
     myCharacter.awake()
-    setCameraZoom(character)
+    setScenePosition(character)
     computeWindowCenter()
- 
-    addHome(function(){
-      
-      addMainMenu(mesh,character)
 
-       if (isRegistered()) {
-      addLiveCharacters()
-      emitJoinMsg()
-    }
-    animate()
+    addHome(function() {
+
+      addMainMenu(mesh, character)
+
+      if (isRegistered()) {
+        addLiveCharacters()
+        emitJoinMsg()
+      }
+      animate()
 
     })
-   
+
   })
 }
 
@@ -38,7 +39,7 @@ function createCharacter(data, cB) {
   if (isExtension) var path = chrome.extension.getURL('public/models/character/eva-animated.json')
   else var path = '/models/character/eva-animated.json'
 
-    var loader = new THREE.JSONLoader()
+  var loader = new THREE.JSONLoader()
   loader.load(path, function(geometry, materials) {
 
     materials.forEach(function(material) {
@@ -75,9 +76,9 @@ function createCharacter(data, cB) {
     character.y_scale = 1
     character.z_scale = 1
 
-    var xZoom = character.x_scale * zoom
-    var yZoom = character.y_scale * zoom
-    var zZoom = character.z_scale * zoom
+    var xZoom = character.x_scale * zoomFactor
+    var yZoom = character.y_scale * zoomFactor
+    var zZoom = character.z_scale * zoomFactor
 
     character.scale.set(xZoom, yZoom, zZoom)
 
@@ -85,7 +86,7 @@ function createCharacter(data, cB) {
     character.geometry = geometry
 
     character.height = geometry.boundingBox.max.y - geometry.boundingBox.min.y
-    character.width = geometry.boundingBox.max.x - geometry.boundingBox.min.x 
+    character.width = geometry.boundingBox.max.x - geometry.boundingBox.min.x
 
 
     character.walk = function(data) {
@@ -208,12 +209,39 @@ function updateCharacter(request, data, cB) {
 
     case 'getLocal':
 
-      chrome.storage.sync.get('pt-user', function(data) {
+      if (isExtension) {
 
-        var user = data['pt-user']
+        chrome.storage.sync.get('pt-user', function(data) {
 
-        if (!user){
-          updateCharacter('getRemote',null,cB)
+          var user = data['pt-user']
+
+          if (!user) {
+            updateCharacter('getRemote', null, cB)
+            return
+          }
+
+          pos = user.position
+          rot = user.rotation
+
+          if (!pos && !rot) return
+
+          if (myCharacter) {
+
+            myCharacter.position.set(pos.x, pos.y, pos.z)
+            myCharacter.rotation.set(rot.x, rot.y, rot.z)
+            myCharacter.data = user
+
+          }
+
+          if (cB) cB(user)
+        })
+      } else {
+
+        data = localStorage.getItem('pt-user')
+        var user = JSON.parse(data)
+
+        if (!user) {
+          updateCharacter('getRemote', null, cB)
           return
         }
 
@@ -231,7 +259,8 @@ function updateCharacter(request, data, cB) {
         }
 
         if (cB) cB(user)
-      })
+
+      }
 
       break
 
@@ -262,11 +291,17 @@ function updateCharacter(request, data, cB) {
       myCharacter.data.position = pos
       myCharacter.data.rotation = rot
 
-      if (isExtension) chrome.storage.sync.set({
-        'pt-user': myCharacter.data
-      }, function() {
-        if (cB) cB(data)
-      })
+      if (isExtension) {
+        chrome.storage.sync.set({
+          'pt-user': myCharacter.data
+        }, function() {
+          if (cB) cB(data)
+        })
+
+      } else {
+        var myData = JSON.stringify(myCharacter.data)
+        localStorage.setItem('pt-user', myData);
+      }
 
       break
 
@@ -332,8 +367,6 @@ function updateCharacter(request, data, cB) {
 
 
 function putCharacter(cB) {
-
-  console.log(myCharacter)
 
   updateCharacter('putLocal', myCharacter.data)
   if (isRegistered()) updateCharacter('putRemote', myCharacter.data, cB)

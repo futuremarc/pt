@@ -315,7 +315,7 @@ $('document').ready(function() {
     }
 
     console.log('iframe sent', data)
-    window.parent.postMessage(data, '*')
+    if (isIframe) window.parent.postMessage(data, '*')
 
   })
 

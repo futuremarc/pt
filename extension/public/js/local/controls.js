@@ -50,6 +50,7 @@ function onPanEnd(e) {
   triggerKeyUp()
 }
 
+
 var controls = {
 
   37: function(data, keyUp) { //left arrow

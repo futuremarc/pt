@@ -62,7 +62,6 @@ function computeWindowCenter() {
   var vec = new THREE.Vector3(window.innerWidth, -1, 0)
   windowCenter = screenToWorld(vec)
 
-  console.log('computeWindowCenter', windowCenter)
   return windowCenter
 
 }
@@ -71,7 +70,7 @@ function computeWindowCenter() {
 //
 
 
-function setCameraZoom(data) {
+function setScenePosition(data) {
 
   //box serves as anchor for perspective and menu
   var box = new THREE.BoxGeometry(1, 2, 1)
@@ -90,20 +89,26 @@ function setCameraZoom(data) {
   scene.add(mesh)
   sceneCharacters.position.set(0, 1, 0);
 
-  var box = new THREE.Box3().setFromObject(mesh);
-  box.center(mesh.position);
-  mesh.localToWorld(box);
+  var boxHelper = new THREE.Box3().setFromObject(mesh);
+  boxHelper.center(mesh.position);
+  mesh.localToWorld(boxHelper);
   mesh.position.multiplyScalar(-1);
+  mesh.boxHelper = boxHelper
 
-  camera.zoom = Math.min(container.offsetWidth / (box.max.x - box.min.x),
-    container.offsetHeight / (box.max.y - box.min.y)) * .8;
-
-  camera.updateProjectionMatrix();
-  camera.updateMatrix();
-
+  setCameraZoom()
   setSceneOffset()
   mesh.position.set(.25, -.1, 0) //.85 old y value
 
+}
+
+function setCameraZoom(){
+
+  var box = mesh.boxHelper
+  camera.zoom = (Math.min(container.offsetWidth / (box.max.x - box.min.x),
+    container.offsetHeight / (box.max.y - box.min.y)) * .8);
+
+  camera.updateProjectionMatrix();
+  camera.updateMatrix();
 }
 
 var home
@@ -131,9 +136,9 @@ function addHome(cB) {
     object.y_scale = .6
     object.z_scale = .5
 
-    var xZoom = object.x_scale * zoom
-    var yZoom = object.y_scale * zoom
-    var zZoom = object.z_scale * zoom
+    var xZoom = object.x_scale * zoomFactor
+    var yZoom = object.y_scale * zoomFactor
+    var zZoom = object.z_scale * zoomFactor
 
     object.scale.set(xZoom, yZoom, zZoom)
 

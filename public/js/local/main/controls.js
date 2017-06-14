@@ -11,15 +11,6 @@ var lastPan = {
   keyCode: 38
 }
 
-delete Hammer.defaults.cssProps.userSelect; //allow user select on desktop
-
-var hammer = new Hammer(document.body);
-hammer.get('pan').set({
-  'direction': Hammer.DIRECTION_ALL,
-  'threshold': 10
-});
-
-
 var direction = Hammer.DIRECTION_DOWN
 
 function triggerKeyUp() {
@@ -58,10 +49,6 @@ function onPan(e) {
 function onPanEnd(e) {
   triggerKeyUp()
 }
-
-
-hammer.on('panend', onPanEnd);
-hammer.on('pan press', onPan);
 
 
 var controls = {

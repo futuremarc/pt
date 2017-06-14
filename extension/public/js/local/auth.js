@@ -49,39 +49,6 @@ function initAuth() {
     var subs = []
     var timeout = null
 
-    $("#pt-auth-form input:checkbox:checked").each(function() {
-
-      var sub = $(this).data('id')
-      subs.push(sub)
-    });
-
-    if (role === 'settings') {
-
-      return //clean this all up
-
-      if (!isIframe)
-
-        if (!isIframe) {
-
-          myCharacter.data.subscriptions = subs
-
-          putCharacter(function(data) {
-            console.log(data)
-            errorMessage.html(data.message + ' settings!')
-            clearTimeout(timeout)
-
-            timeout = setTimeout(function() {
-              errorMessage.html('&nbsp;')
-            }, 2000)
-
-          })
-        }
-
-      errorMessage.html('&nbsp;')
-
-      return
-    }
-
     var pos = getCharacterPos()
     var rot = getCharacterRot()
     var data = {
@@ -103,13 +70,14 @@ function initAuth() {
 
           errorMessage.html(data.message + ' <strong>' + data.data.name + '</strong>!')
           if (!isIframe) {
+            debugger
             myCharacter.data = data.data
-            putCharacter()
+            putCharacter(function() {
+                location.href = '/'
+            })
           }
 
-          setTimeout(function() {
-            location.href = '/'
-          }, 500)
+
 
         } else {
           errorMessage.html(data.message)

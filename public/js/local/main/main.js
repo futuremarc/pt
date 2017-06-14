@@ -56,19 +56,18 @@ function animateMyChar() {
   if (myCharacter.isWalking && isNameDisplayed && isMouseHovering) hideNameTags()
   else if (!myCharacter.isWalking && !isNameDisplayed && isMouseHovering && !isMenuDisplayed && scene.visible) showNameTags()
 
-    if (myCharacter.position.x > windowCenter.x && !isAwayFromHome){
-      isAwayFromHome = true
-       $('.pt-return-home').show()
-    }
-    else if (myCharacter.position.x < windowCenter.x && isAwayFromHome){
-      isAwayFromHome = false
-       $('.pt-return-home').hide()
-    }
+  if (myCharacter.position.x > windowCenter.x && !isAwayFromHome) {
+    isAwayFromHome = true
+    $('.pt-return-home').show()
+  } else if (myCharacter.position.x < windowCenter.x && isAwayFromHome) {
+    isAwayFromHome = false
+    $('.pt-return-home').hide()
+  }
 
-  if (isAwayFromHome && isMobile && camera.position.x !== myCharacter.position.x - windowCenter.x){ //follow character, align if not aligned
+  if (isAwayFromHome && isMobile && camera.position.x !== myCharacter.position.x - windowCenter.x) { //follow character, align if not aligned
 
     camera.position.x = myCharacter.position.x - windowCenter.x
-    //console.log(myCharacter.position.x, windowCenter.x, camera.position.x, myCharacter.position.x > windowCenter.x)
+      //console.log(myCharacter.position.x, windowCenter.x, camera.position.x, myCharacter.position.x > windowCenter.x)
   }
 
 }
@@ -209,7 +208,7 @@ function onMouseMove(e) {
 
 function onWindowResize() {
 
-  isCameraAligned  = false
+  isCameraAligned = false
 
   camera.left = container.offsetWidth / -2
   camera.right = container.offsetWidth / 2
@@ -247,6 +246,15 @@ function onVisibilityChange() {
 //
 
 
+delete Hammer.defaults.cssProps.userSelect; //allow user select on desktop
+
+var hammer = new Hammer(document.body);
+hammer.get('pan').set({
+  'direction': Hammer.DIRECTION_ALL,
+  'threshold': 10
+});
+
+
 function addDomListeners() {
   $(document).on('click touchstart', onDocumentClick)
   $(document).on('keydown', onKeyDown)
@@ -255,6 +263,9 @@ function addDomListeners() {
   $(window).on('mousemove', onMouseMove)
   $(window).on('resize', onWindowResize)
   $(window).on('orientationchange', onWindowResize)
+  hammer.on('panend', onPanEnd);
+  hammer.on('pan press', onPan);
+
 }
 
 function removeDomListeners() {
@@ -265,6 +276,9 @@ function removeDomListeners() {
   $(window).off('mousemove', onMouseMove)
   $(window).off('resize', onWindowResize)
   $(window).off('orientationchange', onWindowResize)
+  hammer.off('panend', onPanEnd);
+  hammer.off('pan press', onPan);
+
 }
 
 
@@ -513,10 +527,25 @@ function onBgMessage(data, sender, sendResponse) {
 if (isExtension) console.log('extension!')
 else console.log('not extension!')
 
-if (isExtension) chrome.runtime.onMessage.addListener(onBgMessage);
-
 var ptExists = $('.pt').length > 0
 var isIframe = window.parent !== window.self
 
-if (!ptExists && !isIframe) initPt()
+if (isExtension && !ptExists) chrome.runtime.onMessage.addListener(onBgMessage);
 
+var id = 'malhbgmooogkoheilhpjnlimhmnmlpii'
+
+detectExtensionInstalled(id, function(hasPt) {
+
+
+  window.hasExtension = hasPt
+
+  console.log(isExtension, hasExtension, isIframe , ptExists)
+  console.log((!hasExtension && !isExtension && !isIframe && !ptExists), !hasExtension,'NOT INSTALLED INIT')
+  console.log((!isIframe && !ptExists && hasExtension && isExtension), 'INSTALLED INIT')
+  var doRun = (!hasExtension && !isExtension && !isIframe && !ptExists) || (!isIframe && !ptExists && hasExtension && isExtension)
+  if (doRun) initPt()
+
+})
+
+
+// if (!ptExists && !isIframe && !hasExtension) initPt()
