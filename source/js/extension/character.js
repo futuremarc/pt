@@ -217,6 +217,7 @@ function updateCharacter(request, data, cB, isRecursiveCall) {
           if (!user) {
 
             if (!isRecursiveCall) updateCharacter('getRemote', null, cB, true)
+            else if (cB) cB(user)
             return
           }
 
@@ -242,6 +243,7 @@ function updateCharacter(request, data, cB, isRecursiveCall) {
 
         if (!user) {
           if (!isRecursiveCall) updateCharacter('getRemote', null, cB, true)
+          else if (cB) cB(user)
           return
         }
 
@@ -314,6 +316,7 @@ function updateCharacter(request, data, cB, isRecursiveCall) {
 
         if (user) {
           if (!isRecursiveCall)  updateCharacter('getLocal', null, cB, true)
+          else if (cB) cB(user)
           return
         }
 
