@@ -270,7 +270,7 @@ function updateCharacter(request, data, cB) {
 
       $.ajax({
         method: 'PUT',
-        url: 'http://localhost:8080/api/users/' + name,
+        url: 'https://passti.me/api/users/' + name,
         data: data,
         success: function(data) {
           console.log(data)
@@ -326,7 +326,7 @@ function updateCharacter(request, data, cB) {
 
       $.ajax({
         method: 'GET',
-        url: 'http://localhost:8080/api/users/' + name,
+        url: 'https://passti.me/api/users/' + name,
         success: function(data) {
           console.log(data)
 
