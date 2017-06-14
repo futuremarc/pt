@@ -216,8 +216,8 @@ function updateCharacter(request, data, cB, isRecursiveCall) {
           var user = data['pt-user']
           if (!user) {
 
-            if (!isRecursiveCall) updateCharacter('getRemote', null, cB, true)
-            else if (cB) cB(user)
+            if (!isRecursiveCall) updateCharacter('getRemote', null, cB, true) //if not recursive try different method
+            else if (cB) cB(user) //else if recursive call continue without user data
             return
           }
 
@@ -272,7 +272,7 @@ function updateCharacter(request, data, cB, isRecursiveCall) {
 
       $.ajax({
         method: 'PUT',
-        url: 'https://passti.me/api/users/' + name,
+        url: 'http://localhost:8080/api/users/' + name,
         data: data,
         success: function(data) {
           console.log(data)
@@ -329,7 +329,7 @@ function updateCharacter(request, data, cB, isRecursiveCall) {
 
       $.ajax({
         method: 'GET',
-        url: 'https://passti.me/api/users/' + name,
+        url: 'http://localhost:8080/api/users/' + name,
         success: function(data) {
           console.log(data)
 

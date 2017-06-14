@@ -216,8 +216,8 @@ function updateCharacter(request, data, cB, isRecursiveCall) {
           var user = data['pt-user']
           if (!user) {
 
-            if (!isRecursiveCall) updateCharacter('getRemote', null, cB, true)
-            else if (cB) cB(user)
+            if (!isRecursiveCall) updateCharacter('getRemote', null, cB, true) //if not recursive try different method
+            else if (cB) cB(user) //else if recursive call continue without user data
             return
           }
 
