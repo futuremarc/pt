@@ -62,7 +62,7 @@ if (!isExtension && !isIframe) {
 
 function setInstallBtn() {
 
-  if (!isMobile && !isIframe && isChrome()) {
+  if (!isMobile && !isIframe && isChrome() && !isExtension && !hasExtension) {
     console.log('show tag!')
     $('#pt-install-tag').show()
   } else {

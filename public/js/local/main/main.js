@@ -536,12 +536,9 @@ var id = 'malhbgmooogkoheilhpjnlimhmnmlpii'
 
 detectExtensionInstalled(id, function(hasPt) {
 
-
   window.hasExtension = hasPt
+  setInstallBtn()
 
-  console.log(isExtension, hasExtension, isIframe , ptExists)
-  console.log((!hasExtension && !isExtension && !isIframe && !ptExists), !hasExtension,'NOT INSTALLED INIT')
-  console.log((!isIframe && !ptExists && hasExtension && isExtension), 'INSTALLED INIT')
   var doRun = (!hasExtension && !isExtension && !isIframe && !ptExists) || (!isIframe && !ptExists && hasExtension && isExtension)
   if (doRun) initPt()
 
