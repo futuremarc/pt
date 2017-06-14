@@ -7,10 +7,15 @@ var isNameDisplayed = false,
 
 //
 
+function animateBike(){
+  home.rearWheel.rotateX(.1)
+  home.frontWheel.rotateX(.1)
+}
 
 function animate() {
 
   animateMyChar()
+  //animateBike()
   if (isRegistered()) animateOtherChars()
   requestAnimationFrame(animate);
   render();

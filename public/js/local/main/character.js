@@ -68,7 +68,6 @@ function createCharacter(data, cB) {
     character.data = data
     character.mixer = new THREE.AnimationMixer(character);
     character.actions = {};
-    character.mixer;
     character.animations = ['idle', 'walk', 'run', 'hello', 'pose'];
     character.activeState = 'idle';
 
@@ -87,6 +86,7 @@ function createCharacter(data, cB) {
 
     character.height = geometry.boundingBox.max.y - geometry.boundingBox.min.y
     character.width = geometry.boundingBox.max.x - geometry.boundingBox.min.x
+    character.depth = geometry.boundingBox.max.z - geometry.boundingBox.min.z
 
 
     character.walk = function(data) {
@@ -199,7 +199,7 @@ function createCharacter(data, cB) {
 //
 
 
-function updateCharacter(request, data, cB) {
+function updateCharacter(request, data, cB, isRecursiveCall) {
 
   var pos, rot, data = data || {}
 
@@ -216,7 +216,7 @@ function updateCharacter(request, data, cB) {
           var user = data['pt-user']
           if (!user) {
 
-            updateCharacter('getRemote', null, cB)
+            if (!isRecursiveCall) updateCharacter('getRemote', null, cB, true)
             return
           }
 
@@ -241,7 +241,7 @@ function updateCharacter(request, data, cB) {
         var user = JSON.parse(data)
 
         if (!user) {
-          updateCharacter('getRemote', null, cB)
+          if (!isRecursiveCall) updateCharacter('getRemote', null, cB, true)
           return
         }
 
@@ -313,7 +313,7 @@ function updateCharacter(request, data, cB) {
         var user = JSON.parse(data)
 
         if (user) {
-          updateCharacter('getLocal', null, cB)
+          if (!isRecursiveCall)  updateCharacter('getLocal', null, cB, true)
           return
         }
 

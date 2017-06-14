@@ -1,4 +1,3 @@
-
 var clock, container, camera, scene, light, renderer, controls = {};
 var hoveredMesh = undefined
 var projector = new THREE.Projector()
@@ -37,7 +36,7 @@ function initScene(data) {
   camera.position.set(0, 1.25, 2)
 
   dLight = new THREE.DirectionalLight(0xffffff, .1);
-  dLight.position.set(0,0,10)
+  dLight.position.set(0, 0, 10)
   scene.add(dLight);
 
   aLight = new THREE.AmbientLight(0xffffff, 1);
@@ -101,7 +100,7 @@ function setScenePosition(data) {
 
 }
 
-function setCameraZoom(){
+function setCameraZoom() {
 
   var box = mesh.boxHelper
   camera.zoom = (Math.min(container.offsetWidth / (box.max.x - box.min.x),
@@ -124,9 +123,9 @@ function addHome(cB) {
 
     object.role = 'home'
     object.position.set(0, 0, 0)
-    object.rotation.set(0, (Math.PI * 3) /2, 0)
+    object.rotation.set(0, (Math.PI * 3) / 2, 0)
 
-    object.traverse(function(child){
+    object.traverse(function(child) {
       child.renderOrder = 100
       if (child.name === 'HemisphereLight') object.remove(child)
     })
@@ -144,6 +143,61 @@ function addHome(cB) {
 
     home = object
     home.visible = false
+
+    if (cB) cB()
+
+  })
+}
+
+
+function addBike() {
+
+  if (isExtension) var path = chrome.extension.getURL('public/models/bike/bike.json')
+  else var path = '/models/bike/bike.json'
+
+
+  var loader = new THREE.ObjectLoader();
+  loader.load(path, function(object) {
+
+    object.role = 'bike'
+    object.position.set(2, 2, 0)
+    object.rotation.set(0, (Math.PI * 3) / 2, 0)
+
+    object.traverse(function(child) {
+      child.renderOrder = 100
+
+      if (child.name === 'WheelRear_hiProfile') {
+
+        object.rearWheel = child
+
+        var geo = object.rearWheel.children[0].geometry
+        geo.computeBoundingBox()
+
+        geo.height = geo.boundingBox.max.y - geo.boundingBox.min.y
+        geo.width = geo.boundingBox.max.x - geo.boundingBox.min.x
+        geo.depth = geo.boundingBox.max.z - geo.boundingBox.min.z
+
+        geo.applyMatrix(new THREE.Matrix4().makeTranslation(-2, -2, 0));
+
+      } else if (child.name === 'WheelFront_hiProfile') {
+        
+        object.frontWheel = child
+      } else if (child.name === 'HemisphereLight') object.remove(child)
+    })
+
+    scene.add(object)
+
+    object.x_scale = 1
+    object.y_scale = 1
+    object.z_scale = 1
+
+    var xZoom = object.x_scale * zoomFactor
+    var yZoom = object.y_scale * zoomFactor
+    var zZoom = object.z_scale * zoomFactor
+
+    object.scale.set(xZoom, yZoom, zZoom)
+
+    bike = object
 
     if (cB) cB()
 
