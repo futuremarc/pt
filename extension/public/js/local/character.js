@@ -88,6 +88,24 @@ function createCharacter(data, cB) {
     character.width = geometry.boundingBox.max.x - geometry.boundingBox.min.x
     character.depth = geometry.boundingBox.max.z - geometry.boundingBox.min.z
 
+    actions = character.actions
+    mixer = character.mixer
+
+    actions.hello = mixer.clipAction(geometry.animations[0]);
+    actions.idle = mixer.clipAction(geometry.animations[1]);
+    actions.run = mixer.clipAction(geometry.animations[3]);
+    actions.walk = mixer.clipAction(geometry.animations[4]);
+    actions.pose = mixer.clipAction(geometry.animations[2]);
+
+    for (var action in actions) {
+      actions[action].setEffectiveWeight(1);
+      actions[action].enabled = true;
+    }
+
+    actions.hello.setLoop(THREE.LoopOnce, 0);
+    actions.hello.clampWhenFinished = true;
+
+    actions.idle.play();
 
     character.walk = function(data) {
       var direction = data.direction
@@ -115,6 +133,10 @@ function createCharacter(data, cB) {
       this.fadeAction(this.animations[4])
     }
 
+    character.idle = function() {
+      this.fadeAction(this.animations[0])
+    }
+
     character.sleep = function() {
       this.data.isLive = false
       this.material.materials[0].transparent = true
@@ -135,37 +157,24 @@ function createCharacter(data, cB) {
       this.rotation.set(0, Math.PI, 0)
     }
 
-    character.fadeAction = function(name) {
+    character.fadeAction = function(action) {
 
       var from = this.actions[this.activeState].play();
-      var to = this.actions[name].play();
+      var to = this.actions[action].play();
 
       from.enabled = true;
       to.enabled = true;
       if (to.loop === THREE.LoopOnce) to.reset();
       from.crossFadeTo(to, 0.3);
-      this.activeState = name;
+      this.activeState = action;
 
     }
 
-    actions = character.actions
-    mixer = character.mixer
+    this.mixer.addEventListener( 'finished', function( e ) {
+      character.idle()
+    } );
 
-    actions.hello = mixer.clipAction(geometry.animations[0]);
-    actions.idle = mixer.clipAction(geometry.animations[1]);
-    actions.run = mixer.clipAction(geometry.animations[3]);
-    actions.walk = mixer.clipAction(geometry.animations[4]);
-    actions.pose = mixer.clipAction(geometry.animations[2]);
 
-    for (var action in actions) {
-      actions[action].setEffectiveWeight(1);
-      actions[action].enabled = true;
-    }
-
-    actions.hello.setLoop(THREE.LoopOnce, 0);
-    actions.hello.clampWhenFinished = true;
-
-    actions.idle.play();
 
     renderOrder -= 1
     character.renderOrder = renderOrder
@@ -315,7 +324,7 @@ function updateCharacter(request, data, cB, isRecursiveCall) {
         var user = JSON.parse(data)
 
         if (user) {
-          if (!isRecursiveCall)  updateCharacter('getLocal', null, cB, true)
+          if (!isRecursiveCall) updateCharacter('getLocal', null, cB, true)
           else if (cB) cB(user)
           return
         }
