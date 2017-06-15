@@ -4,17 +4,56 @@ $(document).ready(function() {
 
     var errorMessage = $(".error-message h3")
 
+
     $.ajax({
       method: 'GET',
-      url: 'http://localhost:8080/api/users/',
+      url: 'http://localhost:8080/api/users/' + _id,
       success: function(data) {
         console.log(data)
+
         if (data.status === 'success') {
 
-          var container = $('#auth-suggestions-parent')
-          var users = data.data
-          var html = Templates.auth.addSuggestions(users)
-          container.html(html)
+          var friends = data.data.friends
+
+          $.ajax({
+            method: 'GET',
+            url: 'http://localhost:8080/api/users/',
+            success: function(data) {
+              console.log(data)
+              if (data.status === 'success') {
+
+                var container = $('#auth-suggestions-parent')
+                var users = data.data
+                var usersToShow = []
+
+                users.forEach(function(user) {
+
+                  var isUserFriend = false
+
+                  friends.forEach(function(friend) {
+                    if (user._id === friend.user._id) isUserFriend = true
+                   
+                  })
+
+                  var isMe = (_id === user._id)
+                  var isRequestAlreadySent = (user.friendRequests.indexOf(_id) > -1)
+
+                  if (!isUserFriend && !isMe && !isRequestAlreadySent) usersToShow.push(user)
+
+                })
+
+                var html = Templates.auth.addSuggestions(usersToShow)
+                container.html(html)
+
+              } else {
+                errorMessage.html(data.message)
+              }
+            },
+            error: function(err) {
+              console.log(err)
+            }
+          })
+
 
         } else {
           errorMessage.html(data.message)

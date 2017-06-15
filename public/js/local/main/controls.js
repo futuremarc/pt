@@ -24,8 +24,6 @@ function triggerKeyUp(key) {
   onKeyUp(keyCode)
   direction = 0 //reset direction for onPan
 
-  console.log('')
-
 }
 
 function onPan(e) {

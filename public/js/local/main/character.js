@@ -17,7 +17,7 @@ function createMyCharacter(data) {
 
     addHome(function() {
 
-      addMainMenu(mesh, character)
+      addMainMenu(mesh, character.data)
 
       if (isRegistered()) {
         addLiveCharacters()

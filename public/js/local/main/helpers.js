@@ -79,11 +79,11 @@ function zoomPt() {
   if (role === 'zoom-out' && zoomFactor > .25) zoomFactor -= .25
   else if (role === 'zoom-in' && zoomFactor < 1.25) zoomFactor += .25
 
+
+  // $('.pt').not('.pt-menu, .pt-iframe, .pt-menu-icon').css('zoom', zoomFactor)
+  // onWindowResize()
+
   $('.pt-menu-icon').css('zoom', zoomFactor)
-
-
-  // setCameraZoom()
-  // setSceneOffset()
 
   scene.traverse(function(child) {
 
@@ -160,6 +160,7 @@ function logout(cB) {
   if (isRegistered()) emitLeaveMsg()
 
   if (!isExtension) {
+    localStorage.removeItem('pt-user')
     if (cB) cB()
     return
   }
@@ -695,15 +696,19 @@ function closePt() {
 //
 
 
-function changeSubmitButton(disable, replaceText, id) {
-  if (!id) var btn = $("input[type='submit']")
-  else var btn = $(id)
+//
+
+
+function changeSubmitButton(disable, replaceText, id, elt) {
+
+  if (!id && !elt) var btn = $("input[type='submit']")
+  else if (id) var btn = $(id)
+  else if (elt) var btn = $(elt)
 
   if (replaceText) {
     if (!btn.val()) btn.html(replaceText)
     else btn.val(replaceText)
   }
-
   btn.attr('disabled', disable)
 }
 

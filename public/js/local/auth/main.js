@@ -127,7 +127,7 @@ $('document').ready(function() {
 
       $.ajax({
         method: 'POST',
-        url: 'https://passti.me/api/feedback/', // + event
+        url: 'http://localhost:8080/api/feedback/', // + event
         data: data,
         success: function(data) {
           console.log(data)
@@ -149,6 +149,51 @@ $('document').ready(function() {
 
     },
 
+    'suggestion': function(data) {
+
+      var event = data.event
+      var action = data.action
+      var userId = data.user._id
+      var friendId = data.friendId
+
+      data = {
+        userId: userId,
+        action: action
+      }
+
+      $.ajax({
+        method: 'POST',
+        url: 'http://localhost:8080/api/users/friend/' + friendId, // + event
+        data: data,
+        success: function(data) {
+          console.log(data)
+          if (data.status === 'success') {
+
+            var user = data.data
+            myCharacter.data = user
+            var elt = $("[data-id='" + friendId + "']")[0]
+            
+            changeSubmitButton(true, 'Request sent!', false, elt)
+
+          } else {
+            changeSubmitButton(true, data.message, false, elt)
+          }
+
+          data = {
+            'event': 'update',
+            'type': 'window',
+            'user': user
+          }
+          window.parent.postMessage(data, '*')
+
+        },
+        error: function(err) {
+          console.log(err)
+        }
+      })
+    },
+
+
     'friend': function(data) {
 
       var errorMessage = $('.error-message h3')
@@ -164,7 +209,7 @@ $('document').ready(function() {
 
       $.ajax({
         method: 'POST',
-        url: 'https://passti.me/api/users/friend/' + friendId, // + event
+        url: 'http://localhost:8080/api/users/friend/' + friendId, // + event
         data: data,
         success: function(data) {
           console.log(data)
@@ -218,7 +263,7 @@ $('document').ready(function() {
 
       $.ajax({
         method: method,
-        url: 'https://passti.me/api/users/friend/' + friendId, //+ event,
+        url: 'http://localhost:8080/api/users/friend/' + friendId, //+ event,
         data: data,
         success: function(data) {
           console.log(data)
@@ -266,7 +311,7 @@ $('document').ready(function() {
 
       $.ajax({
         method: 'PUT',
-        url: 'https://passti.me/api/users/' + name,
+        url: 'http://localhost:8080/api/users/' + name,
         data: data,
         success: function(data) {
           console.log(data)
@@ -326,7 +371,7 @@ $('document').ready(function() {
 
       $.ajax({
         method: 'POST',
-        url: 'https://passti.me/api/' + event,
+        url: 'http://localhost:8080/api/' + event,
         data: data,
         success: function(data) {
           console.log(data)
@@ -483,22 +528,39 @@ $('document').ready(function() {
       'type': 'window'
     }
 
-    // data = {
-    //     'user': myCharacter.data,
-    //     'event': role,
-    //     'type': 'window',
-    //     'friendId': friendId,
-    //     'fromExtension': true,
-    //     'action': action
-    //   }
+    console.log('iframe sent', data)
+    window.parent.postMessage(data, '*')
+    return
 
-    //submitData[role](data)
+  })
+
+
+  //
+
+
+  $('body').on('click', '.suggested-friend-btn', function(e) {
+
+    e.preventDefault()
+
+    var role = $(this).data('role')
+    var action = $(this).data('action')
+    var friendId = $(this).data('id')
+
+    var data = {
+      'event': role,
+      'action': action,
+      'friendId': friendId,
+      'type': 'window'
+    }
 
     console.log('iframe sent', data)
     window.parent.postMessage(data, '*')
     return
 
   })
+
+
+  //
 
 
   $('body').on('keyup', '#pt-friend-form', function(e) {
@@ -543,7 +605,7 @@ $('document').ready(function() {
 
     $.ajax({
       method: 'GET',
-      url: 'https://passti.me/api/users/' + name,
+      url: 'http://localhost:8080/api/users/' + name,
       success: function(data) {
         console.log(data)
 
@@ -604,16 +666,3 @@ $('document').ready(function() {
 })
 
 
-//
-
-
-function changeSubmitButton(disable, replaceText, id) {
-  if (!id) var btn = $("input[type='submit']")
-  else var btn = $(id)
-
-  if (replaceText) {
-    if (!btn.val()) btn.html(replaceText)
-    else btn.val(replaceText)
-  }
-  btn.attr('disabled', disable)
-}

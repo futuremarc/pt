@@ -43,7 +43,6 @@ var walk_speed = .045
 var run_speed = .075
 
 
-var isCameraAligned = true
 var isAwayFromHome = false
 
 function animateMyChar() {
@@ -132,10 +131,10 @@ function initPt() {
     else var hasUserData = false
 
     if (hasUserData && !signedIntoSite && isExtension) signInFromExtension(user)
-    if (user) initScene(user)
     else if (method === 'getLocal') updateCharacter('getRemote', null, function(user) {
       initScene(user)
     })
+    else initScene(user)
 
 
   })
@@ -219,8 +218,6 @@ function onMouseMove(e) {
 
 function onWindowResize() {
 
-  isCameraAligned = false
-
   camera.left = container.offsetWidth / -2
   camera.right = container.offsetWidth / 2
   camera.top = container.offsetHeight / 2
@@ -235,8 +232,6 @@ function onWindowResize() {
 
   showNameTags() //reset name tags
   hideNameTags()
-
-  isCameraAligned = true
 }
 
 
@@ -381,6 +376,29 @@ function onWindowMsg(data) {
       data = {
         '_id': user._id,
         'event': event,
+        'type': 'socket',
+        'friendId': friendId
+      }
+
+      emitMsg(data)
+
+      break;
+
+    case 'suggestion':
+
+      data = {
+        'user': user,
+        'event': event,
+        'type': 'window',
+        'friendId': friendId,
+        'fromExtension': true
+      }
+
+      source.postMessage(data, '*')
+
+      data = {
+        '_id': user._id,
+        'event': 'friend', //send friend request
         'type': 'socket',
         'friendId': friendId
       }

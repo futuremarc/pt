@@ -408,7 +408,7 @@ module.exports = function(passport) {
         .find({
           'isLive': true
         })
-        .select('-password -friendRequests')
+        .select('-password')
         .exec(function(err, result) {
 
           if (err) return res.json({
@@ -431,7 +431,7 @@ module.exports = function(passport) {
 
       User
         .find({})
-        .select('-password -friendRequests')
+        .select('-password')
         .exec(function(err, result) {
 
           if (err) return res.json({
@@ -455,7 +455,7 @@ module.exports = function(passport) {
 
       User
         .find({})
-        .select('-password -friendRequests')
+        .select('-password')
         .exec(function(err, result) {
 
           if (err) return res.json({

@@ -9,7 +9,7 @@
       <ul>
         {{#each this}}
 
-          <li data-id='{{_id}}'>
+          <li>
 
             <div>
               {{name}}
@@ -17,7 +17,7 @@
             
             <ul class="list-inline">
               <li>
-                <input type='submit' data-action='request', data-role='friend', data-name='{{name}}', data-id='{{_id}}', class='btn btn-custom friend-request-btn', value='Add'>
+                <input type='submit' data-action='request', data-role='suggestion', data-name='{{name}}', data-id='{{_id}}', class='btn btn-custom suggested-friend-btn', value='Add'>
               </li>
             </ul>
 

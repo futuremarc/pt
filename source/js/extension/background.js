@@ -43,7 +43,7 @@ function onInstall(data) {
 
   if (data.reason == "install") {
 
-    var url = 'https://passti.me/'
+    var url = 'https://passti.me'
 
     chrome.tabs.update({
       url: url
