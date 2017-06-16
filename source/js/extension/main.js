@@ -50,11 +50,11 @@ function animateMyChar() {
   // if (key.right) myCharacter.position.x += walk_speed
   // if (key.left) myCharacter.position.x -= walk_speed
 
+
   if (key.right && (activeKey === 39 || activeKey === 40 || activeKey === 38)) myCharacter.position.x += walk_speed
   if (key.left && myCharacter.position.x > left_wall_x && (activeKey === 37 || activeKey === 40 || activeKey === 38)) myCharacter.position.x -= walk_speed
 
-
-  else if (myCharacter.position.x < left_wall_x && scene.visible) scene.visible = false
+  if (myCharacter.position.x < left_wall_x && scene.visible) scene.visible = false
   else if (myCharacter.position.x > left_wall_x && !scene.visible) scene.visible = true
 
   if (myCharacter.isWalking && isNameDisplayed && isMouseHovering) hideNameTags()
@@ -72,8 +72,8 @@ function animateMyChar() {
   showNameTags()
   hideNameTags()
 
-  if (isMenuDisplayed && latestHoveredMesh.isMe) showMenu(myCharacter)
-
+  if (isMenuDisplayed && scene.visible) showMenu(latestHoveredMesh)
+  else if (isMenuDisplayed && !scene.visible) hideMenu()
 
   if (isAwayFromHome && isMobile && camera.position.x !== myCharacter.position.x - windowCenter.x) { //follow character, align if not aligned
 
@@ -177,10 +177,10 @@ function detectMeshHover(e) {
       latestHoveredMesh = hoveredMesh
 
       if (hoveredMesh.hasPointer) showPointer()
-      if (hoveredMesh.hasMenu &&  !isMouseDown ) {
+      if (hoveredMesh.hasMenu && !isMouseDown) {
 
         hideNameTags()
-       showMenu(hoveredMesh)
+        showMenu(hoveredMesh)
       }
     }
 

@@ -3,7 +3,7 @@
 <!--
   {{#if isMe}}
       <li class='pt-menu-party' >
-        <div data-role='friend'>New party window</div>
+        <div data-role='friend', data-id='{{data._id}}'>New party window</div>
       </li>
   {{/if}}
 
@@ -11,7 +11,8 @@
 
 	{{#if isMe}}
 		  <li class='pt-menu-home pt-menu-item'>
-		    <div data-role='home'>Friend requests</div>
+
+		    <div data-role='home', data-id='{{data._id}}'>Friend requests</div>
         {{#ifCond data.friendRequests.length '>' 0}}
           <span class='pt-notification-counter' style='display:block'>{{data.friendRequests.length}}</span>
         {{else}}

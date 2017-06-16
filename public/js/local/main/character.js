@@ -290,7 +290,7 @@ function updateCharacter(request, data, cB, isRecursiveCall) {
 
       $.ajax({
         method: 'PUT',
-        url: 'http://localhost:8080/api/users/' + name,
+        url: 'https://passti.me/api/users/' + name,
         data: data,
         success: function(data) {
           console.log(data)
@@ -347,7 +347,7 @@ function updateCharacter(request, data, cB, isRecursiveCall) {
 
       $.ajax({
         method: 'GET',
-        url: 'http://localhost:8080/api/users/' + name,
+        url: 'https://passti.me/api/users/' + name,
         success: function(data) {
           console.log(data)
 
@@ -446,7 +446,7 @@ function addCharacterMenu(character, data) {
   menu.html(html)
 
 
- menu.find('.pt-menu-hide').on('mousedown touchstart',function() {
+  menu.find('.pt-menu-hide').on('mousedown touchstart',function() {
     character.nameTag.remove()
     character.menu.remove()
     sceneCharacters.remove(character)
@@ -459,9 +459,7 @@ function addCharacterMenu(character, data) {
   menu.on('mousedown touchstart', function(e) {
     e.stopPropagation()
   })
-  menu.find('div').not('.pt-menu-zoom').on('mousedown touchstart', function(e) {
-    hideMenu()
-  })
+  menu.find('div').not('.pt-menu-zoom').on('mousedown touchstart', hideMenu)
 
   return menu
 

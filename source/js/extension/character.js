@@ -446,7 +446,7 @@ function addCharacterMenu(character, data) {
   menu.html(html)
 
 
- menu.find('.pt-menu-hide').on('mousedown touchstart',function() {
+  menu.find('.pt-menu-hide').on('mousedown touchstart',function() {
     character.nameTag.remove()
     character.menu.remove()
     sceneCharacters.remove(character)
@@ -459,9 +459,7 @@ function addCharacterMenu(character, data) {
   menu.on('mousedown touchstart', function(e) {
     e.stopPropagation()
   })
-  menu.find('div').not('.pt-menu-zoom').on('mousedown touchstart', function(e) {
-    hideMenu()
-  })
+  menu.find('div').not('.pt-menu-zoom').on('mousedown touchstart', hideMenu)
 
   return menu
 

@@ -1,17 +1,17 @@
 function detectExtensionInstalled(id, cB) {
 
-  var url ='chrome-extension://' + id  + '/manifest.json'
+  var url = 'chrome-extension://' + id + '/manifest.json'
 
-      $.ajax({
-        method: 'GET',
-        url:  url,
-        success: function(data) {
-          if (cB) cB(true)
-        },
-        error: function(err) {
-          if (cB) cB(false)
-        },
-      })
+  $.ajax({
+    method: 'GET',
+    url: url,
+    success: function(data) {
+      if (cB) cB(true)
+    },
+    error: function(err) {
+      if (cB) cB(false)
+    },
+  })
 
 }
 
@@ -35,10 +35,7 @@ function isChrome() {
 
 
 
-
-
-
-if (isChrome()) var isExtension = (chrome && chrome.storage) !== undefined//check if inside extension
+if (isChrome()) var isExtension = (chrome && chrome.storage) !== undefined //check if inside extension
 else var isExtension = false
 
 var isIframe = window.parent !== window.self
@@ -49,7 +46,9 @@ var id = 'cjokaadpcmicjaimmokifhjgikepgjdp' //chrome extension id
 
 function detectMobileOrTablet() {
   var check = false;
-  (function(a){if(/(android|bb\d+|meego).+mobile|avantgo|bada\/|blackberry|blazer|compal|elaine|fennec|hiptop|iemobile|ip(hone|od)|iris|kindle|lge |maemo|midp|mmp|mobile.+firefox|netfront|opera m(ob|in)i|palm( os)?|phone|p(ixi|re)\/|plucker|pocket|psp|series(4|6)0|symbian|treo|up\.(browser|link)|vodafone|wap|windows ce|xda|xiino|android|ipad|playbook|silk/i.test(a)||/1207|6310|6590|3gso|4thp|50[1-6]i|770s|802s|a wa|abac|ac(er|oo|s\-)|ai(ko|rn)|al(av|ca|co)|amoi|an(ex|ny|yw)|aptu|ar(ch|go)|as(te|us)|attw|au(di|\-m|r |s )|avan|be(ck|ll|nq)|bi(lb|rd)|bl(ac|az)|br(e|v)w|bumb|bw\-(n|u)|c55\/|capi|ccwa|cdm\-|cell|chtm|cldc|cmd\-|co(mp|nd)|craw|da(it|ll|ng)|dbte|dc\-s|devi|dica|dmob|do(c|p)o|ds(12|\-d)|el(49|ai)|em(l2|ul)|er(ic|k0)|esl8|ez([4-7]0|os|wa|ze)|fetc|fly(\-|_)|g1 u|g560|gene|gf\-5|g\-mo|go(\.w|od)|gr(ad|un)|haie|hcit|hd\-(m|p|t)|hei\-|hi(pt|ta)|hp( i|ip)|hs\-c|ht(c(\-| |_|a|g|p|s|t)|tp)|hu(aw|tc)|i\-(20|go|ma)|i230|iac( |\-|\/)|ibro|idea|ig01|ikom|im1k|inno|ipaq|iris|ja(t|v)a|jbro|jemu|jigs|kddi|keji|kgt( |\/)|klon|kpt |kwc\-|kyo(c|k)|le(no|xi)|lg( g|\/(k|l|u)|50|54|\-[a-w])|libw|lynx|m1\-w|m3ga|m50\/|ma(te|ui|xo)|mc(01|21|ca)|m\-cr|me(rc|ri)|mi(o8|oa|ts)|mmef|mo(01|02|bi|de|do|t(\-| |o|v)|zz)|mt(50|p1|v )|mwbp|mywa|n10[0-2]|n20[2-3]|n30(0|2)|n50(0|2|5)|n7(0(0|1)|10)|ne((c|m)\-|on|tf|wf|wg|wt)|nok(6|i)|nzph|o2im|op(ti|wv)|oran|owg1|p800|pan(a|d|t)|pdxg|pg(13|\-([1-8]|c))|phil|pire|pl(ay|uc)|pn\-2|po(ck|rt|se)|prox|psio|pt\-g|qa\-a|qc(07|12|21|32|60|\-[2-7]|i\-)|qtek|r380|r600|raks|rim9|ro(ve|zo)|s55\/|sa(ge|ma|mm|ms|ny|va)|sc(01|h\-|oo|p\-)|sdk\/|se(c(\-|0|1)|47|mc|nd|ri)|sgh\-|shar|sie(\-|m)|sk\-0|sl(45|id)|sm(al|ar|b3|it|t5)|so(ft|ny)|sp(01|h\-|v\-|v )|sy(01|mb)|t2(18|50)|t6(00|10|18)|ta(gt|lk)|tcl\-|tdg\-|tel(i|m)|tim\-|t\-mo|to(pl|sh)|ts(70|m\-|m3|m5)|tx\-9|up(\.b|g1|si)|utst|v400|v750|veri|vi(rg|te)|vk(40|5[0-3]|\-v)|vm40|voda|vulc|vx(52|53|60|61|70|80|81|83|85|98)|w3c(\-| )|webc|whit|wi(g |nc|nw)|wmlb|wonu|x700|yas\-|your|zeto|zte\-/i.test(a.substr(0,4))) check = true;})(navigator.userAgent||navigator.vendor||window.opera);
+  (function(a) {
+    if (/(android|bb\d+|meego).+mobile|avantgo|bada\/|blackberry|blazer|compal|elaine|fennec|hiptop|iemobile|ip(hone|od)|iris|kindle|lge |maemo|midp|mmp|mobile.+firefox|netfront|opera m(ob|in)i|palm( os)?|phone|p(ixi|re)\/|plucker|pocket|psp|series(4|6)0|symbian|treo|up\.(browser|link)|vodafone|wap|windows ce|xda|xiino|android|ipad|playbook|silk/i.test(a) || /1207|6310|6590|3gso|4thp|50[1-6]i|770s|802s|a wa|abac|ac(er|oo|s\-)|ai(ko|rn)|al(av|ca|co)|amoi|an(ex|ny|yw)|aptu|ar(ch|go)|as(te|us)|attw|au(di|\-m|r |s )|avan|be(ck|ll|nq)|bi(lb|rd)|bl(ac|az)|br(e|v)w|bumb|bw\-(n|u)|c55\/|capi|ccwa|cdm\-|cell|chtm|cldc|cmd\-|co(mp|nd)|craw|da(it|ll|ng)|dbte|dc\-s|devi|dica|dmob|do(c|p)o|ds(12|\-d)|el(49|ai)|em(l2|ul)|er(ic|k0)|esl8|ez([4-7]0|os|wa|ze)|fetc|fly(\-|_)|g1 u|g560|gene|gf\-5|g\-mo|go(\.w|od)|gr(ad|un)|haie|hcit|hd\-(m|p|t)|hei\-|hi(pt|ta)|hp( i|ip)|hs\-c|ht(c(\-| |_|a|g|p|s|t)|tp)|hu(aw|tc)|i\-(20|go|ma)|i230|iac( |\-|\/)|ibro|idea|ig01|ikom|im1k|inno|ipaq|iris|ja(t|v)a|jbro|jemu|jigs|kddi|keji|kgt( |\/)|klon|kpt |kwc\-|kyo(c|k)|le(no|xi)|lg( g|\/(k|l|u)|50|54|\-[a-w])|libw|lynx|m1\-w|m3ga|m50\/|ma(te|ui|xo)|mc(01|21|ca)|m\-cr|me(rc|ri)|mi(o8|oa|ts)|mmef|mo(01|02|bi|de|do|t(\-| |o|v)|zz)|mt(50|p1|v )|mwbp|mywa|n10[0-2]|n20[2-3]|n30(0|2)|n50(0|2|5)|n7(0(0|1)|10)|ne((c|m)\-|on|tf|wf|wg|wt)|nok(6|i)|nzph|o2im|op(ti|wv)|oran|owg1|p800|pan(a|d|t)|pdxg|pg(13|\-([1-8]|c))|phil|pire|pl(ay|uc)|pn\-2|po(ck|rt|se)|prox|psio|pt\-g|qa\-a|qc(07|12|21|32|60|\-[2-7]|i\-)|qtek|r380|r600|raks|rim9|ro(ve|zo)|s55\/|sa(ge|ma|mm|ms|ny|va)|sc(01|h\-|oo|p\-)|sdk\/|se(c(\-|0|1)|47|mc|nd|ri)|sgh\-|shar|sie(\-|m)|sk\-0|sl(45|id)|sm(al|ar|b3|it|t5)|so(ft|ny)|sp(01|h\-|v\-|v )|sy(01|mb)|t2(18|50)|t6(00|10|18)|ta(gt|lk)|tcl\-|tdg\-|tel(i|m)|tim\-|t\-mo|to(pl|sh)|ts(70|m\-|m3|m5)|tx\-9|up(\.b|g1|si)|utst|v400|v750|veri|vi(rg|te)|vk(40|5[0-3]|\-v)|vm40|voda|vulc|vx(52|53|60|61|70|80|81|83|85|98)|w3c(\-| )|webc|whit|wi(g |nc|nw)|wmlb|wonu|x700|yas\-|your|zeto|zte\-/i.test(a.substr(0, 4))) check = true;
+  })(navigator.userAgent || navigator.vendor || window.opera);
   return check;
 };
 
@@ -58,7 +57,7 @@ isMobile = detectMobileOrTablet()
 
 if (!isExtension && !isIframe) {
 
-  var socket = io('http://localhost:5050', {
+  var socket = io('https://passti.me', {
     'path': '/socket',
     'forceNew': true
   })
@@ -379,14 +378,14 @@ function addMainMenu(mesh, data) {
   menu.html(html)
 
   menu.find('.pt-menu-hide-pt').on('mousedown touchstart', closePt)
-  menu.find('.pt-menu-zoom').on('mousedown touchstart', zoomPt)
-  menu.find('.pt-menu-item').on('mousedown touchstart', openIframe)
-  menu.find('.pt-return-home').on('mousedown touchstart', returnHome)
-  menu.on('click touchstart', function(e) {
+  menu.find('.pt-menu-zoom').on('mouseup touchend', zoomPt)
+  menu.find('.pt-menu-item').on('mouseup touchend', openIframe)
+  menu.find('.pt-return-home').on('mouseup touchend', returnHome)
+  menu.on('mousedown mouseup touchstart touchend', function(e) {
     e.stopPropagation()
   })
-  menu.find('div').not('.pt-menu-zoom').on('click touchstart', function(e) {
-    hideMenu()
+  menu.find('div').not('.pt-menu-zoom').on('mousedown touchstart', function(e) {
+    triggerKeyUp()
   })
 
   addMenuIcon(data)
@@ -469,7 +468,7 @@ function getFriendInfo(idOrName, cB) {
 
   $.ajax({
     method: 'GET',
-    url: 'http://localhost:8080/api/users/' + idOrName,
+    url: 'https://passti.me/api/users/' + idOrName,
     success: function(data) {
       console.log(data)
 
@@ -574,24 +573,40 @@ function removeLiveCharacters() {
 
 
 function openIframe(e) {
+
   e.stopPropagation()
+
   var target = e.currentTarget
   var isMe = $(target).closest('ul').data('is-me')
+  var id = $(target).closest('ul').data('id')
   var role = $(target).find('div').data('role')
   var iframe = document.createElement('iframe')
-  var src = 'http://localhost:8080/' + role
+  var src = 'https://passti.me/' + role
 
-  console.log('openIframe', isMe, role)
   closeIframe()
   $(iframe).attr('frameborder', 0)
   $(iframe).attr('src', src)
   $(iframe).data('role', role)
   $(iframe).addClass('pt-iframe pt')
-  $(iframe).on('click touchstart', function(e) {
+  $(iframe).on('mousedown touchstart', function(e) {
     e.stopPropagation()
   })
 
+  var _mesh = characters[id]
+  var pos = worldToScreen(_mesh.position)
+  var x = pos.x
+
+  var data = new THREE.Vector3(0, _mesh.height, 0)
+  var pos = worldToScreen(data)
+  var y = Math.abs(pos.y)
+
+
   $('body').append(iframe)
+
+  var halfWidth = $(iframe).width() / 2
+  $(iframe).css('left', x - halfWidth)
+  $(iframe).css('bottom', y * .7)
+
   myCharacter.faceBackward()
 
 }
@@ -684,15 +699,19 @@ function showMenu(_mesh) {
   }
 
 
-  var data = new THREE.Vector3(0,_mesh.height,0)
+
+  var data = new THREE.Vector3(0, _mesh.height, 0)
   var pos = worldToScreen(data)
   var y = Math.abs(pos.y)
 
 
   var menu = _mesh.menu
 
+  var rightWall = window.innerWidth - menu.width()
+  if (x > rightWall) x = rightWall
+
   menu.css('left', x)
-  menu.css('bottom', y/2)
+  menu.css('bottom', y / 2)
   menu.show();
 
   $('.pt-menu-icon').addClass('pt-menu-open')
