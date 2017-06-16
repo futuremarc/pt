@@ -43,15 +43,9 @@
 
   {{#if isMe}}
     <li class='pt-menu-feedback pt-menu-item'>
-      <div data-role='feedback'>Bug report and feedback</div>
+      <div data-role='feedback'>Bug report and feature request</div>
     </li>
   {{/if}}
-
-  {{#ifCond isMe '&&' isExtension}}
-  	<li class='pt-menu-hide-pt'>
-    	<div data-role='hide-pt'>Hide pt</div>
-  	</li>
-  {{/ifCond}}
 
   {{#if isMe}}
     <li class='pt-menu-item'>
@@ -59,18 +53,33 @@
     </li>
   {{/if}}
 
+<!--
   {{#if isMe}}
     <li>
-      <div data-role='zoom-out' class='pt-menu-zoom' style='display:inline' >🔍 -</div> <span> / </span>
+      <div data-role='zoom-out' class='pt-menu-zoom' style='display:inline' >🔍 -</div>
+      <span> / </span>
       <div data-role='zoom-in' class='pt-menu-zoom' style='display:inline' >🔍 +</div>
     </li>
   {{/if}}
+-->
+
+  <li>
+    <div class='pt-menu-hide', data-role='hide-pt', style='display:inline'>Hide {{data.name}}</div>
+
+    {{#if isMe}}
+      <span> / </span>
+      <div class='pt-menu-hide-pt', data-role='hide-pt', style='display:inline'>Hide scene</div>
+    {{/if}}
+
+  </li>
+
+<!--
 
   {{#if isMe}}
     <li cl>
       <div class='pt-return-home', style='display:none', data-role='return-home'>Return home</div>
     </li>
   {{/if}}
-
+-->
 
 </ul>

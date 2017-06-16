@@ -72,7 +72,7 @@ function animateMyChar() {
   showNameTags()
   hideNameTags()
 
-  if (isMenuDisplayed) showMenu(myCharacter)
+  if (isMenuDisplayed && latestHoveredMesh.isMe) showMenu(myCharacter)
 
 
   if (isAwayFromHome && isMobile && camera.position.x !== myCharacter.position.x - windowCenter.x) { //follow character, align if not aligned
@@ -174,12 +174,13 @@ function detectMeshHover(e) {
     if (!hoveredMesh) {
 
       hoveredMesh = intersects[0].object;
-      if (hoveredMesh.hasPointer) showPointer()
-      if (hoveredMesh.hasMenu) {
+      latestHoveredMesh = hoveredMesh
 
+      if (hoveredMesh.hasPointer) showPointer()
+      if (hoveredMesh.hasMenu &&  !isMouseDown ) {
 
         hideNameTags()
-        showMenu(hoveredMesh)
+       showMenu(hoveredMesh)
       }
     }
 
@@ -279,7 +280,8 @@ hammer.add(new Hammer.Tap({
 }));
 
 function addDomListeners() {
-  $(document).on('click touchstart', onDocumentClick)
+  $(document).on('mousedown touchstart', onMouseDown)
+  $(document).on('mouseup touchend', onMouseUp)
   $(document).on('keydown', onKeyDown)
   $(document).on('keyup', onKeyUp)
   $(window).on('visibilitychange', onVisibilityChange)
@@ -293,7 +295,8 @@ function addDomListeners() {
 }
 
 function removeDomListeners() {
-  $(document).off('click touchstart', onDocumentClick)
+  $(document).off('mousedown touchstart', onMouseDown)
+  $(document).off('mouseup touchend', onMouseUp)
   $(document).off('keydown', onKeyDown)
   $(document).off('keyup', onKeyUp)
   $(window).off('visibilitychange', onVisibilityChange)

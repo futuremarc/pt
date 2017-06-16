@@ -15,9 +15,9 @@ function createMyCharacter(data) {
     setScenePosition(character)
     addHome(function() {
 
-      addMainMenu(character, character.data)
-      showNameTags()
-      hideNameTags()
+      //addMainMenu(character, character.data)
+      // showNameTags()
+      // hideNameTags()
 
 
       myCharacter.awake()
@@ -71,7 +71,7 @@ function createCharacter(data, cB) {
     var nameTag = character.nameTag
 
     $('body').prepend(nameTag)
-    
+
     character.nameTagWidth = $('.pt-name-tag').width()
     character.menu = addCharacterMenu(character, data)
     character.role = 'character' //associate purpose for all meshes
@@ -438,22 +438,28 @@ function addCharacterMenu(character, data) {
   var isMe = character.isMe
   var html = Templates.extension.addMenu({
     isMe: isMe,
+    isExtension:true,
     data: data
   })
 
   $('body').append(menu)
   menu.html(html)
 
-  menu.find('.pt-menu-hide').click(function() {
+
+ menu.find('.pt-menu-hide').on('mousedown touchstart',function() {
     character.nameTag.remove()
     character.menu.remove()
     sceneCharacters.remove(character)
   })
-  menu.find('.pt-menu-friend, .pt-menu-settings, .pt-menu-home, .pt-menu-login, .pt-menu-signup, .pt-menu-logout').click(openIframe)
-  menu.click(function(e) {
+
+  menu.find('.pt-menu-hide-pt').on('mousedown touchstart', closePt)
+  menu.find('.pt-menu-zoom').on('mousedown touchstart', zoomPt)
+  menu.find('.pt-menu-item').on('mousedown touchstart', openIframe)
+  menu.find('.pt-return-home').on('mousedown touchstart', returnHome)
+  menu.on('mousedown touchstart', function(e) {
     e.stopPropagation()
   })
-  menu.find('a').click(function(e) {
+  menu.find('div').not('.pt-menu-zoom').on('mousedown touchstart', function(e) {
     hideMenu()
   })
 
