@@ -121,6 +121,18 @@ module.exports = function() {
 
   })
 
+  router.get('/chat', function(req, res, next) {
+
+    if (!req.user) return res.render('auth/login.pug')
+      
+    res.render('chat/chat.pug', {
+      loggedIn: true,
+      userName: req.user.name,
+      userId: req.user._id
+    })
+
+  })
+
 
 
   router.get('/forgot', function(req, res) {

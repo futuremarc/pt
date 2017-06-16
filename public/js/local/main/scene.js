@@ -5,7 +5,7 @@ var renderOrder = 0
 
 //
 
-var canvas_height
+var canvasHeight
 
 function initScene(data) {
 
@@ -24,7 +24,7 @@ function initScene(data) {
   renderer = isWebGL() ? new THREE.WebGLRenderer(options) : new THREE.CanvasRenderer(options);
 
   container = document.getElementById('pt-container');
-  canvas_height = $(container).height()
+  canvasHeight = $(container).height()
 
   renderer.setPixelRatio(window.devicePixelRatio);
   renderer.setSize(container.offsetWidth, container.offsetHeight);
@@ -96,7 +96,8 @@ function setScenePosition(data) {
 
   setCameraZoom()
   setSceneOffset()
-  mesh.position.set(.25, -.1, 0) //.85 old y value
+  computeWindowCenter()
+  
 
 }
 
@@ -180,7 +181,7 @@ function addBike() {
         geo.applyMatrix(new THREE.Matrix4().makeTranslation(-2, -2, 0));
 
       } else if (child.name === 'WheelFront_hiProfile') {
-        
+
         object.frontWheel = child
       } else if (child.name === 'HemisphereLight') object.remove(child)
     })

@@ -1,0 +1,23 @@
+extends ../main/layout
+
+block css
+  link(href='/css/local/chat.css', rel='stylesheet')
+
+block content
+  div(id='pt-chat-container')
+    //iframe(src='http://localhost:8080' frameborder='0')
+    div(id='pt-messages-container')
+      ul(class='list-unstyled')
+    div(id='form-container')
+      form(class='form-inline')
+        div(class='form-group')
+          div(class='input-group')
+            input(type='text', id='pt-chat-input', class='form-control', autocomplete='off' placeholder='Send a message...')
+            div(class='input-group-addon')
+              button(type='submit', class='btn btn-custom-chat')
+                span() Send
+
+block javascript
+  script(src='/js/local/chat/chat.js')
+
+

@@ -1,9 +1,9 @@
 $(document).ready(function(){
 
   var isIframe = window.parent !== window.self
+  window.isHomePage = true
 
  if (loggedIn && isIframe) {
-
 
     var errorMessage = $(".error-message h3")
 

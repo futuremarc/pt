@@ -10,20 +10,26 @@ function createMyCharacter(data) {
 
   createCharacter(data, function(character) {
 
-    myCharacter = character
-    myCharacter.awake()
-    setScenePosition(character)
-    computeWindowCenter()
+    window.myCharacter = character
 
+    setScenePosition(character)
     addHome(function() {
 
-      addMainMenu(mesh, character.data)
+      addMainMenu(character, character.data)
+      showNameTags()
+      hideNameTags()
+
+
+      myCharacter.awake()
 
       if (isRegistered()) {
         addLiveCharacters()
         emitJoinMsg()
-      }
+      } 
+
       animate()
+
+        if (isHomePage && scene.visible) $('.pt-menu-suggestions').click() //show default card... isHome defined in auth/home.js
 
     })
 
@@ -50,21 +56,27 @@ function createCharacter(data, cB) {
     var character = new THREE.SkinnedMesh(geometry, new THREE.MeshFaceMaterial(materials));
     var name = data.name || ''
 
-    character.name = name
-    character.nameTag = $('<div class="pt-name-tag pt">' + name + '</div>')
-
-    var nameTag = character.nameTag
-    $('body').prepend(nameTag)
-    character.nameTagWidth = nameTag.width()
-
-
     var isMe = (renderOrder === 0)
     if (isMe) character.isMe = true
 
+    character.name = name
+
+
+    if (isMe) name = '&#x25BC;'
+
+    var nameTagElt = '<div class="pt-name-tag">' + name + '</div>'
+    
+    character.nameTag = $('<div class="pt-name-tag-con pt">' + nameTagElt  + '</div>')
+
+    var nameTag = character.nameTag
+
+    $('body').prepend(nameTag)
+    
+    character.nameTagWidth = $('.pt-name-tag').width()
     character.menu = addCharacterMenu(character, data)
     character.role = 'character' //associate purpose for all meshes
-    character.hasPointer = false
-    character.hasMenu = false
+    character.hasPointer = true
+    character.hasMenu = true
     character.data = data
     character.mixer = new THREE.AnimationMixer(character);
     character.actions = {};
@@ -84,9 +96,9 @@ function createCharacter(data, cB) {
     geometry.computeBoundingBox();
     character.geometry = geometry
 
-    character.height = geometry.boundingBox.max.y - geometry.boundingBox.min.y
-    character.width = geometry.boundingBox.max.x - geometry.boundingBox.min.x
-    character.depth = geometry.boundingBox.max.z - geometry.boundingBox.min.z
+    character.height = Math.abs(geometry.boundingBox.max.y - geometry.boundingBox.min.y)
+    character.width = Math.abs(geometry.boundingBox.max.x - geometry.boundingBox.min.x)
+    character.depth = Math.abs(geometry.boundingBox.max.z - geometry.boundingBox.min.z)
 
     actions = character.actions
     mixer = character.mixer
@@ -170,10 +182,7 @@ function createCharacter(data, cB) {
 
     }
 
-    this.mixer.addEventListener( 'finished', function( e ) {
-      character.idle()
-    } );
-
+    this.mixer.addEventListener('finished', character.idle.bind(character)); //return to idle when any animation finishes
 
 
     renderOrder -= 1

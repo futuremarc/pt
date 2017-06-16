@@ -7,7 +7,7 @@ var isNameDisplayed = false,
 
 //
 
-function animateBike(){
+function animateBike() {
   home.rearWheel.rotateX(.1)
   home.frontWheel.rotateX(.1)
 }
@@ -15,7 +15,7 @@ function animateBike(){
 function animate() {
 
   animateMyChar()
-  //animateBike()
+    //animateBike()
   if (isRegistered()) animateOtherChars()
   requestAnimationFrame(animate);
   render();
@@ -38,7 +38,7 @@ function render() {
 
 //
 
-var left_wall_x = .5
+var left_wall_x = 0
 var walk_speed = .045
 var run_speed = .075
 
@@ -67,6 +67,13 @@ function animateMyChar() {
     isAwayFromHome = false
     $('.pt-return-home').hide()
   }
+
+
+  showNameTags()
+  hideNameTags()
+
+  if (isMenuDisplayed) showMenu(myCharacter)
+
 
   if (isAwayFromHome && isMobile && camera.position.x !== myCharacter.position.x - windowCenter.x) { //follow character, align if not aligned
 
@@ -130,7 +137,9 @@ function initPt() {
     if (user && user._id) var hasUserData = true
     else var hasUserData = false
 
-    if (hasUserData && !signedIntoSite && isExtension) signInFromExtension(user)
+    if (hasUserData && !signedIntoSite) signInFromExtension(user)
+
+    if (!doRun) return
     else if (method === 'getLocal') updateCharacter('getRemote', null, function(user) {
       initScene(user)
     })
@@ -167,6 +176,8 @@ function detectMeshHover(e) {
       hoveredMesh = intersects[0].object;
       if (hoveredMesh.hasPointer) showPointer()
       if (hoveredMesh.hasMenu) {
+
+
         hideNameTags()
         showMenu(hoveredMesh)
       }
@@ -201,13 +212,14 @@ function onCanvasHover(e) {
 
 //
 
+var canvas_offset = 50
 
 function onMouseMove(e) {
 
   mouseX = e.clientX
   mouseY = e.clientY
 
-  isMouseHovering = (mouseY > window.innerHeight - canvas_height)
+  isMouseHovering = (mouseY > window.innerHeight - canvasHeight + canvas_offset)
 
   detectMeshHover()
   onCanvasHover()
@@ -561,14 +573,15 @@ if (isExtension && !ptExists) chrome.runtime.onMessage.addListener(onBgMessage);
 
 //var id = 'bgnidgoonglndlgocabmhdogbdniaiih'
 var id = 'malhbgmooogkoheilhpjnlimhmnmlpii'
+var doRun = false
 
 detectExtensionInstalled(id, function(hasPt) {
 
   window.hasExtension = hasPt
   setInstallBtn()
 
-  var doRun = (!hasExtension && !isExtension && !isIframe && !ptExists) || (!isIframe && !ptExists && hasExtension && isExtension)
-  if (doRun) initPt()
+  doRun = (!hasExtension && !isExtension && !isIframe && !ptExists) || (!isIframe && !ptExists && hasExtension && isExtension)
+  initPt()
 
 })
 

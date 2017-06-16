@@ -172,7 +172,7 @@ $('document').ready(function() {
             var user = data.data
             myCharacter.data = user
             var elt = $("[data-id='" + friendId + "']")[0]
-            
+
             changeSubmitButton(true, 'Request sent!', false, elt)
 
           } else {
@@ -379,9 +379,7 @@ $('document').ready(function() {
 
             errorMessage.html(data.message + ' <strong>' + data.data.name + '</strong>!')
 
-            setTimeout(function() {
-              location.href = '/'
-            }, 0)
+              location.href = document.referrer
 
             return
 

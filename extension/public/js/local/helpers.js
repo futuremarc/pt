@@ -298,7 +298,8 @@ function hideSceneBg() {
 //
 
 
-var name_tag_y = 85
+var name_tag_y = 105
+var name_tag_x_off = -1
 
 function showNameTags() {
 
@@ -313,7 +314,7 @@ function showNameTags() {
       var worldPos = new THREE.Vector3(user.position.x, user.height, user.position.z)
       var screenPos = worldToScreen(worldPos)
 
-      var x = screenPos.x - (user.nameTagWidth / 2) //center nametag to user pos
+      var x = screenPos.x - (user.nameTagWidth / 2) + name_tag_x_off //center nametag to user pos
       var y = name_tag_y * zoomFactor //align nametag to height of user based on zoom
 
       var options = {
@@ -406,7 +407,7 @@ var mainMenuIconWidth
 
 function addMenuIcon(data) {
 
-  var icon = $('<span>&#9776;</span>')
+  var icon = $('<span>&nbsp; &nbsp;</span>') //&#9776;
   var badge = $('<span class="pt-notification-counter"></span>')
   var container = $('<div class="pt-menu-icon pt"></div>')
   var requests = data.friendRequests || []
@@ -417,8 +418,8 @@ function addMenuIcon(data) {
   })
 
   $(container).on('mouseenter', function() {
-    showMenu()
-    hideNameTags()
+    //showMenu()
+    //hideNameTags()
   })
 
   var notifications = num_requests
@@ -426,7 +427,7 @@ function addMenuIcon(data) {
 
   container.append(icon)
   container.append(badge)
-  $('body').append(container)
+  myCharacter.nameTag.append(container)
 
   $('.pt-menu-icon').css('zoom', zoomFactor)
 
@@ -526,7 +527,7 @@ function refreshMainMenu() {
 
   updateCharacter('getRemote', null, function(character) {
     removeMainMenu()
-    addMainMenu(mesh, character)
+    addMainMenu(myCharacter, character)
   })
 }
 
@@ -648,30 +649,44 @@ function closeIframe() {
 
 //
 var isMenuDisplayed = false
-var main_menu_offset = 8
+var main_menu_x_off = 8
+var main_menu_y_off = 5
 
 function showMenu(_mesh) {
+
+  console.log('showMenu',_mesh)
 
   hideMenu()
 
   if (!_mesh) { //if mesh is passed create menu at mesh pos, else create menu at left side of screen menu icon
 
     _mesh = mesh
-    var x = mainMenuIconWidth + main_menu_offset
+    var x = mainMenuIconWidth + main_menu_x_off
 
   } else {
-
     var pos = worldToScreen(_mesh.position)
     var x = pos.x
 
   }
 
+
+  var data = new THREE.Vector3(0,_mesh.height,0)
+  var pos = worldToScreen(data)
+  var y = Math.abs(pos.y)
+
+
   var menu = _mesh.menu
+
   menu.css('left', x)
+  menu.css('bottom', y/2)
+
+    console.log('showMenu', x,y)
 
   menu.show();
 
   $('.pt-menu-icon').addClass('pt-menu-open')
+
+  isMenuDisplayed = true
 }
 
 

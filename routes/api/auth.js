@@ -123,8 +123,8 @@ module.exports = function(passport) {
       var mailOptions = {
         to: 'sirmarcus@gmail.com',
         from: 'feedback@passti.me',
-        subject: name + ' has some feedback for Passtime!',
-        html: html
+        subject: name + ' says: "' + feedback + '"',
+        html: '<div></div>'
       }
       mailer.sendMail(mailOptions, function(res) {
         console.log("SENDGRID RESPONSE", res)

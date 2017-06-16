@@ -21,8 +21,11 @@ function signInFromExtension(data) {
         errorMessage.html(data.message + ' <strong>' + data.data.name + '</strong>!')
 
         setTimeout(function() {
-          location.href = '/'
+          location.href = document.referrer
         }, 0)
+
+        console.log('REFERER',document.referrer)
+
 
       } else {
         errorMessage.html(data.message)
@@ -70,10 +73,10 @@ function initAuth() {
 
           errorMessage.html(data.message + ' <strong>' + data.data.name + '</strong>!')
           if (!isIframe) {
-            
+
             myCharacter.data = data.data
             putCharacter(function() {
-                location.href = '/'
+              location.href = '/'
             })
           }
 
