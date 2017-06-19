@@ -187,9 +187,9 @@
 
 .pt-iframe{
 	position: fixed !important;
-
-	width: 285px !important;
-	height: 375px !important;
+	display:none;
+	width: 250px !important;
+	height: 350px !important;
 
 	@media(max-width: 668px){
 		width: 85% !important;

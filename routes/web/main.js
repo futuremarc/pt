@@ -125,7 +125,7 @@ module.exports = function() {
 
     if (!req.user) return res.render('auth/login.pug')
       
-    res.render('chat/chat.pug', {
+    res.render('auth/chat.pug', {
       loggedIn: true,
       userName: req.user.name,
       userId: req.user._id

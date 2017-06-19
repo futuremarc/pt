@@ -41,6 +41,7 @@ else var isExtension = false
 var isIframe = window.parent !== window.self
 
 var isMobile = false;
+var isHomePage = isHomePage || false
 
 var id = 'cjokaadpcmicjaimmokifhjgikepgjdp' //chrome extension id
 
@@ -274,7 +275,7 @@ function screenToWorld(screenPos) {
 function worldToScreen(worldPos) {
 
   var halfConWidth = container.offsetWidth / 2
-  var halfConHeight = window.innerHeight / 2
+  var halfConHeight = container.offsetHeight / 2
   var screenPos = worldPos.clone();
 
   projector.projectVector(screenPos, camera);
@@ -387,7 +388,7 @@ function addMainMenu(mesh, data) {
   menu.find('div').not('.pt-menu-zoom').on('mousedown touchstart', function(e) {
     triggerKeyUp()
   })
-
+  console.log('ADDMAIN MENU')
   addMenuIcon(data)
 }
 
@@ -568,31 +569,34 @@ function removeLiveCharacters() {
 
 }
 
-
+ 
 //
 
+var menu_y_offset = 3.5
 
-function openIframe(e) {
+
+function openIframe(e){
 
   e.stopPropagation()
 
   var target = e.currentTarget
+  var role = $(target).find('div').data('role')
   var isMe = $(target).closest('ul').data('is-me')
   var id = $(target).closest('ul').data('id')
-  var role = $(target).find('div').data('role')
-  var iframe = document.createElement('iframe')
   var src = 'http://localhost:8080/' + role
 
-  closeIframe()
-  $(iframe).attr('frameborder', 0)
-  $(iframe).attr('src', src)
-  $(iframe).data('role', role)
-  $(iframe).addClass('pt-iframe pt')
-  $(iframe).on('mousedown touchstart', function(e) {
-    e.stopPropagation()
-  })
+  var iframe = characters[id].iframe
+  iframe.attr('src', src)
+  iframe.data('role', role)
 
-  var _mesh = characters[id]
+  positionIframe(iframe)
+  showIframe(iframe)
+
+}
+
+function positionIframe(iframe){
+
+  var _mesh = iframe.character
   var pos = worldToScreen(_mesh.position)
   var x = pos.x
 
@@ -600,20 +604,23 @@ function openIframe(e) {
   var pos = worldToScreen(data)
   var y = Math.abs(pos.y)
 
+  var halfWidth = iframe.width() / 2
+  iframe.css('left', x - halfWidth)
+  iframe.css('bottom', y * menu_y_offset)
+}
 
-  $('body').append(iframe)
+function hideIframe(iframe){
+  if (iframe) iframe.hide()
+  else $('.pt-iframe').hide()
+}
 
-  var halfWidth = $(iframe).width() / 2
-  $(iframe).css('left', x - halfWidth)
-  $(iframe).css('bottom', y * .7)
-
-  myCharacter.faceBackward()
-
+function showIframe(iframe){
+  if (iframe) iframe.show()
+  else $('.pt-iframe').show()
 }
 
 
 //
-
 
 
 function onExternalMsg(data, sender, sendResponse) {
@@ -672,11 +679,19 @@ function onMouseUp() {
 
 //
 
+var isIframeOpen = false
 
 function closeIframe() {
-  $('.pt-iframe').remove();
+  hideIframe()
+  //resetIframe()
+  //$('.pt-iframe').remove();
+  isIframeOpen = false
 }
 
+function resetIframe(iframe){
+  if (iframe) iframe.attr('src','')
+  else $('.pt-iframe').attr('src','')
+}
 
 //
 var isMenuDisplayed = false
@@ -684,6 +699,8 @@ var main_menu_x_off = 8
 var main_menu_y_off = 5
 
 function showMenu(_mesh) {
+
+  if (isIframeOpen) return
 
   hideMenu()
 
@@ -711,7 +728,7 @@ function showMenu(_mesh) {
   if (x > rightWall) x = rightWall
 
   menu.css('left', x)
-  menu.css('bottom', y / 2)
+  menu.css('bottom', y * menu_y_offset)
   menu.show();
 
   $('.pt-menu-icon').addClass('pt-menu-open')

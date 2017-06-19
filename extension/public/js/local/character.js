@@ -74,9 +74,11 @@ function createCharacter(data, cB) {
 
     character.nameTagWidth = $('.pt-name-tag').width()
     character.menu = addCharacterMenu(character, data)
+    character.iframe = addIframe(character)
     character.role = 'character' //associate purpose for all meshes
     character.hasPointer = true
     character.hasMenu = true
+    character.hasCard = true
     character.data = data
     character.mixer = new THREE.AnimationMixer(character);
     character.actions = {};
@@ -290,7 +292,7 @@ function updateCharacter(request, data, cB, isRecursiveCall) {
 
       $.ajax({
         method: 'PUT',
-        url: 'https://passti.me/api/users/' + name,
+        url: 'http://localhost:8080/api/users/' + name,
         data: data,
         success: function(data) {
           console.log(data)
@@ -347,7 +349,7 @@ function updateCharacter(request, data, cB, isRecursiveCall) {
 
       $.ajax({
         method: 'GET',
-        url: 'https://passti.me/api/users/' + name,
+        url: 'http://localhost:8080/api/users/' + name,
         success: function(data) {
           console.log(data)
 
@@ -459,6 +461,7 @@ function addCharacterMenu(character, data) {
   menu.on('mousedown touchstart', function(e) {
     e.stopPropagation()
   })
+
   menu.find('div').not('.pt-menu-zoom').on('mousedown touchstart', hideMenu)
 
   return menu
@@ -466,9 +469,25 @@ function addCharacterMenu(character, data) {
 }
 
 
-
 //
 
+
+function addIframe(character, data) {
+
+  var iframe = $(document.createElement('iframe'))
+
+  iframe.character = character
+  iframe.attr('frameborder', 0)
+  iframe.addClass('pt-iframe pt')
+  iframe.on('mousedown touchstart', function(e) {
+    e.stopPropagation()
+  })
+
+  
+  $('body').append(iframe)
+
+  return iframe
+}
 
 function removeCharacter(data) {
   characters[data._id].nameTag.remove()

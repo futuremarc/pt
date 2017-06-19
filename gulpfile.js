@@ -30,7 +30,6 @@ gulp.task('watch', function(){
   gulp.watch('views/handlebars/**/*.handlebars', ['precompile'])
   gulp.watch('source/js/auth/*.js',['auth-scripts'])
   gulp.watch('source/js/main/*.js', ['main-scripts'])
-  gulp.watch('source/js/mobile/*.js', ['mobile-scripts'])
 
   //extension
   gulp.watch('source/scss/extension.scss', ['extension-build-css'])
@@ -46,7 +45,7 @@ gulp.task('socket-url-replace', function(){
 })
 
 gulp.task('strip-minify', function(){
-  gulp.src(['public/js/local/auth/*.js','public/js/local/main/*.js','public/js/local/mobile/*.js'],{base: "./"})
+  gulp.src(['public/js/local/auth/*.js','public/js/local/main/*.js'],{base: "./"})
     .pipe(stripDebug())
     .pipe(uglify())
     .pipe(gulp.dest("./"))
@@ -71,11 +70,6 @@ gulp.task('main-scripts', function(){
   gulp.src('source/js/main/*.js')
     .pipe(concat('main.js'))
     .pipe(gulp.dest('public/js/local/auth/'))
-})
-
-gulp.task('mobile-scripts', function(){
-  gulp.src('source/js/mobile/*.js')
-    .pipe(gulp.dest('public/js/local/mobile/'))
 })
 
 gulp.task('precompile', function(){

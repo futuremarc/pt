@@ -1,13 +1,8 @@
 <ul data-id='{{data._id}}'  data-name='{{data.name}}' data-is-me='{{isMe}}'>
 
-<!--
-  {{#if isMe}}
-      <li class='pt-menu-party' >
-        <div data-role='friend', data-id='{{data._id}}'>New party window</div>
-      </li>
-  {{/if}}
-
-  -->
+  <li class='pt-chat pt-menu-item' >
+    <div data-role='chat', data-id='{{data._id}}'>Chat</div>
+  </li>
 
 	{{#if isMe}}
 		  <li class='pt-menu-home pt-menu-item'>
@@ -23,7 +18,7 @@
 
  	{{#if isMe}}
   		<li class='pt-menu-friend pt-menu-item' >
-    		<div data-role='friend'>Find your friends</div>
+    		<div data-role='friend', data-id='{{data._id}}'>Find your friends</div>
   		</li>
   {{/if}}
 
@@ -31,38 +26,54 @@
 <!--
   {{#if isMe}}
       <li>
-        <div class='pt-menu-share' data-role='share'>Share this page</div>
+        <div class='pt-menu-share' data-role='share', data-id='{{data._id}}'>Share this page</div>
       </li>
   {{/if}}
   -->
 
   {{#if isMe}}
       <li class='pt-menu-suggestions pt-menu-item'>
-        <div data-role='suggestions'>People you might know</div>
+        <div data-role='suggestions', data-id='{{data._id}}'>People you might know</div>
       </li>
   {{/if}}
 
   {{#if isMe}}
     <li class='pt-menu-feedback pt-menu-item'>
-      <div data-role='feedback'>Bug report and feature request</div>
+      <div data-role='feedback', data-id='{{data._id}}'>Bug report and feature request</div>
     </li>
   {{/if}}
 
   {{#if isMe}}
     <li class='pt-menu-item'>
-      <div data-role='settings'>Settings</div>
+      <div data-role='settings', data-id='{{data._id}}'>Settings</div>
     </li>
   {{/if}}
 
 <!--
   {{#if isMe}}
     <li>
-      <div data-role='zoom-out' class='pt-menu-zoom' style='display:inline' >🔍 -</div>
+      <div data-role='zoom-out', data-id='{{data._id}}' class='pt-menu-zoom' style='display:inline' >🔍 -</div>
       <span> / </span>
-      <div data-role='zoom-in' class='pt-menu-zoom' style='display:inline' >🔍 +</div>
+      <div data-role='zoom-in', data-id='{{data._id}}' class='pt-menu-zoom' style='display:inline' >🔍 +</div>
     </li>
   {{/if}}
 -->
+
+<!--
+  {{#ifCond isMe '&&' isExtension}}
+    <li class='pt-menu-hide-pt'>
+      <div data-role='hide-pt'>Hide scene</div>
+    </li>
+  {{/ifCond}}
+-->
+
+  {{#unless isMe}}
+    <li class='pt-menu-hide'>
+      <div data-role='hide-pt'>Hide {{data.name}}</div>
+    </li>
+  {{/unless}}
+
+<!--
 
   <li>
     <div class='pt-menu-hide', data-role='hide-pt', style='display:inline'>Hide {{data.name}}</div>
@@ -73,6 +84,7 @@
     {{/if}}
 
   </li>
+-->
 
 <!--
 

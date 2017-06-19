@@ -13,5 +13,10 @@ if (app.get('env') === 'development') {
 
 module.exports = function(passport) {
 
+  router.route('/messages/:id')
+    .get(function(req, res) {
+
+    })
+
   return router
 }

@@ -3,7 +3,7 @@ $('document').ready(function() {
 
   var isIframe = (window.parent !== window.self)
 
-  var myCharacter = {}
+  window.myCharacter = {}
 
   var submitData = {
 
@@ -281,7 +281,7 @@ $('document').ready(function() {
 
             errorMessage.html(data.message + ' <strong>' + data.data.name + '</strong>!')
 
-              location.href = document.referrer
+            location.href = document.referrer
 
             return
 
@@ -564,5 +564,3 @@ $('document').ready(function() {
   if (isIframe) window.parent.postMessage(data, '*')
 
 })
-
-

@@ -15,7 +15,7 @@ function animateBike() {
 function animate() {
 
   animateMyChar()
-    //animateBike()
+  //animateBike()
   if (isRegistered()) animateOtherChars()
   requestAnimationFrame(animate);
   render();
@@ -50,7 +50,6 @@ function animateMyChar() {
   // if (key.right) myCharacter.position.x += walk_speed
   // if (key.left) myCharacter.position.x -= walk_speed
 
-
   if (key.right && (activeKey === 39 || activeKey === 40 || activeKey === 38)) myCharacter.position.x += walk_speed
   if (key.left && myCharacter.position.x > left_wall_x && (activeKey === 37 || activeKey === 40 || activeKey === 38)) myCharacter.position.x -= walk_speed
 
@@ -68,8 +67,7 @@ function animateMyChar() {
     $('.pt-return-home').hide()
   }
 
-
-  showNameTags()
+  if (isNameDisplayed) showNameTags()
   hideNameTags()
 
   if (isMenuDisplayed && scene.visible) showMenu(latestHoveredMesh)
@@ -82,7 +80,6 @@ function animateMyChar() {
   }
 
 }
-
 
 
 //
@@ -584,7 +581,7 @@ detectExtensionInstalled(id, function(hasPt) {
   setInstallBtn()
 
   doRun = (!hasExtension && !isExtension && !isIframe && !ptExists) || (!isIframe && !ptExists && hasExtension && isExtension)
-  initPt()
+  if (doRun) initPt()
 
 })
 

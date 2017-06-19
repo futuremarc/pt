@@ -32,7 +32,7 @@ iframe{
 
 #pt-chat-container {
 
-	bottom: 0px;
+	top: 0px;
 	left: 0px;
 	width: 100%;
 	height:100%;
@@ -42,12 +42,10 @@ iframe{
 		width: 100%;
 		position:absolute;
 		bottom:50;
-
-		overflow-y: scroll;
-		overflow-x: hidden;
+		max-height:100%;
+		overflow: scroll;
 		overflow-wrap: break-word;
     	word-wrap: break-word;
-		max-height: 1000px;
 		padding-left:10px;
 		padding-right:10px;
 	
@@ -113,7 +111,7 @@ iframe{
 	}
 
 	
-	form {
+	#pt-chat-form {
 		width:100%;
 		position:absolute;
 		bottom:0;
@@ -128,8 +126,8 @@ iframe{
 			width: 100%;
 			margin-bottom:0px;
 
-			
 			.input-group{
+
 				width: 100%;
 				background: rgba(0,0,0,0);
 
@@ -146,7 +144,7 @@ iframe{
 					padding: 12px 12px;
 					color: black;
 					border-bottom: none;
-					height: 15%;
+					height: 10%;
 					border-radius:0;
 				}
 

@@ -8,8 +8,8 @@ block content
     //iframe(src='http://localhost:8080' frameborder='0')
     div(id='pt-messages-container')
       ul(class='list-unstyled')
-    div(id='form-container')
-      form(class='form-inline')
+    div(id='pt-form-container')
+      form(id="pt-chat-form", class='form-inline')
         div(class='form-group')
           div(class='input-group')
             input(type='text', id='pt-chat-input', class='form-control', autocomplete='off' placeholder='Send a message...')
@@ -18,6 +18,6 @@ block content
                 span() Send
 
 block javascript
-  script(src='/js/local/chat/chat.js')
+  script(src='/js/local/auth/chat.js')
 
 
