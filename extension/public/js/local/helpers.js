@@ -569,32 +569,33 @@ function removeLiveCharacters() {
 
 }
 
- 
+
 //
 
 var menu_y_offset = 3.5
 
 
-function openIframe(e){
+function openIframe(e) {
 
   e.stopPropagation()
 
   var target = e.currentTarget
   var role = $(target).find('div').data('role')
   var isMe = $(target).closest('ul').data('is-me')
+  var name = $(target).closest('ul').data('name')
   var id = $(target).closest('ul').data('id')
   var src = 'http://localhost:8080/' + role
-
   var iframe = characters[id].iframe
-  iframe.attr('src', src)
+  
   iframe.data('role', role)
+  iframe.attr('src', src)
 
   positionIframe(iframe)
   showIframe(iframe)
 
 }
 
-function positionIframe(iframe){
+function positionIframe(iframe) {
 
   var _mesh = iframe.character
   var pos = worldToScreen(_mesh.position)
@@ -609,12 +610,12 @@ function positionIframe(iframe){
   iframe.css('bottom', y * menu_y_offset)
 }
 
-function hideIframe(iframe){
+function hideIframe(iframe) {
   if (iframe) iframe.hide()
   else $('.pt-iframe').hide()
 }
 
-function showIframe(iframe){
+function showIframe(iframe) {
   if (iframe) iframe.show()
   else $('.pt-iframe').show()
 }
@@ -683,14 +684,14 @@ var isIframeOpen = false
 
 function closeIframe() {
   hideIframe()
-  //resetIframe()
-  //$('.pt-iframe').remove();
+    //resetIframe()
+    //$('.pt-iframe').remove();
   isIframeOpen = false
 }
 
-function resetIframe(iframe){
-  if (iframe) iframe.attr('src','')
-  else $('.pt-iframe').attr('src','')
+function resetIframe(iframe) {
+  if (iframe) iframe.attr('src', '')
+  else $('.pt-iframe').attr('src', '')
 }
 
 //

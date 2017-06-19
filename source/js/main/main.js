@@ -11,6 +11,7 @@ $('document').ready(function() {
 
       console.log('iframe initAuth', data)
       myCharacter.data = data.user
+
     },
 
     'feedback': function(data) {

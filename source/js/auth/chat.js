@@ -1,9 +1,31 @@
 $(document).ready(function() {
 
-  var messages = [], messageList = $('ul')
+  var messages = [],
+    messageList = $('ul')
 
-  function initChat(){
-    $('#pt-name-tag').html('')
+    function checkAddUsers(){
+      return window.myCharacter.data
+    }
+
+    function isMe(){
+      return (window.myCharacter.data.name === window.name)
+    }
+
+  function addUsers() {
+
+    if (isMe()) return
+
+    window.name = window.frameElement.getAttribute('data-name');
+  
+    var html = $('#pt-name-tag').html()
+    $('#pt-name-tag').html(name + ', ' + html)
+  }
+
+
+  function initChat() {
+      if (checkAddUsers()) addUsers()
+  else setTimeout(initChat, 500)
+
   }
 
   function onFormSubmit(e) {
@@ -17,7 +39,7 @@ $(document).ready(function() {
 
     var data = {
       message: message,
-      outgoing:true,
+      outgoing: true,
       user: user
     }
 

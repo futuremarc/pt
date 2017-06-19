@@ -74,7 +74,7 @@ function createCharacter(data, cB) {
 
     character.nameTagWidth = $('.pt-name-tag').width()
     character.menu = addCharacterMenu(character, data)
-    character.iframe = addIframe(character)
+    character.iframe = addIframe(character, data)
     character.role = 'character' //associate purpose for all meshes
     character.hasPointer = true
     character.hasMenu = true
@@ -478,7 +478,11 @@ function addIframe(character, data) {
 
   iframe.character = character
   iframe.attr('frameborder', 0)
+  iframe.attr('data-name', data.name)
+  iframe.attr('data-is-me', character.isMe)
+  iframe.attr('data-id', data._id) 
   iframe.addClass('pt-iframe pt')
+
   iframe.on('mousedown touchstart', function(e) {
     e.stopPropagation()
   })
