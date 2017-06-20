@@ -378,14 +378,14 @@ function addMainMenu(mesh, data) {
   $('body').append(menu)
   menu.html(html)
 
-  menu.find('.pt-menu-hide-pt').on('mousedown touchstart', closePt)
+  menu.find('.pt-menu-hide-pt').on('mouseup touchend', closePt)
   menu.find('.pt-menu-zoom').on('mouseup touchend', zoomPt)
   menu.find('.pt-menu-item').on('mouseup touchend', openIframe)
   menu.find('.pt-return-home').on('mouseup touchend', returnHome)
-  menu.on('mousedown mouseup touchstart touchend', function(e) {
+  menu.on('mouseup touchend', function(e) {
     e.stopPropagation()
   })
-  menu.find('div').not('.pt-menu-zoom').on('mousedown touchstart', function(e) {
+  menu.find('div').not('.pt-menu-zoom').on('mouseup touchend', function(e) {
     triggerKeyUp()
   })
   console.log('ADDMAIN MENU')
@@ -586,7 +586,7 @@ function openIframe(e) {
   var id = $(target).closest('ul').data('id')
   var src = 'http://localhost:8080/' + role
   var iframe = characters[id].iframe
-  
+
   iframe.data('role', role)
   iframe.attr('src', src)
 
@@ -595,6 +595,16 @@ function openIframe(e) {
 
 }
 
+function updateIframePositions(){
+
+  for (var character in characters){
+
+    var isShown = characters[character].iframe.isShown
+    if (isShown) positionIframe(characters[character].iframe)
+    
+  }
+
+}
 function positionIframe(iframe) {
 
   var _mesh = iframe.character
@@ -611,13 +621,31 @@ function positionIframe(iframe) {
 }
 
 function hideIframe(iframe) {
-  if (iframe) iframe.hide()
-  else $('.pt-iframe').hide()
+  if (iframe) {
+    iframe.hide()
+    iframe.isShown = false
+  } else {
+
+    $('.pt-iframe').hide()
+    $('.pt-iframe').each(function(iframe) {
+      iframe.isShown = false
+    })
+
+  }
 }
 
 function showIframe(iframe) {
-  if (iframe) iframe.show()
-  else $('.pt-iframe').show()
+  if (iframe) {
+    iframe.show()
+    iframe.isShown = true
+  } else {
+
+    $('.pt-iframe').show()
+    $('.pt-iframe').each(function(index, iframe) {
+      iframe.isShown = true
+    })
+
+  }
 }
 
 
@@ -664,8 +692,6 @@ function hidePointer() {
 var isMouseDown = false
 
 function onMouseDown() {
-  closeIframe()
-  hideMenu()
   isMouseDown = true
 }
 
@@ -674,6 +700,8 @@ function onMouseDown() {
 
 
 function onMouseUp() {
+  closeIframe()
+  hideMenu()
   isMouseDown = false
 }
 

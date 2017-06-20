@@ -448,21 +448,21 @@ function addCharacterMenu(character, data) {
   menu.html(html)
 
 
-  menu.find('.pt-menu-hide').on('mousedown touchstart',function() {
+  menu.find('.pt-menu-hide').on('mouseup touchend',function() {
     character.nameTag.remove()
     character.menu.remove()
     sceneCharacters.remove(character)
   })
 
-  menu.find('.pt-menu-hide-pt').on('mousedown touchstart', closePt)
-  menu.find('.pt-menu-zoom').on('mousedown touchstart', zoomPt)
-  menu.find('.pt-menu-item').on('mousedown touchstart', openIframe)
-  menu.find('.pt-return-home').on('mousedown touchstart', returnHome)
-  menu.on('mousedown touchstart', function(e) {
+  menu.find('.pt-menu-hide-pt').on('mouseup touchend', closePt)
+  menu.find('.pt-menu-zoom').on('mouseup touchend', zoomPt)
+  menu.find('.pt-menu-item').on('mouseup touchend', openIframe)
+  menu.find('.pt-return-home').on('mouseup touchend', returnHome)
+  menu.on('mouseup touchend', function(e) {
     e.stopPropagation()
   })
 
-  menu.find('div').not('.pt-menu-zoom').on('mousedown touchstart', hideMenu)
+  menu.find('div').not('.pt-menu-zoom').on('mouseup touchend', hideMenu)
 
   return menu
 

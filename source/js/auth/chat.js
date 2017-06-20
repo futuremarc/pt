@@ -3,28 +3,27 @@ $(document).ready(function() {
   var messages = [],
     messageList = $('ul')
 
-    function checkAddUsers(){
-      return window.myCharacter.data
-    }
+  function checkAddUsers() {
+    return window.myCharacter.data
+  }
 
-    function isMe(){
-      return (window.myCharacter.data.name === window.name)
-    }
+  function isMe() {
+    return (window.myCharacter.data.name === window.friend)
+  }
 
   function addUsers() {
 
+    window.friend = window.frameElement.getAttribute('data-name');
     if (isMe()) return
 
-    window.name = window.frameElement.getAttribute('data-name');
-  
     var html = $('#pt-name-tag').html()
-    $('#pt-name-tag').html(name + ', ' + html)
+    $('#pt-name-tag').html(friend + ', ' + html)
   }
 
 
-  function initChat() {
-      if (checkAddUsers()) addUsers()
-  else setTimeout(initChat, 500)
+  function initChat() { //wait for data from main.js ... TODO: please use events instead
+    if (checkAddUsers()) addUsers()
+    else setTimeout(initChat, 100)
 
   }
 
