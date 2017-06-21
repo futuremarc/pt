@@ -66,18 +66,24 @@ db.on('open', () => {
 
 var subscriptions = require('models/subscription/init')()
 
+var webMainRoutes = require('routes/web/main')();
 var authRoutes = require('routes/auth/routes')(passport)
 var apiAuthRoutes = require('routes/api/auth')(passport)
 var apiUserRoutes = require('routes/api/user')()
-var webMainRoutes = require('routes/web/main')();
+var apiRoomRoutes = require('routes/api/room')()
+var apiMessageRoutes = require('routes/api/message')()
+var apiPostRoutes = require('routes/api/post')()
+
 
 app.use('/', webMainRoutes);
 app.use('/', authRoutes)
 app.use('/api', apiAuthRoutes)
 app.use('/api', apiUserRoutes)
+app.use('/api', apiRoomRoutes)
+app.use('/api', apiMessageRoutes)
+app.use('/api', apiPostRoutes)
 
 var mainSockets = require('sockets/main/sockets')(io)
-var mobileSockets = require('sockets/mobile/sockets')(io)
 
 var server = http.listen(8080, function() {
   console.log('listening on', this.address().port)

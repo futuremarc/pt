@@ -78,7 +78,7 @@ function createCharacter(data, cB) {
     character.role = 'character' //associate purpose for all meshes
     character.hasPointer = true
     character.hasMenu = true
-    character.hasCard = true
+    character.hasIframe = true
     character.data = data
     character.mixer = new THREE.AnimationMixer(character);
     character.actions = {};
@@ -482,6 +482,7 @@ function addIframe(character, data) {
   iframe.attr('data-is-me', character.isMe)
   iframe.attr('data-id', data._id) 
   iframe.addClass('pt-iframe pt')
+  iframe.isMinimized = false
 
   iframe.on('mousedown touchstart', function(e) {
     e.stopPropagation()

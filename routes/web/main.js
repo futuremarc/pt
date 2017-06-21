@@ -121,11 +121,11 @@ module.exports = function() {
 
   })
 
-  router.get('/chat', function(req, res, next) {
+  router.get('/room', function(req, res, next) {
 
     if (!req.user) return res.render('auth/login.pug')
       
-    res.render('auth/chat.pug', {
+    res.render('auth/room.pug', {
       loggedIn: true,
       userName: req.user.name,
       userId: req.user._id

@@ -1,37 +1,63 @@
 $(document).ready(function() {
 
-  var messages = [],
-    messageList = $('ul')
+  var messages = []
 
-  function checkAddUsers() {
-    return window.myCharacter.data
-  }
-
-  function isMe() {
-    return (window.myCharacter.data.name === window.friend)
-  }
-
-  function addUsers() {
-
-    window.friend = window.frameElement.getAttribute('data-name');
-    if (isMe()) return
-
-    var html = $('#pt-name-tag').html()
-    $('#pt-name-tag').html(friend + ', ' + html)
-  }
+  function createInterface(room) {
 
 
-  function initChat() { //wait for data from main.js ... TODO: please use events instead
-    if (checkAddUsers()) addUsers()
-    else setTimeout(initChat, 100)
+    var html = Templates.extension.addRoom(room)
+
+    var container = $('#pt-room-container')
+    container.append(html)
+
+    $('#pt-room-input').focus()
+    $('#pt-room-form').on('submit', onFormSubmit)
+
+    window.messageList = $('ul')
 
   }
+
+    function initChat() {
+
+    getRoomData.then(function(room) {
+
+      createInterface(room)
+      addCachedMsgsToDom(room)
+
+    })
+
+  }
+
+   var getRoomData = new Promise(function(resolve, reject) {
+
+    $.ajax({
+      method: 'GET',
+      url: '/api/rooms',
+      success: function(data) {
+        console.log(data)
+
+        if (data.status === 'success') {
+
+          var room = data.data[0]
+
+          resolve(room);
+
+        }
+      },
+      error: function(err) {
+        console.log(err)
+        reject(err);
+      }
+    })
+
+  });
+
 
   function onFormSubmit(e) {
 
     e.preventDefault();
 
-    var message = $('#pt-chat-input').val();
+    var message = $('#pt-room-input').val();
     if (!message) return
 
     var user = myCharacter.data
@@ -43,12 +69,15 @@ $(document).ready(function() {
     }
 
     createMessage(data)
+    postMessage()
 
-    $('#pt-chat-input').val('');
+    $('#pt-room-input').val('');
 
   }
 
   function createMessage(data) {
+
+    console.log('createMessage', data)
 
     var message = data.message
     var outgoing = data.outgoing
@@ -93,16 +122,23 @@ $(document).ready(function() {
 
     messageList.append(li)
     scrollChatToBottom()
-    $('#pt-chat-input').focus()
+    $('#pt-room-input').focus()
 
 
   }
 
+    function addCachedMsgsToDom(messages) {
+
+    messages.forEach(function(data) {
+      createMessage(data)
+    })
+
+  }
 
 
   function scrollChatToBottom() {
     var container = $('#pt-messages-container')[0]
-    container.scrollTop = container.scrollHeight; //scroll to bottom of chat
+    container.scrollTop = container.scrollHeight; //scroll to bottom of room
   }
 
 
@@ -111,7 +147,7 @@ $(document).ready(function() {
   }
 
 
-  $('#pt-chat-form').on('submit', onFormSubmit)
+
   initChat()
 
 

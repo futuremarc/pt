@@ -3,22 +3,23 @@ var Schema = mongoose.Schema
 
 var postSchema = new Schema({
 
+  //expires: 60 * 60 * 24,
   createdAt: {
     type: Date,
-    expires: 60 * 60 * 24,
     default: Date.now
-  }
+  },
 
   type: String,
   title: String,
-  content: String,
+  url: String,
   thumbnail: String,
+  timestamp: Number,
 
   isLive: {
     type: Boolean,
     default: false
   },
-
+  
   favorites: [{
     type: Schema.Types.ObjectId,
     ref: 'User'

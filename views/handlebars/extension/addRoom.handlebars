@@ -1,0 +1,33 @@
+
+
+<div class="pt-room-header"  data-name='{{title}}' data-id='{{_id}}' data-user='{{user._id}}'>
+  <div class="row">
+    <div class="pt-room-users col-xs-4">{{viewers}}</div>
+    <div class="pt-room-title col-xs-4">{{title}}</div>
+
+    <div class="pt-minimize-close col-xs-4">
+
+      <span class="pt-minimize-room"  data-id='{{_id}}' data-is-minimized=false data-user='{{user._id}}' >
+        <img src="/icons/core/minus.svg"/>
+      </span>
+      <span class="pt-close-room"  data-id='{{_id}}' data-user='{{user._id}}' >
+      <img src="/icons/core/x.svg"/>
+      </span>
+    </div>
+  </div>
+</div>
+<div class="pt-room-body">
+  <div id="pt-iframe-container"><iframe frameborder="0"></iframe></div>
+  <div id="pt-messages-container">
+    <ul class="list-unstyled"></ul>
+  </div>
+  <div id="pt-form-container">
+    <form class="form-inline" id="pt-room-form">
+      <div class="form-group">
+        <div class="input-group"><input class="form-control" type="text" id="pt-room-input" autocomplete="off" placeholder="Send a message..." />
+          <div class="input-group-addon"><button class="btn btn-custom-room" type="submit"><span>Send</span></button></div>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>

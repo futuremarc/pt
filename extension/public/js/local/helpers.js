@@ -58,7 +58,7 @@ isMobile = detectMobileOrTablet()
 
 if (!isExtension && !isIframe) {
 
-  var socket = io('http://localhost:5050', {
+  var socket = io('https://passti.me', {
     'path': '/socket',
     'forceNew': true
   })
@@ -469,7 +469,7 @@ function getFriendInfo(idOrName, cB) {
 
   $.ajax({
     method: 'GET',
-    url: 'http://localhost:8080/api/users/' + idOrName,
+    url: 'https://passti.me/api/users/' + idOrName,
     success: function(data) {
       console.log(data)
 
@@ -584,27 +584,30 @@ function openIframe(e) {
   var isMe = $(target).closest('ul').data('is-me')
   var name = $(target).closest('ul').data('name')
   var id = $(target).closest('ul').data('id')
-  var src = 'http://localhost:8080/' + role
+  var src = 'https://passti.me/' + role
   var iframe = characters[id].iframe
+  var previousSrc = $(iframe).attr('src')
 
   iframe.data('role', role)
-  iframe.attr('src', src)
+
+  if (previousSrc !== src) iframe.attr('src', src)
 
   positionIframe(iframe)
   showIframe(iframe)
 
 }
 
-function updateIframePositions(){
+function updateIframePositions() {
 
-  for (var character in characters){
+  for (var character in characters) {
 
     var isShown = characters[character].iframe.isShown
     if (isShown) positionIframe(characters[character].iframe)
-    
+
   }
 
 }
+
 function positionIframe(iframe) {
 
   var _mesh = iframe.character
@@ -620,19 +623,47 @@ function positionIframe(iframe) {
   iframe.css('bottom', y * menu_y_offset)
 }
 
-function hideIframe(iframe) {
-  if (iframe) {
-    iframe.hide()
-    iframe.isShown = false
-  } else {
 
-    $('.pt-iframe').hide()
-    $('.pt-iframe').each(function(iframe) {
-      iframe.isShown = false
-    })
+
+var iframe_minimize_height = '20px'
+var iframe_maximize_height = '375px'
+
+function minimizeIframe(e, iframe, isMaximize) {
+
+  console.log('E',e)
+
+  if (!iframe) {
+    var target = e.currentTarget
+    var id = $(target).data('id')
+    var userId = $(target).data('user')
+    var iframe = characters[userId].iframe
+  }
+  console.log(iframe, iframe.isMinimized)
+
+  if (!iframe.isMinimized) {
+
+    iframe[0].style.setProperty("height", iframe_minimize_height, "important") //override important style for height
+    iframe.isMinimized = true
+    $(iframe).contents().find('.pt-room-body').hide()
+    $(iframe).contents().find('body').removeClass('hover-show-header')
+    $(iframe).contents().find('.pt-minimize-room').data('is-minimized', true)
+    $(iframe).contents().find('.pt-minimize-room').find('img').attr('src', 'icons/core/plus.svg')
+
+  } else if (iframe.isMinimized || isMaximize){
+
+    iframe[0].style.setProperty("height", iframe_maximize_height, "important") //override important style for height
+    iframe.isMinimized = false
+
+    $(iframe).contents().find('.pt-room-body').show()
+    $(iframe).contents().find('body').addClass('hover-show-header')
+    $(iframe).contents().find('.pt-minimize-room').data('is-minimized', false)
+    $(iframe).contents().find('.pt-minimize-room').find('img').attr('src', 'icons/core/minus.svg')
 
   }
+
+
 }
+
 
 function showIframe(iframe) {
   if (iframe) {
@@ -700,7 +731,6 @@ function onMouseDown() {
 
 
 function onMouseUp() {
-  closeIframe()
   hideMenu()
   isMouseDown = false
 }
@@ -708,16 +738,22 @@ function onMouseUp() {
 
 //
 
-var isIframeOpen = false
+function closeIframe(e) {
 
-function closeIframe() {
-  hideIframe()
-    //resetIframe()
-    //$('.pt-iframe').remove();
-  isIframeOpen = false
+  var target = e.currentTarget
+  var id = $(target).data('id')
+  var userId = $(target).data('user')
+  var iframe = characters[userId].iframe
+
+  $(iframe).contents().find('.pt-room-body').show()
+  minimizeIframe(false, iframe, true)
+  iframe.isShown = false
+  iframe.hide();
+
 }
 
 function resetIframe(iframe) {
+
   if (iframe) iframe.attr('src', '')
   else $('.pt-iframe').attr('src', '')
 }
@@ -728,8 +764,6 @@ var main_menu_x_off = 8
 var main_menu_y_off = 5
 
 function showMenu(_mesh) {
-
-  if (isIframeOpen) return
 
   hideMenu()
 

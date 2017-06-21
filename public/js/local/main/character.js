@@ -78,7 +78,7 @@ function createCharacter(data, cB) {
     character.role = 'character' //associate purpose for all meshes
     character.hasPointer = true
     character.hasMenu = true
-    character.hasCard = true
+    character.hasIframe = true
     character.data = data
     character.mixer = new THREE.AnimationMixer(character);
     character.actions = {};
@@ -292,7 +292,7 @@ function updateCharacter(request, data, cB, isRecursiveCall) {
 
       $.ajax({
         method: 'PUT',
-        url: 'http://localhost:8080/api/users/' + name,
+        url: 'https://passti.me/api/users/' + name,
         data: data,
         success: function(data) {
           console.log(data)
@@ -349,7 +349,7 @@ function updateCharacter(request, data, cB, isRecursiveCall) {
 
       $.ajax({
         method: 'GET',
-        url: 'http://localhost:8080/api/users/' + name,
+        url: 'https://passti.me/api/users/' + name,
         success: function(data) {
           console.log(data)
 
@@ -482,6 +482,7 @@ function addIframe(character, data) {
   iframe.attr('data-is-me', character.isMe)
   iframe.attr('data-id', data._id) 
   iframe.addClass('pt-iframe pt')
+  iframe.isMinimized = false
 
   iframe.on('mousedown touchstart', function(e) {
     e.stopPropagation()

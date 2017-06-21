@@ -1,10 +1,11 @@
 .pt-info-tag{
-	top:5px;
+	top:0px;
 	right:5px;
 	position:absolute;
-	font-size:14px;
+	font-size:11px;
 	text-align:right;
 	padding: 1px 3px;
+	display:none;
 }
 
 
@@ -188,8 +189,8 @@
 .pt-iframe{
 	position: fixed !important;
 	display:none;
-	width: 250px !important;
-	height: 350px !important;
+	width: 275px !important;
+	height: 375px !important;
 
 	@media(max-width: 668px){
 		width: 85% !important;
