@@ -630,8 +630,6 @@ var iframe_maximize_height = '375px'
 
 function minimizeIframe(e, iframe, isMaximize) {
 
-  console.log('E',e)
-
   if (!iframe) {
     var target = e.currentTarget
     var id = $(target).data('id')
@@ -640,9 +638,11 @@ function minimizeIframe(e, iframe, isMaximize) {
   }
   console.log(iframe, iframe.isMinimized)
 
-  if (!iframe.isMinimized) {
+  if (!iframe.isMinimized && !isMaximize) {
 
     iframe[0].style.setProperty("height", iframe_minimize_height, "important") //override important style for height
+    iframe[0].style.setProperty("width", "130px", "important") //override important style for height
+    
     iframe.isMinimized = true
     $(iframe).contents().find('.pt-room-body').hide()
     $(iframe).contents().find('body').removeClass('hover-show-header')
@@ -652,6 +652,8 @@ function minimizeIframe(e, iframe, isMaximize) {
   } else if (iframe.isMinimized || isMaximize){
 
     iframe[0].style.setProperty("height", iframe_maximize_height, "important") //override important style for height
+    iframe[0].style.setProperty("width", "275px", "important") //override important style for height
+    
     iframe.isMinimized = false
 
     $(iframe).contents().find('.pt-room-body').show()

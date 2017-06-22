@@ -25,11 +25,11 @@ function createMyCharacter(data) {
       if (isRegistered()) {
         addLiveCharacters()
         emitJoinMsg()
-      } 
+      }
 
       animate()
 
-        if (isHomePage && scene.visible) $('.pt-menu-suggestions').click() //show default card... isHome defined in auth/home.js
+      if (isHomePage && scene.visible) $('.pt-menu-suggestions').click() //show default card... isHome defined in auth/home.js
 
     })
 
@@ -65,8 +65,8 @@ function createCharacter(data, cB) {
     if (isMe) name = '&#x25BC;'
 
     var nameTagElt = '<div class="pt-name-tag">' + name + '</div>'
-    
-    character.nameTag = $('<div class="pt-name-tag-con pt">' + nameTagElt  + '</div>')
+
+    character.nameTag = $('<div class="pt-name-tag-con pt">' + nameTagElt + '</div>')
 
     var nameTag = character.nameTag
 
@@ -440,15 +440,15 @@ function addCharacterMenu(character, data) {
   var isMe = character.isMe
   var html = Templates.extension.addMenu({
     isMe: isMe,
-    isExtension:true,
+    isExtension: true,
     data: data
   })
 
-  $('body').append(menu)
+  $('body').prepend(menu)
   menu.html(html)
 
 
-  menu.find('.pt-menu-hide').on('mouseup touchend',function() {
+  menu.find('.pt-menu-hide').on('mouseup touchend', function() {
     character.nameTag.remove()
     character.menu.remove()
     sceneCharacters.remove(character)
@@ -480,16 +480,20 @@ function addIframe(character, data) {
   iframe.attr('frameborder', 0)
   iframe.attr('data-name', data.name)
   iframe.attr('data-is-me', character.isMe)
-  iframe.attr('data-id', data._id) 
+  iframe.attr('data-id', data._id)
   iframe.addClass('pt-iframe pt')
   iframe.isMinimized = false
 
-  iframe.on('mousedown touchstart', function(e) {
-    e.stopPropagation()
+  iframe.on('load',function() {
+
+    $(this).contents().find("body").on('mouseup touchend', function(e) {
+      window.isMouseDown = false
+      console.log('isMouseDown up', isMouseDown)
+    })
   })
 
-  
-  $('body').append(iframe)
+
+  $('body').prepend(iframe)
 
   return iframe
 }

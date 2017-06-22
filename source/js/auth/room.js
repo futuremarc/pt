@@ -17,6 +17,18 @@ $(document).ready(function() {
     $('#pt-room-form').on('submit', onFormSubmit)
     $('#pt-room-input').focus()
 
+
+    $('#pt-messages-container').on('mousedown', function(e){
+      
+      $('#pt-messages-container').css('pointer-events','none')
+      setTimeout(function(){
+        $('#pt-messages-container').css('pointer-events','auto')
+        console.log('set back events')
+      },100)
+    })
+
+
+
     window.messageList = $('ul')
 
   }
