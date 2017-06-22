@@ -4,6 +4,8 @@ $(document).ready(function() {
 
   function createInterface(room) {
 
+    console.log('ADD ROOM!!!', room)
+
 
     var html = Templates.extension.addRoom(room)
 
@@ -50,13 +52,13 @@ $(document).ready(function() {
 
     $.ajax({
       method: 'GET',
-      url: '/api/rooms',
+      url: '/api/rooms/users/' + _id,
       success: function(data) {
         console.log(data)
 
         if (data.status === 'success') {
 
-          var room = data.data[0]
+          var room = data.data
 
           resolve(room);
 

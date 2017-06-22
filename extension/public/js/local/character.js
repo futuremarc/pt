@@ -478,11 +478,14 @@ function addIframe(character, data) {
 
   iframe.character = character
   iframe.attr('frameborder', 0)
-  iframe.attr('data-name', data.name)
+  iframe.attr('data-title', data.room.title)
   iframe.attr('data-is-me', character.isMe)
-  iframe.attr('data-id', data._id)
+  iframe.attr('data-id', data.room._id)
+  iframe.attr('data-user', data._id)
   iframe.addClass('pt-iframe pt')
   iframe.isMinimized = false
+
+  console.log(iframe,'!!@')
 
   iframe.on('load',function() {
 
