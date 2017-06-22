@@ -9,7 +9,7 @@ $(document).ready(function(){
 
     $.ajax({
       method: 'GET',
-      url: 'http://localhost:8080/api/users/' + name,
+      url: 'https://passti.me/api/users/' + name,
       success: function(data) {
         console.log(data)
 
