@@ -21,11 +21,8 @@ function signInFromExtension(data) {
         errorMessage.html(data.message + ' <strong>' + data.data.name + '</strong>!')
 
         setTimeout(function() {
-          location.href = document.referrer
+          location.href = '/'
         }, 0)
-
-        console.log('REFERER',document.referrer)
-
 
       } else {
         errorMessage.html(data.message)

@@ -9,7 +9,7 @@ $(document).ready(function() {
 
     var container = $('#pt-room-container')
     container.append(html)
-    $('body').addClass('hover-show-header')
+    //$('body').addClass('hover-show-header')
 
     //event listeners
     $('.pt-close-room').click(parent.closeIframe)
@@ -19,8 +19,9 @@ $(document).ready(function() {
 
 
     $('#pt-messages-container').on('mousedown', function(e){
-      
+
       $('#pt-messages-container').css('pointer-events','none')
+
       setTimeout(function(){
         $('#pt-messages-container').css('pointer-events','auto')
         console.log('set back events')

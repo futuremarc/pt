@@ -625,7 +625,7 @@ function positionIframe(iframe) {
 
 
 
-var iframe_minimize_height = '20px'
+var iframe_minimize_height = '22px'
 var iframe_maximize_height = '375px'
 
 function minimizeIframe(e, iframe, isMaximize) {
@@ -640,26 +640,26 @@ function minimizeIframe(e, iframe, isMaximize) {
 
   if (!iframe.isMinimized && !isMaximize) {
 
-    iframe[0].style.setProperty("height", iframe_minimize_height, "important") //override important style for height
-    iframe[0].style.setProperty("width", "130px", "important") //override important style for height
+    iframe.get(0).style.setProperty("height", iframe_minimize_height, "important") //override important style for height
+    iframe.get(0).style.setProperty("width", "130px", "important") //override important style for height
     
     iframe.isMinimized = true
     $(iframe).contents().find('.pt-room-body').hide()
-    $(iframe).contents().find('body').removeClass('hover-show-header')
+   // $(iframe).contents().find('body').removeClass('hover-show-header')
     $(iframe).contents().find('.pt-minimize-room').data('is-minimized', true)
-    $(iframe).contents().find('.pt-minimize-room').find('img').attr('src', 'icons/core/plus.svg')
+    $(iframe).contents().find('.pt-minimize-room').find('img').attr('src', 'icons/core/plus-white.svg')
 
   } else if (iframe.isMinimized || isMaximize){
 
-    iframe[0].style.setProperty("height", iframe_maximize_height, "important") //override important style for height
-    iframe[0].style.setProperty("width", "275px", "important") //override important style for height
+    iframe.get(0).style.setProperty("height", iframe_maximize_height, "important") //override important style for height
+    iframe.get(0).style.setProperty("width", "275px", "important") //override important style for height
     
     iframe.isMinimized = false
 
     $(iframe).contents().find('.pt-room-body').show()
-    $(iframe).contents().find('body').addClass('hover-show-header')
+    //$(iframe).contents().find('body').addClass('hover-show-header')
     $(iframe).contents().find('.pt-minimize-room').data('is-minimized', false)
-    $(iframe).contents().find('.pt-minimize-room').find('img').attr('src', 'icons/core/minus.svg')
+    $(iframe).contents().find('.pt-minimize-room').find('img').attr('src', 'icons/core/minus-white.svg')
 
   }
 
@@ -749,6 +749,7 @@ function closeIframe(e) {
 
   $(iframe).contents().find('.pt-room-body').show()
   minimizeIframe(false, iframe, true)
+  resetIframe(iframe)
   iframe.isShown = false
   iframe.hide();
 
