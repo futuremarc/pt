@@ -9,8 +9,12 @@ module.exports = function(passport) {
 		}, function(req, name, password, done) {
 
 			User.findOne({
-          name: name
-        }).exec(function(err, user) {
+				$or: [{
+					email: req.body.email
+				}, {
+					name: req.body.name
+				}]
+			}).exec(function(err, user) {
 					if (err) {
 						return done(err)
 					}

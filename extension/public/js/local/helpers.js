@@ -745,7 +745,11 @@ function closeIframe(e) {
   var target = e.currentTarget
   var id = $(target).data('id')
   var userId = $(target).data('user')
+
+  console.log(id,userId)
   var iframe = characters[userId].iframe
+
+  console.log(iframe)
 
   $(iframe).contents().find('.pt-room-body').show()
   minimizeIframe(false, iframe, true)

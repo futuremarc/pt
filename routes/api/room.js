@@ -109,5 +109,42 @@ module.exports = function(passport) {
       })
   })
 
+
+  router.route('/rooms/users/:id')
+
+  .get(function(req, res) {
+
+    var id = req.params.id
+
+    Room
+      .findOne({
+        user: id
+      })
+      .populate({
+        path: 'messages',
+        model: 'Message',
+        populate: {
+          path: 'user',
+          model: 'User'
+        }
+      })
+      .exec(function(err, doc) {
+
+        if (err) return res.json({
+          status: "error",
+          data: null,
+          message: "Couldn't find room"
+        })
+
+        return res.json({
+          status: "success",
+          data: doc,
+          message: "Found room"
+        })
+
+      })
+  })
+
+
   return router
 }

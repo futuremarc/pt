@@ -22,6 +22,11 @@ var userSchema = new Schema({
     type: String
   },
 
+  room: {
+    type: Schema.Types.ObjectId,
+    ref: 'Room'
+  },
+
   texture: String,
   model: Object,
   action: String,
@@ -123,6 +128,40 @@ userSchema.methods.comparePassword = function(candidatePassword, cb) {
     cb(null, isMatch);
   });
 }
+
+
+
+
+userSchema.methods.createRoom = function(next) {
+
+  var Room = require('models/room/model')
+
+  var userId = this._id
+  var title = this.name
+
+  var self = this
+
+  var room = Room({
+    user: userId,
+    title: title
+  })
+
+  room.save(function(err, result) {
+
+    if (err) {
+      console.log('cant save room on new user', err)
+      next(err)
+    } else {
+      console.log('saved room on new user', result)
+      self.room = result._id
+
+      next()
+    }
+
+  })
+
+}
+
 
 
 module.exports = userSchema;

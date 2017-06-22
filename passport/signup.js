@@ -4,15 +4,28 @@ var User = require('models/user/model')
 module.exports = function(passport) {
 
 	passport.use('signup', new LocalStrategy({
+
 		passReqToCallback: true,
 		usernameField: 'name',
 
 	}, function(req, email, password, done) {
 
 		findOrCreateUser = function() {
-			
+
+			if (!req.body.name) {
+				return done(null, false, {
+					message: 'Please choose a name'
+				})
+			} else if (!req.body.email) {
+				return done(null, false, {
+					message: 'Please enter your email'
+				})
+			}
+
 			User.findOne({
-				$or: [ {
+				$or: [{
+					email: req.body.email
+				}, {
 					name: req.body.name
 				}]
 			}, function(err, user) {
@@ -29,16 +42,10 @@ module.exports = function(passport) {
 				} else {
 					var newUser = new User();
 
-					//validate name, email and pw
-					if (!req.body.name) {
-						return done(null, false, {
-							message: 'Please choose a name'
-						})
-					} 
 
 					for (var prop in req.body) {
-            newUser[prop] = req.body[prop]
-          }
+						newUser[prop] = req.body[prop]
+					}
 
 					if (validatePassword(req.body.password)) {
 
@@ -48,10 +55,17 @@ module.exports = function(passport) {
 								throw err
 							}
 
-							console.log("User saved successfully")
-							return done(null, newUser, {
-								message: 'Welcome'
+							console.log("User saved successfully"),
+								console.log('CREATE ROOM', newUser.createRoom)
+
+							newUser.createRoom(function() {
+
+								return done(null, newUser, {
+									message: 'Welcome'
+								})
+
 							})
+
 						})
 					} else {
 						return done(null, false, {
@@ -64,7 +78,7 @@ module.exports = function(passport) {
 		};
 
 		process.nextTick(findOrCreateUser);
-		
+
 	}))
 
 }

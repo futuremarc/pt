@@ -345,7 +345,7 @@ module.exports = function(passport) {
           populate: {
             path: 'subscriptions'
           }
-        })
+        }).populate('room')
         .exec(function(err, user) {
 
           if (err) {
