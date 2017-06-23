@@ -1,5 +1,6 @@
 var clients = {}
 var User = require('models/user/model')
+var Message = require('models/message/model')
 
 
 module.exports = function(io) {
@@ -110,10 +111,25 @@ module.exports = function(io) {
     socket.on('chat', function(data) {
 
       var room = data.room
+      var user = data.user._id
+      var content = data.content
+
       socket.broadcast.to(room).emit('chat', data)
 
-    });
+      //save msg to DB
+      var message = Message({
+        user: user,
+        content: content,
+        room: room
+      })
 
+      message.save(function(err, doc) {
+        if (err) {
+          console.log('cant save message', err)
+        }
+      })
+
+    });
 
 
     var events = ['action', 'post']

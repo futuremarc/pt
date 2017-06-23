@@ -4,6 +4,8 @@ var router = express.Router();
 var Room = require('models/room/model')
 var User = require('models/user/model')
 var async = require('async')
+var ObjectId = require('mongoose').Types.ObjectId;
+
 
 if (app.get('env') === 'development') {
   var config = require('config/config-dev');
@@ -80,10 +82,22 @@ module.exports = function(passport) {
 
   .get(function(req, res) {
 
-    var id = req.params.id
+    
+      var id = req.params.id;
 
-    Room
-      .findById(id)
+      var $or = [{
+        title: id
+      }];
+
+      if (ObjectId.isValid(id)) {
+        $or.push({
+          _id: ObjectId(id)
+        });
+      }
+
+    Room.findOne({
+          $or: $or
+        })
       .populate({
         path: 'messages',
         model: 'Message',

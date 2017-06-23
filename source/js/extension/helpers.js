@@ -194,6 +194,7 @@ function emitJoinMsg() {
       '_id': info._id,
       'position': info.position,
       'rotation': info.rotation,
+      'room': info.room,
       'name': info.name,
       'action': 'awake',
       'liveFriends': info.liveFriends
@@ -217,6 +218,7 @@ function emitLeaveMsg() {
       '_id': info._id,
       'position': info.position,
       'rotation': info.rotation,
+      'room': info.room,
       'name': info.name,
       'liveFriends': info.liveFriends
     }
@@ -600,6 +602,8 @@ function openIframe(e) {
 function updateIframePositions() {
 
   for (var character in characters) {
+
+    if (!characters[character].hasIframe) return
 
     var isShown = characters[character].iframe.isShown
     if (isShown) positionIframe(characters[character].iframe)

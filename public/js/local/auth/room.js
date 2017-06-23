@@ -37,7 +37,7 @@ $(document).ready(function() {
 
   function initSockets() {
 
-    window.socket = io('http://localhost:5050', {
+     if (!socket) window.socket = io('http://localhost:5050', {
       'path': '/socket',
       'forceNew': true
     })
@@ -81,11 +81,13 @@ $(document).ready(function() {
 
   var getRoomData = new Promise(function(resolve, reject) {
 
-    var id = window.frameElement.getAttribute('data-user');
+    if (isIframe) var id = window.frameElement.getAttribute('data-id');
+    else if (roomId) var id = roomId
+    else var id = _id
 
     $.ajax({
       method: 'GET',
-      url: '/api/rooms/users/' + id,
+      url: '/api/rooms/' + id,
       success: function(data) {
         console.log(data)
 
@@ -133,7 +135,7 @@ $(document).ready(function() {
       'type': 'window'
     }
 
-    socket.emit('chat',message)
+    socket.emit('chat', message)
 
     // window.parent.postMessage(data, '*')
 

@@ -72,14 +72,14 @@ function createCharacter(data, cB) {
 
     $('body').prepend(nameTag)
 
+    character.data = data
+
+    console.log('CHARACTER DATA', character.data)
     character.nameTagWidth = $('.pt-name-tag').width()
     character.menu = addCharacterMenu(character, data)
-    character.iframe = addIframe(character, data)
+    character.iframe = addIframe(character)
     character.role = 'character' //associate purpose for all meshes
-    character.hasPointer = true
-    character.hasMenu = true
-    character.hasIframe = true
-    character.data = data
+
     character.mixer = new THREE.AnimationMixer(character);
     character.actions = {};
     character.animations = ['idle', 'walk', 'run', 'hello', 'pose'];
@@ -208,6 +208,10 @@ function createCharacter(data, cB) {
 
     sceneCharacters.add(character)
     characters[data._id] = character
+
+    character.hasPointer = true
+    character.hasMenu = true
+    character.hasIframe = true
 
     if (cB) cB(character)
 
@@ -418,11 +422,13 @@ function getCharacterInfo() {
   var rot = getCharacterRot()
   var id = myCharacter.data._id
   var name = myCharacter.data.name
+  var room = myCharacter.data.room
 
   var info = {
     'liveFriends': liveFriends,
     'position': pos,
     'rotation': rot,
+    'room': room,
     'name': name,
     '_id': id
   }
@@ -474,28 +480,29 @@ function addCharacterMenu(character, data) {
 
 var iframes = {}
 
-function addIframe(character, data) {
+function addIframe(character) {
+
+  console.log('addIFrame',character.data.name, character)
 
   var iframe = $(document.createElement('iframe'))
   iframe.character = character
 
-
-  console.log('addIframe', data)
-
   iframe.attr('frameborder', 0)
   iframe.attr('data-is-me', character.isMe)
-  iframe.attr('data-user', data._id)
+
   iframe.addClass('pt-iframe pt')
   iframe.isMinimized = false
 
-  iframe.on('load',function() {
+  iframe.on('load', function() {
 
     $(this).contents().find("body").on('mouseup touchend', function(e) {
       window.isMouseDown = false
     })
   })
 
-  iframes[data.room._id] = iframe
+    iframe.attr('data-user', character.data._id)
+    iframe.attr('data-id', character.data.room._id)
+    iframes[character.data.room._id] = iframe
 
   $('body').prepend(iframe)
 

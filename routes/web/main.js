@@ -1,6 +1,7 @@
 var express = require('express');
 var router = express.Router();
 var User = require('models/user/model')
+var Room = require('models/room/model')
 var Subscription = require('models/subscription/model')
 
 module.exports = function() {
@@ -17,7 +18,7 @@ module.exports = function() {
 
 
     //JUST TO PREVENT REFRESH - REMOVE FOR PRODUCTION
-    
+
     // User.findOne({name:'marc'}, function(err, user) {
     //  if (err) {
     //    throw err
@@ -97,10 +98,10 @@ module.exports = function() {
 
   })
 
-   router.get('/suggestions', function(req, res, next) {
+  router.get('/suggestions', function(req, res, next) {
 
     if (!req.user) return res.render('auth/login.pug')
-      
+
     res.render('auth/suggestions.pug', {
       loggedIn: true,
       userName: req.user.name,
@@ -109,10 +110,10 @@ module.exports = function() {
 
   })
 
-   router.get('/feedback', function(req, res, next) {
+  router.get('/feedback', function(req, res, next) {
 
     if (!req.user) return res.render('auth/feedback.pug')
-      
+
     res.render('auth/feedback.pug', {
       loggedIn: true,
       userName: req.user.name,
@@ -121,10 +122,33 @@ module.exports = function() {
 
   })
 
+  router.get('/room/:title', function(req, res, next) {
+
+    if (!req.user) return res.render('auth/login.pug')
+
+    var title = req.params.title
+
+    Room.findOne({
+      title: title
+    }).exec(function(err, doc) {
+
+      var roomId = doc.id
+
+      res.render('auth/room.pug', {
+        loggedIn: true,
+        userName: req.user.name,
+        userId: req.user._id,
+        roomId: roomId
+      })
+    })
+
+
+  })
+
   router.get('/room', function(req, res, next) {
 
     if (!req.user) return res.render('auth/login.pug')
-      
+
     res.render('auth/room.pug', {
       loggedIn: true,
       userName: req.user.name,
