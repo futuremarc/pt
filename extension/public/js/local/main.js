@@ -15,7 +15,7 @@ function animateBike() {
 function animate() {
 
   animateMyChar()
-  //animateBike()
+    //animateBike()
   if (isRegistered()) animateOtherChars()
   requestAnimationFrame(animate);
   render();
@@ -320,9 +320,9 @@ function onWindowMsg(data) {
 
   var source = data.source
   var origin = data.origin
-  var iframe = $('.pt-iframe')[0]
   var event = data.data.event
   var action = data.data.action
+  var message = data.data.message
   var friendId = data.data.friendId
 
   if (event === 'signup' || event === 'login' || event === 'refreshPage') {
@@ -420,6 +420,44 @@ function onWindowMsg(data) {
       emitMsg(data)
 
       break;
+
+    case 'chat':
+
+      data = {
+        '_id': user._id,
+        'event': event,
+        'message': message,
+        'type': 'socket'
+      }
+
+      emitMsg(data)
+
+      break;
+
+    case 'joinRoom':
+
+      data = {
+        '_id': user._id,
+        'event': event,
+        'type': 'socket'
+      }
+
+      emitMsg(data)
+
+      break;
+
+    case 'leaveRoom':
+
+      data = {
+        '_id': user._id,
+        'event': event,
+        'type': 'socket'
+      }
+
+      emitMsg(data)
+
+      break;
+
 
     case 'request':
 

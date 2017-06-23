@@ -27,6 +27,7 @@ module.exports = function(passport) {
             friendRequests: userId
           }
         })
+        .populate('room')
         .exec(function(err, user) {
           if (err) {
             return res.json({
@@ -57,6 +58,7 @@ module.exports = function(passport) {
         }, {
           new: true
         })
+        .populate('room')
         .exec(function(err, user) {
           if (err) {
             return res.json({
@@ -86,7 +88,7 @@ module.exports = function(passport) {
             }, {
               new: true
             })
-            .populate('friendRequests')
+            .populate('friendRequests room')
             .exec(function(err, user) {
 
               if (err) {
@@ -170,6 +172,7 @@ module.exports = function(passport) {
       }, {
         new: true
       })
+      .populate('room')
       .exec(function(err, user) {
         if (err) {
           return res.json({
@@ -254,6 +257,7 @@ module.exports = function(passport) {
         .findOne({
           $or: $or
         })
+        .populate('room')
         .exec(function(err, user) {
           if (err || !user) { //incase remote character wants to login to local
             return res.json({
@@ -409,6 +413,7 @@ module.exports = function(passport) {
           'isLive': true
         })
         .select('-password')
+        .populate('room')
         .exec(function(err, result) {
 
           if (err) return res.json({
@@ -432,6 +437,7 @@ module.exports = function(passport) {
       User
         .find({})
         .select('-password')
+        .populate('room')
         .exec(function(err, result) {
 
           if (err) return res.json({
@@ -456,6 +462,7 @@ module.exports = function(passport) {
       User
         .find({})
         .select('-password')
+        .populate('room')
         .exec(function(err, result) {
 
           if (err) return res.json({

@@ -472,29 +472,30 @@ function addCharacterMenu(character, data) {
 //
 
 
+var iframes = {}
+
 function addIframe(character, data) {
 
   var iframe = $(document.createElement('iframe'))
-
   iframe.character = character
+
+
+  console.log('addIframe', data)
+
   iframe.attr('frameborder', 0)
-  iframe.attr('data-title', data.room.title)
   iframe.attr('data-is-me', character.isMe)
-  iframe.attr('data-id', data.room._id)
   iframe.attr('data-user', data._id)
   iframe.addClass('pt-iframe pt')
   iframe.isMinimized = false
-
-  console.log(iframe,'!!@')
 
   iframe.on('load',function() {
 
     $(this).contents().find("body").on('mouseup touchend', function(e) {
       window.isMouseDown = false
-      console.log('isMouseDown up', isMouseDown)
     })
   })
 
+  iframes[data.room._id] = iframe
 
   $('body').prepend(iframe)
 

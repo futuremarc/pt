@@ -4,33 +4,17 @@ $(document).ready(function() {
 
   function createInterface(room) {
 
-    console.log('ADD ROOM!!!', room)
-
-
     var html = Templates.extension.addRoom(room)
 
     var container = $('#pt-room-container')
     container.append(html)
-    //$('body').addClass('hover-show-header')
+      //$('body').addClass('hover-show-header')
 
     //event listeners
     $('.pt-close-room').click(parent.closeIframe)
     $('.pt-minimize-room').click(parent.minimizeIframe)
     $('#pt-room-form').on('submit', onFormSubmit)
     $('#pt-room-input').focus()
-
-
-    $('#pt-messages-container').on('mousedown', function(e){
-
-      $('#pt-messages-container').css('pointer-events','none')
-
-      setTimeout(function(){
-        $('#pt-messages-container').css('pointer-events','auto')
-        console.log('set back events')
-      },100)
-    })
-
-
 
     window.messageList = $('ul')
 
@@ -40,25 +24,75 @@ $(document).ready(function() {
 
     getRoomData.then(function(room) {
 
-      console.log(room)
       createInterface(room)
-      addCachedMsgsToDom(room.messages)
+      addCachedMessages(room.messages)
+      initSockets()
+      window.addEventListener('beforeunload', leaveRoom)
+
 
     })
 
   }
 
+
+  function initSockets() {
+
+    window.socket = io('http://localhost:5050', {
+      'path': '/socket',
+      'forceNew': true
+    })
+
+    joinRoom()
+
+    socket.on('chat', createMessage)
+    socket.on('disconnect', leaveRoom)
+    socket.on('reconnect', joinRoom)
+
+  }
+
+  function joinRoom() {
+
+    var data = {
+      'event': 'joinRoom',
+      'room': roomId,
+      'type': 'socket'
+    }
+
+    // window.parent.postMessage(data, '*')
+
+    socket.emit('joinRoom', data)
+  }
+
+  function leaveRoom() {
+
+
+    var data = {
+      'event': 'leaveRoom',
+      'room': roomId,
+      'type': 'socket'
+    }
+
+    // window.parent.postMessage(data, '*')
+
+    socket.emit('leaveRoom', data)
+
+  }
+
+
   var getRoomData = new Promise(function(resolve, reject) {
+
+    var id = window.frameElement.getAttribute('data-user');
 
     $.ajax({
       method: 'GET',
-      url: '/api/rooms/users/' + _id,
+      url: '/api/rooms/users/' + id,
       success: function(data) {
         console.log(data)
 
         if (data.status === 'success') {
 
           var room = data.data
+          window.roomId = room._id
 
           resolve(room);
 
@@ -77,32 +111,45 @@ $(document).ready(function() {
 
     e.preventDefault();
 
-    var message = $('#pt-room-input').val();
-    if (!message) return
+    var content = $('#pt-room-input').val();
+    if (!content) return
 
-    var user = myCharacter.data
+    var user = {
+      _id: myCharacter.data._id,
+      name: myCharacter.data.name
+    }
 
-    var data = {
-      content: message,
-      outgoing: true,
+    var message = {
+      content: content,
+      room: roomId, //global
       user: user
     }
 
-    createMessage(data)
-      //postMessage()
+    createMessage(message)
+
+    var data = {
+      'event': 'chat',
+      'message': message,
+      'type': 'window'
+    }
+
+    socket.emit('chat',message)
+
+    // window.parent.postMessage(data, '*')
 
     $('#pt-room-input').val('');
 
   }
 
-  function createMessage(data) {
+  function createMessage(message) {
 
-    console.log('createMessage', data)
+    console.log('createMessage', message)
 
-    var message = data.content
-    var outgoing = data.outgoing
-    var id = data.user._id
-    var name = data.user.name
+    var content = message.content
+    var id = message.user._id
+    var name = message.user.name
+
+    var outgoing = (id === _id) //_id is global from pug
 
     var outwrapper1 = $(document.createElement('div'));
     outwrapper1.addClass('out-wrapper')
@@ -137,7 +184,7 @@ $(document).ready(function() {
     }
 
 
-    div.text(message);
+    div.text(content);
     nick.text(name);
 
     messageList.append(li)
@@ -147,10 +194,10 @@ $(document).ready(function() {
 
   }
 
-  function addCachedMsgsToDom(messages) {
+  function addCachedMessages(messages) {
 
-    messages.forEach(function(data) {
-      createMessage(data)
+    messages.forEach(function(message) {
+      createMessage(message)
     })
 
   }

@@ -636,7 +636,6 @@ function minimizeIframe(e, iframe, isMaximize) {
     var userId = $(target).data('user')
     var iframe = characters[userId].iframe
   }
-  console.log(iframe, iframe.isMinimized)
 
   if (!iframe.isMinimized && !isMaximize) {
 
@@ -668,6 +667,7 @@ function minimizeIframe(e, iframe, isMaximize) {
 
 
 function showIframe(iframe) {
+
   if (iframe) {
     iframe.show()
     iframe.isShown = true
@@ -734,6 +734,7 @@ function onMouseDown() {
 
 function onMouseUp() {
   hideMenu()
+  $('.pt-iframe').hide() //remove this later
   isMouseDown = false
 }
 
@@ -746,10 +747,7 @@ function closeIframe(e) {
   var id = $(target).data('id')
   var userId = $(target).data('user')
 
-  console.log(id,userId)
   var iframe = characters[userId].iframe
-
-  console.log(iframe)
 
   $(iframe).contents().find('.pt-room-body').show()
   minimizeIframe(false, iframe, true)
