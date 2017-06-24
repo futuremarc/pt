@@ -21,7 +21,7 @@ module.exports = function(passport) {
 
       Room
         .find({})
-        .populate('user')
+        .populate('user posts')
         .populate({
           path: 'messages',
           populate: {
@@ -105,7 +105,7 @@ module.exports = function(passport) {
           path: 'user',
           model: 'User'
         }
-      })
+      }).populate('posts')
       .exec(function(err, doc) {
 
         if (err) return res.json({
@@ -141,7 +141,7 @@ module.exports = function(passport) {
           path: 'user',
           model: 'User'
         }
-      })
+      }).populate('posts')
       .exec(function(err, doc) {
 
         if (err) return res.json({

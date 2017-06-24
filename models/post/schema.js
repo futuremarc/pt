@@ -11,15 +11,18 @@ var postSchema = new Schema({
 
   type: String,
   title: String,
-  url: String,
+  url: {
+    type: String,
+    required: true
+  },
   thumbnail: String,
   timestamp: Number,
 
   isLive: {
     type: Boolean,
-    default: false
+    default: true
   },
-  
+
   favorites: [{
     type: Schema.Types.ObjectId,
     ref: 'User'
@@ -32,10 +35,37 @@ var postSchema = new Schema({
 
   user: {
     type: Schema.Types.ObjectId,
-    ref: 'User'
+    ref: 'User',
+    required: true
+  },
+
+  room: {
+    type: Schema.Types.ObjectId,
+    ref: 'Room',
+    required: true
   },
 
 })
+
+postSchema.methods.saveInRoom = function(roomId, cb){
+  var self = this
+
+  var Room = require('models/room/model')
+
+  return Room.findByIdAndUpdate(roomId,{
+    $push: {
+      posts: self._id
+    }
+  }, cb)
+}
+
+
+
+
+postSchema.pre('save', function(next) { // called before every document saved
+  this.saveInRoom(this.room, next)
+})
+
 
 
 module.exports = postSchema

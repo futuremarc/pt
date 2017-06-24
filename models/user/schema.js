@@ -132,7 +132,7 @@ userSchema.methods.comparePassword = function(candidatePassword, cb) {
 
 
 
-userSchema.methods.createRoom = function(next) {
+userSchema.methods.createDefaultRoom = function(next) {
 
   var Room = require('models/room/model')
 

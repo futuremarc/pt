@@ -55,10 +55,14 @@ module.exports = function(passport) {
 								throw err
 							}
 
-							console.log("User saved successfully"),
-								console.log('CREATE ROOM', newUser.createRoom)
+							console.log("User saved successfully")
 
-							newUser.createRoom(function() {
+										return done(null, newUser, {
+									message: 'Welcome'
+								})
+
+
+							newUser.createDefaultRoom(function() {
 
 								return done(null, newUser, {
 									message: 'Welcome'
