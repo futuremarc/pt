@@ -58,7 +58,7 @@ isMobile = detectMobileOrTablet()
 
 if (!isExtension && !isIframe) {
 
-  var socket = io('http://localhost:5050', {
+  var socket = io('https://passti.me', {
     'path': '/socket',
     'forceNew': true
   })
@@ -471,7 +471,7 @@ function getFriendInfo(idOrName, cB) {
 
   $.ajax({
     method: 'GET',
-    url: 'http://localhost:8080/api/users/' + idOrName,
+    url: 'https://passti.me/api/users/' + idOrName,
     success: function(data) {
       console.log(data)
 
@@ -586,7 +586,7 @@ function openIframe(e) {
   var isMe = $(target).closest('ul').data('is-me')
   var name = $(target).closest('ul').data('name')
   var id = $(target).closest('ul').data('id')
-  var src = 'http://localhost:8080/' + role
+  var src = 'https://passti.me/' + role
   var iframe = characters[id].iframe
   var previousSrc = $(iframe).attr('src')
 
@@ -730,6 +730,7 @@ var isMouseDown = false
 
 function onMouseDown() {
   isMouseDown = true
+  if (hoveredMesh && !isMenuDisplayed) showMenu(hoveredMesh)
 }
 
 
@@ -786,7 +787,6 @@ function showMenu(_mesh) {
     var x = pos.x
 
   }
-
 
 
   var data = new THREE.Vector3(0, _mesh.height, 0)

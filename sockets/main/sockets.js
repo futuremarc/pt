@@ -122,7 +122,7 @@ module.exports = function(io) {
         content: content,
         room: room
       })
-
+      
       message.save(function(err, doc) {
         if (err) {
           console.log('cant save message', err)

@@ -158,7 +158,6 @@ module.exports = function() {
   })
 
 
-
   router.get('/forgot', function(req, res) {
     res.render('auth/forgot.pug', {
       user: req.user,

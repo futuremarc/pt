@@ -730,6 +730,7 @@ var isMouseDown = false
 
 function onMouseDown() {
   isMouseDown = true
+  if (hoveredMesh && !isMenuDisplayed) showMenu(hoveredMesh)
 }
 
 
@@ -786,7 +787,6 @@ function showMenu(_mesh) {
     var x = pos.x
 
   }
-
 
 
   var data = new THREE.Vector3(0, _mesh.height, 0)

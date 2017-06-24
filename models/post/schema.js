@@ -60,8 +60,6 @@ postSchema.methods.saveInRoom = function(roomId, cb){
 }
 
 
-
-
 postSchema.pre('save', function(next) { // called before every document saved
   this.saveInRoom(this.room, next)
 })
