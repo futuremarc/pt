@@ -730,7 +730,6 @@ var isMouseDown = false
 
 function onMouseDown() {
   isMouseDown = true
-  if (hoveredMesh && !isMenuDisplayed) showMenu(hoveredMesh)
 }
 
 
@@ -740,6 +739,7 @@ function onMouseDown() {
 function onMouseUp() {
   hideMenu()
   $('.pt-iframe').hide() //remove this later
+  if (hoveredMesh && !isMenuDisplayed) showMenu(hoveredMesh)
   isMouseDown = false
 }
 

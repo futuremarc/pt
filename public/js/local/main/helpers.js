@@ -58,7 +58,7 @@ isMobile = detectMobileOrTablet()
 
 if (!isExtension && !isIframe) {
 
-  var socket = io('https://passti.me', {
+  var socket = io('http://localhost:5050', {
     'path': '/socket',
     'forceNew': true
   })
@@ -471,7 +471,7 @@ function getFriendInfo(idOrName, cB) {
 
   $.ajax({
     method: 'GET',
-    url: 'https://passti.me/api/users/' + idOrName,
+    url: 'http://localhost:8080/api/users/' + idOrName,
     success: function(data) {
       console.log(data)
 
@@ -586,7 +586,7 @@ function openIframe(e) {
   var isMe = $(target).closest('ul').data('is-me')
   var name = $(target).closest('ul').data('name')
   var id = $(target).closest('ul').data('id')
-  var src = 'https://passti.me/' + role
+  var src = 'http://localhost:8080/' + role
   var iframe = characters[id].iframe
   var previousSrc = $(iframe).attr('src')
 
@@ -730,7 +730,6 @@ var isMouseDown = false
 
 function onMouseDown() {
   isMouseDown = true
-  if (hoveredMesh && !isMenuDisplayed) showMenu(hoveredMesh)
 }
 
 
@@ -740,6 +739,7 @@ function onMouseDown() {
 function onMouseUp() {
   hideMenu()
   $('.pt-iframe').hide() //remove this later
+  if (hoveredMesh && !isMenuDisplayed) showMenu(hoveredMesh)
   isMouseDown = false
 }
 
