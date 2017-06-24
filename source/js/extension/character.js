@@ -501,6 +501,15 @@ function addIframe(character) {
   if ((!character.data && character.isMe)) return iframe
 
   iframe.attr('data-user', character.data._id)
+
+  if (!character.data.room) {
+
+    character.data.room = {
+      _id: '0',
+      name: 'detault'
+    }
+  }
+
   iframe.attr('data-id', character.data.room._id)
   iframes[character.data.room._id] = iframe
 
