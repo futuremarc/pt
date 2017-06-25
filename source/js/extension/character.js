@@ -506,7 +506,7 @@ function addIframe(character) {
 
     character.data.room = {
       _id: '0',
-      name: 'detault'
+      name: 'default'
     }
   }
 

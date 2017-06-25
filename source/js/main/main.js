@@ -66,7 +66,7 @@ $('document').ready(function() {
 
       $.ajax({
         method: 'POST',
-        url: 'http://localhost:8080/api/users/friend/' + friendId, // + event
+        url: 'http://localhost:8080/api/users/friends/' + friendId, // + event
         data: data,
         success: function(data) {
           console.log(data)
@@ -112,7 +112,7 @@ $('document').ready(function() {
 
       $.ajax({
         method: 'POST',
-        url: 'http://localhost:8080/api/users/friend/' + friendId, // + event
+        url: 'http://localhost:8080/api/users/friends/' + friendId, // + event
         data: data,
         success: function(data) {
           console.log(data)
@@ -166,7 +166,7 @@ $('document').ready(function() {
 
       $.ajax({
         method: method,
-        url: 'http://localhost:8080/api/users/friend/' + friendId, //+ event,
+        url: 'http://localhost:8080/api/users/friends/' + friendId, //+ event,
         data: data,
         success: function(data) {
           console.log(data)

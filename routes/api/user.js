@@ -2,6 +2,7 @@ var express = require('express');
 var app = express()
 var router = express.Router();
 var User = require('models/user/model')
+var Friend = require('models/friend/model')
 var async = require('async')
 var mongoose = require('mongoose')
 var ObjectId = require('mongoose').Types.ObjectId;
@@ -15,7 +16,7 @@ if (app.get('env') === 'development') {
 
 module.exports = function(passport) {
 
-  router.route('/users/friend/:id')
+  router.route('/users/friends/:id')
     .post(function(req, res) {
 
       var friendId = req.params.id
@@ -28,6 +29,7 @@ module.exports = function(passport) {
           }
         })
         .populate('room')
+        .populate('friends')
         .exec(function(err, user) {
           if (err) {
             return res.json({
@@ -58,8 +60,9 @@ module.exports = function(passport) {
         }, {
           new: true
         })
-        .populate('room')
+        .populate('room friends')
         .exec(function(err, user) {
+
           if (err) {
             return res.json({
               status: "error",
@@ -76,171 +79,85 @@ module.exports = function(passport) {
             })
           }
 
-          var data = {
-            user: friendId
-          }
+          var friend = Friend({
+            user: friendId,
+            friendOf: userId
+          })
 
-          User
-            .findByIdAndUpdate(userId, {
-              $addToSet: {
-                friends: data
-              }
-            }, {
-              new: true
-            })
-            .populate('friendRequests room')
-            .exec(function(err, user) {
+          friend.save(function(err, result) {
+
+            friend.saveOtherFriend(function(err) {
 
               if (err) {
                 return res.json({
                   status: "error",
-                  data: err,
-                  message: "Error adding friend to user"
+                  data: null,
+                  message: "Couldn't create friend"
                 })
-              }
-
-              var data = {
-                user: userId
               }
 
               User
-                .findByIdAndUpdate(friendId, {
-                  $addToSet: {
-                    friends: data
-                  }
-                }, {
-                  new: true
-                })
-                .exec(function(err, friend) {
+                .findById(userId)
+                .populate('friendRequests room friends')
+                .exec(function(err, user) {
+
                   if (err) {
                     return res.json({
                       status: "error",
                       data: err,
-                      message: "Error adding user to friend"
+                      message: "Error adding friend to user"
                     })
                   }
 
-                  var friends = []
-
-                  async.forEach(user.friends, function(friend, callback) {
-                    User.populate(
-                      friend, {
-                        path: 'user'
-                      },
-                      function(err, friend) {
-
-                        friends.push(friend)
-                        if (err) throw err;
-                        callback();
-                      }
-                    );
-                  }, function(err) {
-
-                    if (err) return res.json({
-                      status: "error",
-                      data: null,
-                      message: "Couldn't find friends of user"
-                    })
-
-                    user.friends = friends
-
-                    return res.json({
-                      status: "success",
-                      data: user,
-                      message: "Added friend"
-                    })
-
+                  return res.json({
+                    status: "success",
+                    data: user,
+                    message: "Added friend"
                   })
+
                 })
 
             })
 
+
+          })
         })
     })
 
   .delete(function(req, res) {
+
     var friendId = req.params.id
     var userId = req.body.userId
 
-    User
-      .findByIdAndUpdate(userId, {
-        $pull: {
-          friends: {
-            user: friendId
-          }
-        }
-      }, {
-        new: true
-      })
-      .populate('room')
-      .exec(function(err, user) {
-        if (err) {
-          return res.json({
-            status: "error",
-            data: null,
-            message: "Error removing friend from user"
-          })
-        }
+    Friend
+      .findOne({
+        'user': friendId,
+        'friendOf': userId
+      }).exec(function(err, doc) {
 
-        var friends = []
-
-        async.forEach(user.friends, function(friend, callback) {
-          User.populate(
-            friend, {
-              path: "user"
-            },
-            function(err, friend) {
-
-              friends.push(friend)
-              if (err) throw err;
-              callback();
+        User.findById(userId)
+          .populate('room friends')
+          .exec(function(err, user) {
+            if (err) {
+              return res.json({
+                status: "error",
+                data: null,
+                message: "Error removing friend from user"
+              })
             }
-          );
-        }, function(err) {
-
-          if (err) return res.json({
-            status: "error",
-            data: null,
-            message: "Couldn't find friends of user"
+            return res.json({
+              status: "success",
+              data: user,
+              message: "Removed friend"
+            })
           })
 
-          user.friends = friends
-
-          return res.json({
-            status: "success",
-            data: user,
-            message: "Removed friend"
-          })
-
-        })
-
       })
-
-    User
-      .findByIdAndUpdate(friendId, {
-        $pull: {
-          friends: {
-            user: userId
-          }
-        }
-      })
-      .exec(function(err, user) {
-        if (err) {
-          return res.json({
-            status: "error",
-            data: null,
-            message: "Error removing user from friend"
-          })
-        }
-
-      })
-
 
   })
 
   router.route('/users/:id')
     .put(function(req, res) {
-
 
       var id = req.params.id;
       var $or = [{
@@ -258,6 +175,7 @@ module.exports = function(passport) {
           $or: $or
         })
         .populate('room')
+        .populate('friends')
         .exec(function(err, user) {
           if (err || !user) { //incase remote character wants to login to local
             return res.json({
@@ -286,43 +204,18 @@ module.exports = function(passport) {
             if (!user) {
               return res.json({
                 status: "not found",
-                data: user,
+                data: null,
                 message: "Couldn't find user"
               })
 
             }
 
-            var friends = []
-
-            async.forEach(user.friends, function(friend, callback) {
-              User.populate(
-                friend, {
-                  path: "user"
-                },
-                function(err, friend) {
-
-                  friends.push(friend)
-                  if (err) throw err;
-                  callback();
-                }
-              );
-            }, function(err) {
-
-              if (err) return res.json({
-                status: "error",
-                data: null,
-                message: "Couldn't find friends of user"
-              })
-
-              user.friends = friends
-
-              return res.json({
-                status: "success",
-                data: user,
-                message: "Updated user"
-              })
-
+            return res.json({
+              status: "success",
+              data: user,
+              message: "Updated user"
             })
+
           })
         })
     })
@@ -347,9 +240,10 @@ module.exports = function(passport) {
           path: 'friendRequests',
           select: 'name',
           populate: {
-            path: 'subscriptions'
+            path: 'friends',
+            select:'user friendOf'
           }
-        }).populate('room')
+        })
         .exec(function(err, user) {
 
           if (err) {
@@ -363,44 +257,17 @@ module.exports = function(passport) {
           if (!user) {
             return res.json({
               status: "not found",
-              data: user,
+              data: null,
               message: "Couldn't find user"
             })
 
           }
 
-          var friends = []
-
-          async.forEach(user.friends, function(friend, callback) {
-            User.populate(
-              friend, {
-                path: "user"
-              },
-              function(err, friend) {
-
-                friends.push(friend)
-                if (err) throw err;
-                callback();
-              }
-            );
-          }, function(err) {
-
-            if (err) return res.json({
-              status: "error",
-              data: null,
-              message: "Couldn't find friends of user"
-            })
-
-            user.friends = friends
-
-            return res.json({
-              status: "success",
-              data: user,
-              message: "Found user"
-            })
-
+          return res.json({
+            status: "success",
+            data: user,
+            message: "Found user"
           })
-
 
         })
     })
@@ -454,6 +321,32 @@ module.exports = function(passport) {
 
         })
     })
+
+
+  router.route('/users/:name/friends/live')
+    .get(function(req, res) {
+
+      var name = req.params.name
+
+      Friend
+        .find({})
+        .exec(function(err, result) {
+
+          if (err) return res.json({
+            status: "error",
+            data: err,
+            message: "Couldn't find live friends"
+          })
+
+          return res.json({
+            status: "success",
+            data: result,
+            message: "Found live friends"
+          })
+
+        })
+    })
+
 
 
   router.route('/users')

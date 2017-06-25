@@ -44,22 +44,10 @@ var userSchema = new Schema({
   },
 
   friends: [{
-    user: {
-      type: Schema.Types.ObjectId,
-      ref: 'User'
-    },
-
-    subscriptions: [{
-      type: Schema.Types.ObjectId,
-      ref: 'Subscription'
-    }],
-
-    isCloseFriend: {
-      type: Boolean,
-      default: true
-    }
+    type: Schema.Types.ObjectId,
+    ref: 'Friend'
   }],
-
+  
   friendRequests: [{
     type: Schema.Types.ObjectId,
     ref: 'User',

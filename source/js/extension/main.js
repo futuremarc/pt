@@ -597,6 +597,8 @@ function onBgMessage(data, sender, sendResponse) {
     case 'idleState':
       onIdleState(data)
       break;
+    case 'tabActivity':
+      //onTabActivity(data)
     case 'socket':
       onSocket(data)
       break;
@@ -607,7 +609,7 @@ function onBgMessage(data, sender, sendResponse) {
 }
 
 var ptExists = ($('.pt').length > 0)
-var isIframe = window.parent !== window.self
+var isIframe = (window.parent !== window.self)
 
 if (isExtension && !ptExists) chrome.runtime.onMessage.addListener(onBgMessage);
 

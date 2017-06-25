@@ -3,7 +3,11 @@ var socketEvents = {
   'chat': function(data) {
 
   },
+
   'post': function(data) {
+    console.log('event post')
+  },
+  'endPost': function(data) {
 
   },
   'disconnect': function(data) {

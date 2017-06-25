@@ -128,7 +128,7 @@ function emitSocket(data) {
 
 function initSockets() {
 
-  var events = ['chat', 'post', 'action', 'join', 'leave', 'connect', 'reconnect', 'disconnect', 'friend', 'request']
+  var events = ['chat', 'post','endPost', 'action', 'join', 'leave', 'connect', 'reconnect', 'disconnect', 'friend', 'request']
 
   events.forEach(function(event) {
 
@@ -155,7 +155,9 @@ function initSockets() {
 
 function onSocket(data) {
   var event = data.event
-  socketEvents[event](data)
+
+  console.log('onSocket', event, data)
+  if (event) socketEvents[event](data)
 }
 
 
@@ -645,22 +647,22 @@ function minimizeIframe(e, iframe, isMaximize) {
 
     iframe.get(0).style.setProperty("height", iframe_minimize_height, "important") //override important style for height
     iframe.get(0).style.setProperty("width", "130px", "important") //override important style for height
-    
+
     iframe.isMinimized = true
     $(iframe).contents().find('.pt-room-body').hide()
-   // $(iframe).contents().find('body').removeClass('hover-show-header')
+      // $(iframe).contents().find('body').removeClass('hover-show-header')
     $(iframe).contents().find('.pt-minimize-room').data('is-minimized', true)
     $(iframe).contents().find('.pt-minimize-room').find('img').attr('src', 'icons/core/plus-white.svg')
 
-  } else if (iframe.isMinimized || isMaximize){
+  } else if (iframe.isMinimized || isMaximize) {
 
     iframe.get(0).style.setProperty("height", iframe_maximize_height, "important") //override important style for height
     iframe.get(0).style.setProperty("width", "275px", "important") //override important style for height
-    
+
     iframe.isMinimized = false
 
     $(iframe).contents().find('.pt-room-body').show()
-    //$(iframe).contents().find('body').addClass('hover-show-header')
+      //$(iframe).contents().find('body').addClass('hover-show-header')
     $(iframe).contents().find('.pt-minimize-room').data('is-minimized', false)
     $(iframe).contents().find('.pt-minimize-room').find('img').attr('src', 'icons/core/minus-white.svg')
 
@@ -685,6 +687,118 @@ function showIframe(iframe) {
   }
 }
 
+
+
+function isYoutubeOrSoundcloud(noisyTab) {
+
+  var url = noisyTab.url
+
+  if (url.indexOf('youtu') > -1) return 'youtube'
+  else if (url.indexOf('soundcloud') > -1) return 'soundcloud'
+
+  return false
+
+};
+
+function getYoutubeTimestamp() {
+
+  var videoElt = document.getElementsByClassName("html5-main-video")[0]
+  var timestamp = videoElt.currentTime; //in seconds
+
+  return timestamp
+}
+
+function getSoundcloudTimestamp() {
+
+  var timelineElt = $('.playbackTimeline__progressWrapper')
+  var timestamp = timelineElt.attr('aria-valuenow') / 1000 //in seconds
+
+  return timestamp
+
+}
+
+
+
+
+// var livePost = {}
+// var hasContentPosted = false
+// var hasContentEnded = false
+
+
+// function endLivePost(){
+
+//   console.log('endLivePost')
+
+//     var data = {
+//       event:'endPost',
+//       post: livePost,
+//       type:'socket'
+//     }
+
+//     livePost = {}
+//     hasContentEnded = true
+
+// }
+
+// function startLivePost(){
+
+//   console.log('startLivePost')
+
+//     var data = {
+//       event:'post',
+//       post: livePost,
+//       type:'socket'
+//     }
+
+//     emitMsg(data)
+//     hasContentPosted = true
+
+// }
+
+// function onTabActivity(data){
+
+//   console.log('onTabActivity', data)
+
+//   var noisyTabs = data.noisyTabs
+  
+//   var service = false
+
+//   if (noisyTabs.length > 0)  service = isYoutubeOrSoundcloud(noisyTabs[0])
+//   if (!service) return
+
+//   if (noisyTabs.length < 1 && !hasContentEnded)  endLivePost()
+
+//   else if (noisyTabs.length > 0 && hasContentPosted && livePost.url !== noisyTabs[0].url){
+
+//     endLivePost()
+//     //then
+    
+//     livePost = {
+//       tabId : noisyTabs[0].id,
+//       url: noisyTabs[0].url,
+//       title: noisyTabs[0].title,
+//       type: service
+//     }
+
+//     startLivePost(noisyTabs[0])
+
+//   }
+
+
+//    else if (noisyTabs.length > 0 && !hasContentPosted){
+
+//     livePost = {
+//       tabId : noisyTabs[0].id,
+//       url: noisyTabs[0].url,
+//       title: noisyTabs[0].title,
+//       type: service
+//     }
+
+//     startLivePost()
+
+//   }
+
+// }
 
 //
 

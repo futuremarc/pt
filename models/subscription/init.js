@@ -16,7 +16,7 @@ module.exports = function() {
     type: "music"
   })
 
-  subscriptions.push(sub)
+  //subscriptions.push(sub)
 
   var sub = new Subscription({
     title: "YouTube",
@@ -30,7 +30,7 @@ module.exports = function() {
     type: "article"
   })
 
-  subscriptions.push(sub)
+  //subscriptions.push(sub)
 
   var sub = new Subscription({
     title: "NY Times",

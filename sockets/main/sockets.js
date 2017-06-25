@@ -132,7 +132,7 @@ module.exports = function(io) {
     });
 
 
-    var events = ['action', 'post']
+    var events = ['action', 'post', 'endPost']
 
     events.forEach(function(event) {
 
