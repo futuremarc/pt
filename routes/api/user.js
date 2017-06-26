@@ -404,11 +404,11 @@ module.exports = function(passport) {
           async.forEach(user.friends, function(friend, callback) {
             User.populate(
               friend, {
-              path: 'user',
-              populate: {
-                path: 'room'
-              }
-            },
+                path: 'user',
+                populate: {
+                  path: 'room'
+                }
+              },
               function(err, friend) {
 
                 friends.push(friend)
@@ -463,10 +463,70 @@ module.exports = function(passport) {
     })
 
 
-  router.route('/users/:name/friends/live')
+  router.route('/users/:id/friends/live')
     .get(function(req, res) {
 
-      var name = req.params.name
+      var id = req.params.id;
+
+      var $or = [{
+        name: id
+      }];
+
+      if (ObjectId.isValid(id)) {
+        $or.push({
+          _id: ObjectId(id)
+        });
+      }
+
+      User
+        .findOne({
+          $or: $or
+        })
+        .select('-password')
+        .populate('room')
+        .exec(function(err, user) {
+
+          console.log('USERS!!!', user)
+
+          var friends = []
+
+          async.forEach(user.friends, function(friend, callback) {
+            User.populate(
+              friend, {
+                path: 'user',
+                populate: {
+                  path: 'room'
+                },
+                select: '-password'
+              },
+              function(err, friend) {
+
+                if (friend.user.isLive) friends.push(friend)
+                if (err) throw err;
+                callback();
+              }
+            );
+          }, function(err) {
+
+            if (err) return res.json({
+              status: "error",
+              data: null,
+              message: "Couldn't find live friends"
+            })
+
+            return res.json({
+              status: "success",
+              data: friends,
+              message: "Found live friends"
+            })
+
+          })
+
+
+
+        })
+
+
 
     })
 
