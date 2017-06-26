@@ -128,7 +128,7 @@ function emitSocket(data) {
 
 function initSockets() {
 
-  var events = ['chat', 'post','endPost', 'action', 'join', 'leave', 'connect', 'reconnect', 'disconnect', 'friend', 'request']
+  var events = ['chat', 'post', 'endPost', 'action', 'join', 'leave', 'connect', 'reconnect', 'disconnect', 'friend', 'request']
 
   events.forEach(function(event) {
 
@@ -155,8 +155,6 @@ function initSockets() {
 
 function onSocket(data) {
   var event = data.event
-
-  console.log('onSocket', event, data)
   if (event) socketEvents[event](data)
 }
 
@@ -188,21 +186,24 @@ function emitJoinMsg() {
 
   putCharacter(function() {
 
-    var info = getCharacterInfo()
+    getCharacterInfo(function(info) {
 
-    var data = {
-      'type': 'socket',
-      'event': 'join',
-      '_id': info._id,
-      'position': info.position,
-      'rotation': info.rotation,
-      'room': info.room,
-      'name': info.name,
-      'action': 'awake',
-      'liveFriends': info.liveFriends
-    }
+      var data = {
+        'type': 'socket',
+        'event': 'join',
+        '_id': info._id,
+        'position': info.position,
+        'rotation': info.rotation,
+        'room': info.room,
+        'name': info.name,
+        'action': 'awake',
+        'liveFriends': info.liveFriends
+      }
 
-    emitMsg(data)
+      emitMsg(data)
+
+    })
+
   })
 }
 
@@ -212,20 +213,24 @@ function emitLeaveMsg() {
   myCharacter.data.isLive = false
   putCharacter(function() {
 
-    var info = getCharacterInfo()
+    getCharacterInfo(function(info) {
 
-    var data = {
-      'type': 'socket',
-      'event': 'leave',
-      '_id': info._id,
-      'position': info.position,
-      'rotation': info.rotation,
-      'room': info.room,
-      'name': info.name,
-      'liveFriends': info.liveFriends
-    }
+      var data = {
+        'type': 'socket',
+        'event': 'leave',
+        '_id': info._id,
+        'position': info.position,
+        'rotation': info.rotation,
+        'room': info.room,
+        'name': info.name,
+        'liveFriends': info.liveFriends
+      }
 
-    emitMsg(data)
+      emitMsg(data)
+
+    })
+
+
   })
 }
 
@@ -336,7 +341,7 @@ function showNameTags() {
       if (x && y) user.nameTag.css(options)
       else hideNameTags()
 
-    } else {
+    } else if (user.nameTag) {
       user.nameTag.hide()
     }
   }
@@ -491,20 +496,50 @@ function getFriendInfo(idOrName, cB) {
 }
 
 
-
 //
 
+//pull info from server only if there is a callback, dont want to hit server everytime controls are let go
+function getLiveFriends(cB) {
 
-function getLiveFriends() {
+  if (cB) {
 
-  var liveFriends = {}
+    $.ajax({
+      method: 'GET',
+      url: 'http://localhost:8080/api/users/' + myCharacter.data._id + '/friends/live',
+      success: function(data) {
+        console.log(data)
 
-  myCharacter.data.friends.forEach(function(friend) {
+        var friends = data.data
+        var liveFriends = {}
 
-    var friend = friend.user
-    if (friend.isLive) liveFriends[friend._id] = friend._id
-  })
-  return liveFriends
+        //map live friends to an object based on _id
+        friends.forEach(function(friend) {
+          var user = friend.user
+          liveFriends[user._id] = user._id
+        })
+
+        console.log('getLiveFriends', liveFriends)
+
+        if (cB) return cB(liveFriends)
+
+        return liveFriends
+      },
+      error: function(err) {
+        console.log(err)
+      },
+    })
+  } else {
+
+    var liveFriends = {}
+
+    myCharacter.data.friends.forEach(function(friend) {
+
+      var friend = friend.user
+      if (friend.isLive) liveFriends[friend._id] = friend._id
+    })
+    return liveFriends
+
+  }
 }
 
 
@@ -549,16 +584,28 @@ function refreshMainMenu() {
 
 function addLiveCharacters() {
 
-  updateCharacter('getRemote', null, function(character) {
+  $.ajax({
+    method: 'GET',
+    url: 'http://localhost:8080/api/users/' + name + '/friends/live',
+    success: function(data) {
+      console.log(data)
 
-    console.log('addLiveCharacters', character, character.friends)
+      var friends = data.data
 
-    character.friends.forEach(function(friend) {
+      //map live friends to an object based on _id
+      friends.forEach(function(friend) {
+        var user = friend.user
+        createCharacter(user)
+      })
 
-      var friend = friend.user
-      if (friend.isLive) createCharacter(friend)
-    })
+      console.log('addLiveCharacters', friends)
+
+    },
+    error: function(err) {
+      console.log(err)
+    },
   })
+
 }
 
 
@@ -719,7 +766,6 @@ function getSoundcloudTimestamp() {
 
 
 
-
 // var livePost = {}
 // var hasContentPosted = false
 // var hasContentEnded = false
@@ -760,7 +806,7 @@ function getSoundcloudTimestamp() {
 //   console.log('onTabActivity', data)
 
 //   var noisyTabs = data.noisyTabs
-  
+
 //   var service = false
 
 //   if (noisyTabs.length > 0)  service = isYoutubeOrSoundcloud(noisyTabs[0])
@@ -772,7 +818,7 @@ function getSoundcloudTimestamp() {
 
 //     endLivePost()
 //     //then
-    
+
 //     livePost = {
 //       tabId : noisyTabs[0].id,
 //       url: noisyTabs[0].url,

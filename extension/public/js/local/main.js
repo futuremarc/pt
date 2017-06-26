@@ -348,13 +348,17 @@ function onWindowMsg(data) {
 
     })
   } else {
-    var info = getCharacterInfo()
-    var user = {
-      '_id': info._id,
-      'position': info.position,
-      'rotation': info.rotation,
-      'name': info.name
-    }
+    getCharacterInfo(function(info) {
+
+      var user = {
+        '_id': info._id,
+        'position': info.position,
+        'rotation': info.rotation,
+        'name': info.name
+      }
+
+    })
+
   }
 
   switch (event) {
@@ -556,18 +560,22 @@ function onIdleState(data) {
 
     if (isRegistered()) {
 
-      var info = getCharacterInfo()
-      var data = {
-        '_id': info._id,
-        'position': info.position,
-        'rotation': info.rotation,
-        'liveFriends': info.liveFriends,
-        'event': 'action',
-        'type': 'socket',
-        'action': state
-      }
+      getCharacterInfo(function(info) {
 
-      emitMsg(data)
+        var data = {
+          '_id': info._id,
+          'position': info.position,
+          'rotation': info.rotation,
+          'liveFriends': info.liveFriends,
+          'event': 'action',
+          'type': 'socket',
+          'action': state
+        }
+
+        emitMsg(data)
+
+      })
+
     }
 
 

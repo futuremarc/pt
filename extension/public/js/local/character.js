@@ -410,28 +410,56 @@ function putCharacter(cB) {
 //
 
 
-function getCharacterInfo() {
-
+function getCharacterInfo(cB) {
 
   if (!isRegistered()) return false
 
-  var liveFriends = getLiveFriends()
-  var pos = getCharacterPos()
-  var rot = getCharacterRot()
-  var id = myCharacter.data._id
-  var name = myCharacter.data.name
-  var room = myCharacter.data.room
+  if (!cB) {
 
-  var info = {
-    'liveFriends': liveFriends,
-    'position': pos,
-    'rotation': rot,
-    'room': room,
-    'name': name,
-    '_id': id
+    var pos = getCharacterPos()
+    var rot = getCharacterRot()
+    var id = myCharacter.data._id
+    var name = myCharacter.data.name
+    var room = myCharacter.data.room
+    var liveFriends = getLiveFriends()
+
+    var info = {
+      'liveFriends': liveFriends,
+      'position': pos,
+      'rotation': rot,
+      'room': room,
+      'name': name,
+      '_id': id
+    }
+
+    console.log('getCharacterInfo', info)
+    return info
+  } else {
+
+
+    getLiveFriends(function(liveFriends) {
+
+      var pos = getCharacterPos()
+      var rot = getCharacterRot()
+      var id = myCharacter.data._id
+      var name = myCharacter.data.name
+      var room = myCharacter.data.room
+
+      var info = {
+        'liveFriends': liveFriends,
+        'position': pos,
+        'rotation': rot,
+        'room': room,
+        'name': name,
+        '_id': id
+      }
+
+      return cB(info)
+
+    })
+
   }
 
-  return info
 }
 
 
@@ -510,7 +538,6 @@ function addIframe(character) {
     }
   }
 
-  console.log('CHAR DATA ON IFRAME', character.data)
   iframe.attr('data-id', character.data.room._id)
   iframes[character.data.room._id] = iframe
 

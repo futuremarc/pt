@@ -29,6 +29,7 @@ module.exports = function(passport) {
         })
         .populate('room')
         .exec(function(err, user) {
+
           if (err) {
             return res.json({
               status: "error",
@@ -36,6 +37,12 @@ module.exports = function(passport) {
               message: "Error requesting friend"
             })
           }
+
+          if (!user) return res.json({
+            status: "error",
+            data: null,
+            message: "Couldn't find user"
+          })
 
           return res.json({
             status: "success",
@@ -68,6 +75,12 @@ module.exports = function(passport) {
             })
           }
 
+          if (!user) return res.json({
+            status: "error",
+            data: null,
+            message: "Couldn't find user"
+          })
+
           if (action === 'reject') {
             return res.json({
               status: "success",
@@ -99,6 +112,12 @@ module.exports = function(passport) {
                 })
               }
 
+              if (!user) return res.json({
+                status: "error",
+                data: null,
+                message: "Couldn't find user"
+              })
+
               var data = {
                 user: userId
               }
@@ -119,6 +138,12 @@ module.exports = function(passport) {
                       message: "Error adding user to friend"
                     })
                   }
+
+                  if (!friend) return res.json({
+                    status: "error",
+                    data: null,
+                    message: "Couldn't find user"
+                  })
 
                   var friends = []
 
@@ -181,6 +206,12 @@ module.exports = function(passport) {
             message: "Error removing friend from user"
           })
         }
+
+        if (!user) return res.json({
+              status: "error",
+              data: null,
+              message: "Couldn't find user"
+            })
 
         var friends = []
 
@@ -271,7 +302,6 @@ module.exports = function(passport) {
   router.route('/users/:id')
     .put(function(req, res) {
 
-
       var id = req.params.id;
       var $or = [{
         name: id
@@ -289,13 +319,19 @@ module.exports = function(passport) {
         })
         .populate('room')
         .exec(function(err, user) {
-          if (err || !user) { //incase remote character wants to login to local
+          if (err) { //incase remote character wants to login to local
             return res.json({
               status: "error",
-              data: null,
+              data: err,
               message: "Error updating user"
             })
           }
+
+          if (!user) return res.json({
+              status: "error",
+              data: null,
+              message: "Couldn't find user"
+            })
 
           if (!req.body.subscriptions) req.body.subscriptions = [] //when empty array is passed over its lost for some reason
 
@@ -393,7 +429,7 @@ module.exports = function(passport) {
           if (!user) {
             return res.json({
               status: "not found",
-              data: user,
+              data: null,
               message: "Couldn't find user"
             })
 
@@ -486,7 +522,11 @@ module.exports = function(passport) {
         .populate('room')
         .exec(function(err, user) {
 
-          console.log('USERS!!!', user)
+          if (!user) return res.json({
+            status: "error",
+            data: null,
+            message: "Couldn't find user"
+          })
 
           var friends = []
 

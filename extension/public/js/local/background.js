@@ -3,11 +3,18 @@ var socket = io('http://localhost:5050', {
   'forceNew': true
 })
 
+
+SC.initialize({
+  client_id: 'bf0076a8fe054ea15003fb6fe36244cc'
+});
+
+
 var myCharacter = {}
 
 chrome.storage.sync.get('pt-user', function(data) {
 
   myCharacter = data['pt-user']
+  console.log('myCharacter', myCharacter)
 
 })
 
@@ -38,40 +45,48 @@ setInterval(function() {
 
     var noisyTabs = tabs;
 
-    var serviceType = null
+    var service = null
 
-    if (noisyTabs.length > 0) serviceType = isYoutubeOrSoundcloud(noisyTabs[0])
+    if (noisyTabs.length > 0) service = isYoutubeOrSoundcloud(noisyTabs[0])
+
+    var title = noisyTabs[0].title
 
     if (noisyTabs.length < 1 && !hasContentEnded) endLivePost()
 
-    else if (noisyTabs.length > 0 && serviceType && hasContentPosted && livePost.url !== noisyTabs[0].url) {
+    else if (noisyTabs.length > 0 && service && hasContentPosted && livePost.title !== noisyTabs[0].title) {
 
       endLivePost()
         //then
 
-      livePost = {
-        tabId: noisyTabs[0].id,
-        url: noisyTabs[0].url,
-        title: noisyTabs[0].title,
-        type: serviceType
-      }
+      getLivePostInfo(title, service, function(data) {
 
-      startLivePost()
+        livePost = {
+          tabId: noisyTabs[0].id,
+          url: data.url,
+          contentId: data.id.toString(),
+          title: title,
+          type: service
+        }
 
-    } else if (noisyTabs.length > 0 && serviceType && !hasContentPosted) {
+        startLivePost()
 
-      livePost = {
-        tabId: noisyTabs[0].id,
-        url: noisyTabs[0].url,
-        title: noisyTabs[0].title,
-        type: serviceType
-      }
+      })
 
-      startLivePost()
+    } else if (noisyTabs.length > 0 && service && !hasContentPosted) {
 
+       getLivePostInfo(title, service, function(data) {
+
+        livePost = {
+          tabId: noisyTabs[0].id,
+          url: data.url,
+          contentId: data.id.toString(),
+          title: title,
+          type: service
+        }
+
+        startLivePost()
+      })
     }
-
-
 
     chrome.tabs.query({
 
@@ -103,87 +118,131 @@ var hasContentEnded = false
 
 function endLivePost() {
 
-  var data = {
-    event: 'endPost',
-    post: livePost,
-    _id: myCharacter._id,
-    type: 'socket'
-  }
+  getLiveFriends(function(liveFriends) {
+
+    var data = {
+      event: 'endPost',
+      liveFriends: liveFriends,
+      post: livePost,
+      _id: myCharacter._id,
+      type: 'socket'
+    }
+
+    emitMsgToServer('endPost', data)
+    hasContentEnded = true
+    hasContentPosted = false
+
+    console.log('endLivePost', data)
+
+    livePost = {}
+
+  })
 
 
-  emitMsgToServer('endPost',data)
-  hasContentEnded = true
-  hasContentPosted = false
-
-  console.log('endLivePost', data)
-
-  livePost = {}
 
 }
 
 function startLivePost() {
 
-  var data = {
-    event: 'post',
-    post: livePost,
-    _id: myCharacter._id,
-    type: 'socket'
-  }
+  getLiveFriends(function(liveFriends) {
 
-  emitMsgToServer('post',data)
-  hasContentEnded = false
-  hasContentPosted = true
+    var data = {
+      event: 'post',
+      post: livePost,
+      liveFriends: liveFriends,
+      room: myCharacter.room,
+      _id: myCharacter._id,
+      type: 'socket'
+    }
 
-  console.log('startLivePost', data)
+    emitMsgToServer('post', data)
+    hasContentEnded = false
+    hasContentPosted = true
+
+    console.log('startLivePost', data)
+
+  })
 
 }
 
-function onTabActivity(data) {
+function getLiveFriends(cB) {
 
-  console.log('onTabActivity', data)
+  console.log('getLiveFriends', myCharacter._id)
 
-  var noisyTabs = data.noisyTabs
+  if (cB) {
 
-  var service = false
+    $.ajax({
+      method: 'GET',
+      url: 'http://localhost:8080/api/users/' + myCharacter._id + '/friends/live',
+      success: function(data) {
+        console.log(data)
 
-  if (noisyTabs.length > 0) service = isYoutubeOrSoundcloud(noisyTabs[0])
-  if (!service) return
+        var friends = data.data
+        var liveFriends = {}
 
-  if (noisyTabs.length < 1 && !hasContentEnded) endLivePost()
+        //map live friends to an object based on _id
 
-  else if (noisyTabs.length > 0 && hasContentPosted && livePost.url !== noisyTabs[0].url) {
+        if (!friends) return liveFriends
 
-    endLivePost()
-      //then
+        friends.forEach(function(friend) {
+          var user = friend.user
+          liveFriends[user._id] = user._id
+        })
 
-    livePost = {
-      tabId: noisyTabs[0].id,
-      url: noisyTabs[0].url,
-      title: noisyTabs[0].title,
-      type: service
-    }
+        console.log('getLiveFriends', liveFriends)
 
-    startLivePost()
+        if (cB) return cB(liveFriends)
 
-  } else if (noisyTabs.length > 0 && !hasContentPosted) {
+        return liveFriends
+      },
+      error: function(err) {
+        console.log(err)
+      },
+    })
+  } else {
 
-    livePost = {
-      tabId: noisyTabs[0].id,
-      url: noisyTabs[0].url,
-      title: noisyTabs[0].title,
-      type: service
-    }
+    var liveFriends = {}
 
-    startLivePost()
+    myCharacter.data.friends.forEach(function(friend) {
+
+      var friend = friend.user
+      if (friend.isLive) liveFriends[friend._id] = friend._id
+    })
+    return liveFriends
 
   }
-
 }
 
+
+function getLivePostInfo(title, service, cB) {
+  if (service === 'soundcloud') getSoundcloudInfo(title, cB)
+  else console.log('getyoutubeinfo')
+}
+
+function getSoundcloudInfo(title, cB) {
+
+  SC.get('/tracks', {
+    q: title
+  }).then(function(tracks) {
+
+    console.log('tracks', tracks)
+
+    if (tracks.length > 0) {
+      var data = {
+        id: tracks[0].id,
+        title: tracks[0].title,
+        url: tracks[0].uri
+      }
+      return cB(data)
+    } else {
+      return cB(false)
+    }
+  })
+}
 
 function initSockets() {
 
-  var events = ['chat', 'post', 'action', 'join', 'leave', 'connect', 'reconnect', 'disconnect', 'friend', 'request']
+  var events = ['chat', 'endPost', 'post', 'action', 'join', 'leave', 'connect', 'reconnect', 'disconnect', 'friend', 'request']
 
   events.forEach(function(event) {
 

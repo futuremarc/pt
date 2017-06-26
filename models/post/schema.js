@@ -15,6 +15,7 @@ var postSchema = new Schema({
     type: String,
     required: true
   },
+  contentId: String,
   thumbnail: String,
   timestamp: Number,
 

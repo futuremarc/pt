@@ -1,6 +1,7 @@
 var clients = {}
 var User = require('models/user/model')
 var Message = require('models/message/model')
+var Post = require('models/post/model')
 
 
 module.exports = function(io) {
@@ -131,8 +132,34 @@ module.exports = function(io) {
 
     });
 
+    socket.on('post', function(data) {
 
-    var events = ['action', 'post', 'endPost']
+      var room = data.room
+      var user = data._id
+      var post = data.post
+
+     broadcastToFriends('post',data)
+
+      //save msg to DB
+      var post = Post({
+        room: room,
+        user: user,
+        url: post.url,
+        contentId: post.contentId,
+        title: post.title,
+        type: post.type
+      })
+      
+      post.save(function(err, doc) {
+        if (err) {
+          console.log('cant save message', err)
+        }
+      })
+
+    });
+
+
+    var events = ['action', 'endPost']
 
     events.forEach(function(event) {
 
