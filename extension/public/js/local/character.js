@@ -510,6 +510,7 @@ function addIframe(character) {
     }
   }
 
+  console.log('CHAR DATA ON IFRAME', character.data)
   iframe.attr('data-id', character.data.room._id)
   iframes[character.data.room._id] = iframe
 

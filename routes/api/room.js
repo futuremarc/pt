@@ -100,10 +100,8 @@ module.exports = function(passport) {
         })
       .populate({
         path: 'messages',
-        model: 'Message',
         populate: {
-          path: 'user',
-          model: 'User'
+          path: 'user'
         }
       }).populate('posts')
       .exec(function(err, doc) {
@@ -136,10 +134,8 @@ module.exports = function(passport) {
       })
       .populate({
         path: 'messages',
-        model: 'Message',
         populate: {
-          path: 'user',
-          model: 'User'
+          path: 'user'
         }
       }).populate('posts')
       .exec(function(err, doc) {

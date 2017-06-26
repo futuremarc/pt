@@ -85,6 +85,7 @@ $(document).ready(function() {
     else if (roomId) var id = roomId
     else var id = _id
 
+      console.log('GET ROOM ', id)
     $.ajax({
       method: 'GET',
       url: '/api/rooms/' + id,
