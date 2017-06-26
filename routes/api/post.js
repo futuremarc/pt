@@ -79,7 +79,7 @@ module.exports = function(passport) {
 
     Post
       .findById(id)
-      .exec(function(err, result) {
+      .exec(function(err, post) {
 
         if (err) return res.json({
           status: "error",
@@ -89,12 +89,49 @@ module.exports = function(passport) {
 
         return res.json({
           status: "success",
-          data: result,
+          data: post,
           post: "Found posts"
         })
 
       })
   })
+
+  .put(function(req, res) {
+
+    var id = req.params.id
+
+    Post
+      .findById(id)
+      .exec(function(err, post) {
+
+        if (!post) return res.json({
+          status: "error",
+          data: null,
+          post: "Couldn't find post"
+        })
+
+        for (var prop in req.body) {
+          post[prop] = req.body[prop]
+        }
+
+        post.save(function(err) {
+
+          if (err) return res.json({
+            status: "error",
+            data: null,
+            post: "Couldn't update post"
+          })
+
+          return res.json({
+            status: "success",
+            data: post,
+            post: "updated post"
+          })
+        })
+
+      })
+  })
+
 
   router.route('/posts/room/:id')
 
@@ -105,7 +142,7 @@ module.exports = function(passport) {
     if (!ObjectId.isValid(id)) {
 
       var $or = [{
-        'user.name':  id
+        'user.name': id
       }];
 
     } else if (ObjectId.isValid(id)) {

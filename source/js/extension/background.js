@@ -287,13 +287,13 @@ function onInstall(data) {
       message: 'Welcome!',
       items: [{
         title: "Move",
-        message: "using the arrow keys."
+        message: "using the arrow keys or click and drag"
       }, {
         title: "The menu",
-        message: "is in the bottom left corner."
+        message: "is inside the characters"
       }, {
         title: "Sign off",
-        message: "by walking to the left wall"
+        message: "by walking off the left side."
       }],
       iconUrl: "public/img/brand/favicon-128.png",
       requireInteraction: true,

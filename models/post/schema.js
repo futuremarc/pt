@@ -56,7 +56,11 @@ postSchema.methods.saveInRoom = function(roomId, cb){
   return Room.findByIdAndUpdate(roomId,{
     $push: {
       posts: self._id
+    },
+    $set:{
+      livePost:self._id
     }
+
   }, cb)
 }
 

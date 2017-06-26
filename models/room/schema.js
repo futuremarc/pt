@@ -20,6 +20,11 @@ var roomSchema = new Schema({
     ref: 'Post'
   }],
 
+  livePost:{
+    type: Schema.Types.ObjectId,
+    ref: 'Post'
+  },
+
   title: {
     type: String,
     required: true,
