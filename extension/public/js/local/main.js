@@ -71,6 +71,7 @@ function animateMyChar() {
   hideNameTags()
 
   updateIframePositions()
+  updateBubblePositions()
 
   if (isMenuDisplayed && scene.visible) showMenu(latestHoveredMesh)
   else if (isMenuDisplayed && !scene.visible) hideMenu()

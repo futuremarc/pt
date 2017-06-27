@@ -282,7 +282,7 @@ $('document').ready(function() {
 
             errorMessage.html(data.message + ' <strong>' + data.data.name + '</strong>!')
 
-            location.href = document.referrer
+            location.href = '/'
 
             return
 

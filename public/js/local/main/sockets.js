@@ -5,7 +5,7 @@ var socketEvents = {
   },
 
   'post': function(data) {
-    createPostNotification(data)
+    openBubble(data) //notification bubble
   },
   'endPost': function(data) {
 

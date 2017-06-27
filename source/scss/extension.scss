@@ -1,10 +1,11 @@
 .pt-info-tag{
-	top:5px;
+	top:0px;
 	right:5px;
 	position:absolute;
-	font-size:14px;
+	font-size:11px;
 	text-align:right;
 	padding: 1px 3px;
+	display:none;
 }
 
 
@@ -74,7 +75,7 @@
 	bottom: 60px !important;
 	*/
 	background-color: white !important;
-	box-shadow: 5px 5px 7px rgba(0,0,0,0.18) !important;
+	box-shadow: 3px 3px 4px rgba(0,0,0,0.18) !important;
 	opacity:.95 !important;
 
 	.pt-return-home{
@@ -184,11 +185,15 @@
     resize: none;
 }
 
+.pt-notify-bubble{
+	display:none;
+}
+
 
 .pt-iframe{
 	position: fixed !important;
 	display:none;
-	width: 285px !important;
+	width: 275px !important;
 	height: 375px !important;
 
 	@media(max-width: 668px){
@@ -196,5 +201,5 @@
 		height: 85% !important;
 	}	
 	z-index:2147483647 !important;
-	box-shadow: 8px 8px 8px rgba(0,0,0,0.15) !important;
+	box-shadow: 4px 4px 5px rgba(0,0,0,0.15) !important;
 }

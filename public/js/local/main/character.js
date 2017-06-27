@@ -78,6 +78,7 @@ function createCharacter(data, cB) {
     character.nameTagWidth = $('.pt-name-tag').width()
     character.menu = addCharacterMenu(character, data)
     character.iframe = addIframe(character)
+    character.bubble = addBubble(character) //notification bubble
     character.role = 'character' //associate purpose for all meshes
 
     character.mixer = new THREE.AnimationMixer(character);
@@ -211,6 +212,7 @@ function createCharacter(data, cB) {
     character.hasPointer = true
     character.hasMenu = true
     character.hasIframe = true
+    character.hasBubble = true
 
     if (cB) cB(character)
 

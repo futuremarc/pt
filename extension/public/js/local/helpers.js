@@ -64,16 +64,82 @@ if (!isExtension && !isIframe) {
   })
 
   initSockets()
+}
+
+function showBubble(bubble) {
+  bubble.isShown = true
+  bubble.show()
+}
+
+function hideBubble(bubble) {
+  bubble.isShown = false
+  bubble.hide()
+}
+
+function positionBubble(bubble) {
+
+  var _mesh = bubble.character
+  var pos = worldToScreen(_mesh.position)
+  var x = pos.x
+
+  var data = new THREE.Vector3(0, _mesh.height, 0)
+  var pos = worldToScreen(data)
+  var y = Math.abs(pos.y)
+
+  var halfWidth = bubble.width() / 2
+  bubble.css('left', x - halfWidth)
+  bubble.css('bottom', y * menu_y_offset)
 
 }
 
 
-function createPostNotification(data){
+function addBubble(character) {
 
-   var notification = Templates.extension.addNotification(data)
-  $('body').append(notification)
+  var bubble = $('<div class="pt pt-bubble-container"></div>')
 
-  $('.pt-post-notification').on('mouseup touchend', openIframe)
+  bubble.character = character
+  bubble.attr('data-is-me', character.isMe)
+  bubble.isShown = false
+
+  bubble.on('mouseup touchend', function(e){
+    hideBubble(this)
+    openIframe(e)
+  })
+  $('body').append(bubble)
+
+  return bubble
+}
+
+function updateBubblePositions() {
+
+  for (var character in characters) {
+
+    if (!characters[character].hasBubble) return
+
+    var isShown = characters[character].bubble.isShown
+    if (isShown) positionIframe(characters[character].bubble)
+
+  }
+
+}
+
+function openBubble(data) {
+
+  var id = data._id
+
+  if (!characters[id]) return
+
+  var bubble = characters[id].bubble
+  var notification = Templates.extension.addNotification(data)
+
+  $(bubble).html(notification)
+
+  positionBubble(bubble)
+  showBubble(bubble)
+
+  setTimeout(function() {
+    hideBubble(bubble)
+  }, 10000)
 
 }
 

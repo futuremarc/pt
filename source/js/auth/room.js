@@ -169,9 +169,14 @@ $(document).ready(function() {
 
   function createMessage(message) {
 
+    //if not logged in make user anon
+    if (!message.user) message.user = {
+        name: 'anonymous',
+        _id: 0
+      }
     var content = message.content
     var id = message.user._id
-    var name = message.user.name || 'anonymous'
+    var name = message.user.name
 
     var outgoing = (id === _id) //_id is global from pug
 

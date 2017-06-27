@@ -52,7 +52,6 @@ setInterval(function() {
 
     if (service) var title = noisyTab.title
 
-    console.log(noisyTab, noisyTabs, service, hasContentEnded, hasContentPosted, livePost)
     if (noisyTabs.length < 1 && !hasContentEnded && livePost) endLivePost()
 
     else if (noisyTabs.length > 0 && service && hasContentPosted && livePost.title !== noisyTab.title) {
@@ -116,7 +115,7 @@ function endLivePost(cB) {
 
   getLiveFriends(function(liveFriends) {
 
-    var room = myCharacter.data.room
+    var room = myCharacter.data.room._id
 
     $.ajax({
       method: 'PUT',
@@ -167,7 +166,7 @@ function startLivePost() {
 
   getLiveFriends(function(liveFriends) {
 
-    var room = myCharacter.data.room
+    var room = myCharacter.data.room._id
 
     var data = {
       event: 'post',

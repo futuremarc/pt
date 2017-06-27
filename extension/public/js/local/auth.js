@@ -19,9 +19,9 @@ function signInFromExtension(data) {
       if (data.status === 'success') {
 
         errorMessage.html(data.message + ' <strong>' + data.data.name + '</strong>!')
-        
+
         setTimeout(function() {
-          location.href = document.referrer
+          location.href = '/'
         }, 0)
 
       } else {
@@ -73,7 +73,7 @@ function initAuth() {
 
             myCharacter.data = data.data
             putCharacter(function() {
-              location.href = document.referrer
+              location.href = '/'
             })
           }
 
