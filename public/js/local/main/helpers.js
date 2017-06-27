@@ -67,6 +67,16 @@ if (!isExtension && !isIframe) {
 
 }
 
+
+function createPostNotification(data){
+
+   var notification = Templates.extension.addNotification(data)
+  $('body').append(notification)
+
+  $('.pt-post-notification').on('mouseup touchend', openIframe)
+
+}
+
 function setInstallBtn() {
 
   if (!isMobile && !isIframe && isChrome() && !isExtension && !hasExtension) {
@@ -186,9 +196,10 @@ function logout(cB) {
 function updateBgCharacterData() {
 
   var data = {
-    'user': myCharacter.data
+    'user': myCharacter.data,
+    'type': 'update'
   }
-  
+
   emitMsg(data)
 }
 
@@ -638,13 +649,13 @@ var menu_y_offset = 3.5
 
 function openIframe(e) {
 
+  console.log('openIframe')
+
   e.stopPropagation()
 
   var target = e.currentTarget
-  var role = $(target).find('div').data('role')
-  var isMe = $(target).closest('ul').data('is-me')
-  var name = $(target).closest('ul').data('name')
-  var id = $(target).closest('ul').data('id')
+  var role = $(target).find('div').data('role') || $(target).find('a').data('role') //menu || notification
+  var id = $(target).closest('ul').data('id') || $(target).find('a').data('id') //menu || notification
   var src = 'http://localhost:8080/' + role
   var iframe = characters[id].iframe
   var previousSrc = $(iframe).attr('src')

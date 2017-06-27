@@ -518,7 +518,7 @@ function addIframe(character) {
   iframe.addClass('pt-iframe pt')
   iframe.isMinimized = false
 
-  iframe.on('load', function() {
+  if (isIframe) iframe.on('load', function() {
 
     $(this).contents().find("body").on('mouseup touchend', function(e) {
       window.isMouseDown = false

@@ -37,7 +37,7 @@ $(document).ready(function() {
 
   function initSockets() {
 
-     if (!socket) window.socket = io('http://localhost:5050', {
+    if (!socket) window.socket = io('http://localhost:5050', {
       'path': '/socket',
       'forceNew': true
     })
@@ -45,10 +45,31 @@ $(document).ready(function() {
     joinRoom()
 
     socket.on('chat', createMessage)
+    socket.on('endPost', endPost)
+    socket.on('post', post)
     socket.on('disconnect', leaveRoom)
     socket.on('reconnect', joinRoom)
 
   }
+
+  function endPost(data) {
+    var iframe = $('#pt-content')
+    iframe.attr('src', '')
+  }
+
+  function post(data) {
+
+    var id = data.post.id
+    var title = data.post.title
+    var url = data.post.url
+    var iframe = $('#pt-content')
+    var src = "https://w.soundcloud.com/player/?url=" + url + "&amp;auto_play=false&amp;hide_related=true&amp;show_comments=false&amp;show_user=false&amp;show_reposts=false&amp;visual=true"
+
+    iframe.data('id', id)
+    iframe.data('title', title)
+    iframe.attr('src', src)
+  }
+
 
   function joinRoom() {
 
@@ -85,7 +106,6 @@ $(document).ready(function() {
     else if (roomId) var id = roomId
     else var id = _id
 
-      console.log('GET ROOM ', id)
     $.ajax({
       method: 'GET',
       url: '/api/rooms/' + id,
@@ -117,9 +137,12 @@ $(document).ready(function() {
     var content = $('#pt-room-input').val();
     if (!content) return
 
+    var name = myCharacter.data.name
+    var id = myCharacter.data._id
+
     var user = {
-      _id: myCharacter.data._id,
-      name: myCharacter.data.name
+      _id: id,
+      name: name
     }
 
     var message = {
@@ -146,11 +169,9 @@ $(document).ready(function() {
 
   function createMessage(message) {
 
-    console.log('createMessage', message)
-
     var content = message.content
     var id = message.user._id
-    var name = message.user.name
+    var name = message.user.name || 'anonymous'
 
     var outgoing = (id === _id) //_id is global from pug
 

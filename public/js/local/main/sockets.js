@@ -5,7 +5,7 @@ var socketEvents = {
   },
 
   'post': function(data) {
-    console.log('event post')
+    createPostNotification(data)
   },
   'endPost': function(data) {
 

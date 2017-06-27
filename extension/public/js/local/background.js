@@ -52,6 +52,7 @@ setInterval(function() {
 
     if (service) var title = noisyTab.title
 
+    console.log(noisyTab, noisyTabs, service, hasContentEnded, hasContentPosted, livePost)
     if (noisyTabs.length < 1 && !hasContentEnded && livePost) endLivePost()
 
     else if (noisyTabs.length > 0 && service && hasContentPosted && livePost.title !== noisyTab.title) {
@@ -71,7 +72,6 @@ setInterval(function() {
               title: title,
               type: service
             }
-
             startLivePost()
 
           })
@@ -98,33 +98,15 @@ setInterval(function() {
         startLivePost()
       })
     }
-
-    chrome.tabs.query({
-
-      currentWindow: true,
-      active: true
-
-    }, function(tabs) {
-
-      var activeTab = tabs[0];
-
-      if (!activeTab) return
-
-      chrome.tabs.sendMessage(activeTab.id, {
-        'type': 'tabActivity',
-        'noisyTabs': noisyTabs
-      });
-
-    });
   })
 
 }, 5000);
 
 
 
-var livePost = null
+var livePost = undefined
 var hasContentPosted = false
-var hasContentEnded = false
+var hasContentEnded = true
 
 
 function endLivePost(cB) {

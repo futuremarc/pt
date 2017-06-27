@@ -136,18 +136,24 @@ module.exports = function(io) {
 
       var room = data.room
       var user = data._id
-      var post = data.post
+      var url = data.post.url
+      var contentId = data.post.contentId
+      var title = data.post.title
+      var type = data.post.type
+
 
      broadcastToFriends('post',data)
+     socket.broadcast.to(room).emit('post', data)
 
-      //save msg to DB
+
+      //add doc to mongo
       var post = Post({
         room: room,
         user: user,
-        url: post.url,
-        contentId: post.contentId,
-        title: post.title,
-        type: post.type
+        url: url,
+        contentId: contentId,
+        title: title,
+        type: type
       })
       
       post.save(function(err, doc) {
@@ -159,7 +165,16 @@ module.exports = function(io) {
     });
 
 
-    var events = ['action', 'endPost']
+    socket.on('endPost', function(data) { //backgroundjs makes changes to mongo
+
+      var room = data.room
+  
+     socket.broadcast.to(room).emit('endPost', data)
+
+    });
+
+
+    var events = ['action']
 
     events.forEach(function(event) {
 

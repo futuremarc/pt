@@ -124,20 +124,26 @@ module.exports = function() {
 
   router.get('/room/:title', function(req, res, next) {
 
-    if (!req.user) return res.render('auth/login.pug')
-
     var title = req.params.title
 
     Room.findOne({
       title: title
-    }).exec(function(err, doc) {
+    }).exec(function(err, room) {
 
-      var roomId = doc.id
+      var roomId = room.id
+      var userName, userId
+      var loggedIn = false
+
+      if (req.user){
+        userName = req.user.name
+        userId = req.user._id
+        loggedIn = true
+      }
 
       res.render('auth/room.pug', {
-        loggedIn: true,
-        userName: req.user.name,
-        userId: req.user._id,
+        loggedIn: loggedIn,
+        userName: userName,
+        userId: userId,
         roomId: roomId
       })
     })
