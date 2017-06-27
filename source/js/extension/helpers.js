@@ -111,8 +111,10 @@ function zoomPt() {
 
 function emitMsg(data) {
   console.log('emit', data)
+  var isSocket = (data.type === 'socket')
+
   if (isExtension) chrome.runtime.sendMessage(data);
-  else emitSocket(data)
+  else if (isSocket) emitSocket(data)
 }
 
 
@@ -181,6 +183,14 @@ function logout(cB) {
 
 //
 
+function updateBgCharacterData() {
+
+  var data = {
+    'user': myCharacter.data
+  }
+  
+  emitMsg(data)
+}
 
 function emitJoinMsg() {
 

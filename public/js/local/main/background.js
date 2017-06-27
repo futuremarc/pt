@@ -11,9 +11,11 @@ SC.initialize({
 
 var myCharacter = {}
 
+
+//what happens when installed but no account? get a new value after user registers... check ifRegistered() for things like liveposts
 chrome.storage.sync.get('pt-user', function(data) {
 
-  myCharacter = data['pt-user']
+  myCharacter.data = data['pt-user']
   console.log('myCharacter', myCharacter)
 
 })
@@ -41,45 +43,54 @@ setInterval(function() {
 
   chrome.tabs.query({
     audible: true
-  }, function(tabs) {
+  }, function(noisyTabs) {
 
-    var noisyTabs = tabs;
-
+    var noisyTab = noisyTabs[0]
     var service = null
 
-    if (noisyTabs.length > 0) service = isYoutubeOrSoundcloud(noisyTabs[0])
+    if (noisyTabs.length > 0) service = isYoutubeOrSoundcloud(noisyTab) //only test 1st noisy tab for now
 
-    var title = noisyTabs[0].title
+    if (service) var title = noisyTab.title
 
-    if (noisyTabs.length < 1 && !hasContentEnded) endLivePost()
+    if (noisyTabs.length < 1 && !hasContentEnded && livePost) endLivePost()
 
-    else if (noisyTabs.length > 0 && service && hasContentPosted && livePost.title !== noisyTabs[0].title) {
+    else if (noisyTabs.length > 0 && service && hasContentPosted && livePost.title !== noisyTab.title) {
 
-      endLivePost()
-        //then
+      endLivePost(function() {
 
-      getLivePostInfo(title, service, function(data) {
+          getLivePostInfo(title, service, function(data) {
 
-        livePost = {
-          tabId: noisyTabs[0].id,
-          url: data.url,
-          contentId: data.id.toString(),
-          title: title,
-          type: service
-        }
+            var url = data.url
+            var tabId = noisyTab.id
+            var contentId = data.id.toString()
 
-        startLivePost()
+            livePost = {
+              tabId: tabId,
+              url: url,
+              contentId: contentId,
+              title: title,
+              type: service
+            }
 
-      })
+            startLivePost()
+
+          })
+
+
+        })
 
     } else if (noisyTabs.length > 0 && service && !hasContentPosted) {
 
-       getLivePostInfo(title, service, function(data) {
+      getLivePostInfo(title, service, function(data) {
+
+        var url = data.url
+        var tabId = noisyTab.id
+        var contentId = data.id.toString()
 
         livePost = {
-          tabId: noisyTabs[0].id,
-          url: data.url,
-          contentId: data.id.toString(),
+          tabId: tabId,
+          url: url,
+          contentId: contentId,
           title: title,
           type: service
         }
@@ -111,47 +122,77 @@ setInterval(function() {
 
 
 
-var livePost = {}
+var livePost = null
 var hasContentPosted = false
 var hasContentEnded = false
 
 
-function endLivePost() {
+function endLivePost(cB) {
+
+  var id = isRegistered()
+  if (!id) return
 
   getLiveFriends(function(liveFriends) {
 
-    var data = {
-      event: 'endPost',
-      liveFriends: liveFriends,
-      post: livePost,
-      _id: myCharacter._id,
-      type: 'socket'
-    }
+    var room = myCharacter.data.room
 
-    emitMsgToServer('endPost', data)
-    hasContentEnded = true
-    hasContentPosted = false
+    $.ajax({
+      method: 'PUT',
+      url: 'http://localhost:8080/api/posts/room/' + room + '/end',
+      success: function(data) {
+        console.log(data)
 
-    console.log('endLivePost', data)
+        data = {
+          event: 'endPost',
+          liveFriends: liveFriends,
+          post: livePost,
+          room: room,
+          _id: id,
+          type: 'socket'
+        }
 
-    livePost = {}
+        emitMsgToServer('endPost', data)
+        hasContentEnded = true
+        hasContentPosted = false
+        livePost = undefined
 
+        console.log('endLivePost', data)
+
+        return cB()
+      },
+      error: function(err) {
+        console.log(err)
+      },
+    })
   })
-
-
-
 }
+
+
+
+function isRegistered() {
+  if (!myCharacter) return false
+  if (!myCharacter.data) return false
+  if (!myCharacter.data._id) return false
+  return myCharacter.data._id
+}
+
+
 
 function startLivePost() {
 
+  var id = isRegistered()
+  if (!id) return
+
   getLiveFriends(function(liveFriends) {
+
+    var room = myCharacter.data.room
 
     var data = {
       event: 'post',
       post: livePost,
       liveFriends: liveFriends,
-      room: myCharacter.room,
-      _id: myCharacter._id,
+      room: room,
+      _id: id,
       type: 'socket'
     }
 
@@ -167,13 +208,13 @@ function startLivePost() {
 
 function getLiveFriends(cB) {
 
-  console.log('getLiveFriends', myCharacter._id)
+  var id = myCharacter.data._id
 
   if (cB) {
 
     $.ajax({
       method: 'GET',
-      url: 'http://localhost:8080/api/users/' + myCharacter._id + '/friends/live',
+      url: 'http://localhost:8080/api/users/' + id + '/friends/live',
       success: function(data) {
         console.log(data)
 
@@ -208,6 +249,7 @@ function getLiveFriends(cB) {
       var friend = friend.user
       if (friend.isLive) liveFriends[friend._id] = friend._id
     })
+
     return liveFriends
 
   }
@@ -224,8 +266,6 @@ function getSoundcloudInfo(title, cB) {
   SC.get('/tracks', {
     q: title
   }).then(function(tracks) {
-
-    console.log('tracks', tracks)
 
     if (tracks.length > 0) {
       var data = {
@@ -340,7 +380,6 @@ function onBrowserAction(activeTab) {
 
 
 function onJoin(data) {
-  myCharacter.data = data
   emitMsgToServer('join', data)
 }
 
@@ -364,6 +403,8 @@ function onContentMessage(data, sender, sendResponse) {
       default:
         emitMsgToServer(event, data)
     }
+  } else if (data.type === 'update') {
+    myCharacter.data = data.user
   }
 }
 

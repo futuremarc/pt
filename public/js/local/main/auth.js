@@ -19,7 +19,7 @@ function signInFromExtension(data) {
       if (data.status === 'success') {
 
         errorMessage.html(data.message + ' <strong>' + data.data.name + '</strong>!')
-
+        
         setTimeout(function() {
           location.href = '/'
         }, 0)

@@ -70,9 +70,7 @@ module.exports = function(passport) {
   })
 
 
-
   router.route('/posts/:id')
-
   .get(function(req, res) {
 
     var id = req.params.id
@@ -131,6 +129,51 @@ module.exports = function(passport) {
 
       })
   })
+
+
+  router.route('/posts/room/:id/end') //end whatever post is live in the room
+
+  .put(function(req, res) {
+
+    var id = req.params.id
+
+    Room
+      .findById(id)
+      .exec(function(err, room) {
+
+        if (err) return res.json({
+          status: "error",
+          data: err,
+          post: "Couldn't end post"
+        })
+
+          Post.findByIdAndUpdate(room.livePost, {
+            $set: {
+              isLive: false
+            }
+          }, {
+            new: true
+          }).exec(function(err, post) {
+
+            room.livePost = undefined
+            room.save(function(err) {
+
+              if (err) return res.json({
+                status: "error",
+                data: err,
+                post: "Couldn't end post"
+              })
+
+              return res.json({
+                status: "success",
+                data: post,
+                post: "Ended post"
+              })
+            })
+          })
+      })
+  })
+
 
 
   router.route('/posts/room/:id')

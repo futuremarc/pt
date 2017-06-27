@@ -24,7 +24,9 @@ function createMyCharacter(data) {
 
       if (isRegistered()) {
         addLiveCharacters()
+        updateBgCharacterData()
         emitJoinMsg()
+
       }
 
       animate()
@@ -183,7 +185,6 @@ function createCharacter(data, cB) {
     }
 
     this.mixer.addEventListener('finished', character.idle.bind(character)); //return to idle when any animation finishes
-
 
     renderOrder -= 1
     character.renderOrder = renderOrder
