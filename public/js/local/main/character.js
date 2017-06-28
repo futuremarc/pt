@@ -228,7 +228,7 @@ function updateCharacter(request, data, cB, isRecursiveCall) {
 
   var pos, rot, data = data || {}
 
-  console.log('updateCharacter', data)
+  console.log('updateCharacter', request, data)
 
   switch (request) {
 
@@ -236,9 +236,9 @@ function updateCharacter(request, data, cB, isRecursiveCall) {
 
       if (isExtension) {
 
-        chrome.storage.sync.get('pt-user', function(data) {
+        chrome.storage.sync.get('pt-user', function(_data) {
 
-          var user = data['pt-user']
+          var user = _data['pt-user']
           if (!user) {
 
             if (!isRecursiveCall) updateCharacter('getRemote', null, cB, true) //if not recursive try different method
@@ -297,11 +297,11 @@ function updateCharacter(request, data, cB, isRecursiveCall) {
 
       $.ajax({
         method: 'PUT',
-        url: 'http://localhost:8080/api/users/' + name,
+        url: 'https://passti.me/api/users/' + name,
         data: data,
         success: function(data) {
           console.log(data)
-          if (cB) cB(data)
+          if (cB) cB(data.data)
         },
         error: function(err) {
           console.log(err)
@@ -354,7 +354,7 @@ function updateCharacter(request, data, cB, isRecursiveCall) {
 
       $.ajax({
         method: 'GET',
-        url: 'http://localhost:8080/api/users/' + name,
+        url: 'https://passti.me/api/users/' + name,
         success: function(data) {
           console.log(data)
 
@@ -434,7 +434,6 @@ function getCharacterInfo(cB) {
       'name': name,
       '_id': id
     }
-
     console.log('getCharacterInfo', info)
     return info
   } else {

@@ -102,7 +102,7 @@ function addBubble(character) {
   bubble.isShown = false
 
   bubble.on('mouseup touchend', function(e){
-    hideBubble(this)
+    hideBubble(bubble)
     openIframe(e)
   })
   $('body').append(bubble)
@@ -271,7 +271,7 @@ function updateBgCharacterData() {
 
 function emitJoinMsg() {
 
-  putCharacter(function() {
+  putCharacter(function(user) {
 
     getCharacterInfo(function(info) {
 

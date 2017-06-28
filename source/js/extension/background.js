@@ -105,7 +105,7 @@ setInterval(function() {
 
 var livePost = undefined
 var hasContentPosted = false
-var hasContentEnded = true
+var hasContentEnded = false
 
 
 function endLivePost(cB) {

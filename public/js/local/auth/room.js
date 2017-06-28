@@ -37,7 +37,7 @@ $(document).ready(function() {
 
   function initSockets() {
 
-    if (!socket) window.socket = io('http://localhost:5050', {
+    if (!socket) window.socket = io('https://passti.me', {
       'path': '/socket',
       'forceNew': true
     })

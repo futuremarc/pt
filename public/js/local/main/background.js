@@ -1,4 +1,4 @@
-var socket = io('http://localhost:5050', {
+var socket = io('https://passti.me', {
   'path': '/socket',
   'forceNew': true
 })
@@ -105,7 +105,7 @@ setInterval(function() {
 
 var livePost = undefined
 var hasContentPosted = false
-var hasContentEnded = true
+var hasContentEnded = false
 
 
 function endLivePost(cB) {
@@ -119,7 +119,7 @@ function endLivePost(cB) {
 
     $.ajax({
       method: 'PUT',
-      url: 'http://localhost:8080/api/posts/room/' + room + '/end',
+      url: 'https://passti.me/api/posts/room/' + room + '/end',
       success: function(data) {
         console.log(data)
 
@@ -195,7 +195,7 @@ function getLiveFriends(cB) {
 
     $.ajax({
       method: 'GET',
-      url: 'http://localhost:8080/api/users/' + id + '/friends/live',
+      url: 'https://passti.me/api/users/' + id + '/friends/live',
       success: function(data) {
         console.log(data)
 

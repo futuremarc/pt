@@ -128,7 +128,7 @@ $('document').ready(function() {
 
       $.ajax({
         method: 'POST',
-        url: 'http://localhost:8080/api/feedback/', // + event
+        url: 'https://passti.me/api/feedback/', // + event
         data: data,
         success: function(data) {
           console.log(data)
@@ -164,7 +164,7 @@ $('document').ready(function() {
 
       $.ajax({
         method: 'POST',
-        url: 'http://localhost:8080/api/users/friends/' + friendId, // + event
+        url: 'https://passti.me/api/users/friends/' + friendId, // + event
         data: data,
         success: function(data) {
           console.log(data)
@@ -210,7 +210,7 @@ $('document').ready(function() {
 
       $.ajax({
         method: 'POST',
-        url: 'http://localhost:8080/api/users/friends/' + friendId, // + event
+        url: 'https://passti.me/api/users/friends/' + friendId, // + event
         data: data,
         success: function(data) {
           console.log(data)
@@ -264,7 +264,7 @@ $('document').ready(function() {
 
       $.ajax({
         method: method,
-        url: 'http://localhost:8080/api/users/friends/' + friendId, //+ event,
+        url: 'https://passti.me/api/users/friends/' + friendId, //+ event,
         data: data,
         success: function(data) {
           console.log(data)
@@ -312,7 +312,7 @@ $('document').ready(function() {
 
       $.ajax({
         method: 'PUT',
-        url: 'http://localhost:8080/api/users/' + name,
+        url: 'https://passti.me/api/users/' + name,
         data: data,
         success: function(data) {
           console.log(data)
@@ -372,7 +372,7 @@ $('document').ready(function() {
 
       $.ajax({
         method: 'POST',
-        url: 'http://localhost:8080/api/' + event,
+        url: 'https://passti.me/api/' + event,
         data: data,
         success: function(data) {
           console.log(data)
@@ -604,7 +604,7 @@ $('document').ready(function() {
 
     $.ajax({
       method: 'GET',
-      url: 'http://localhost:8080/api/users/' + name,
+      url: 'https://passti.me/api/users/' + name,
       success: function(data) {
         console.log(data)
 

@@ -58,7 +58,7 @@ isMobile = detectMobileOrTablet()
 
 if (!isExtension && !isIframe) {
 
-  var socket = io('http://localhost:5050', {
+  var socket = io('https://passti.me', {
     'path': '/socket',
     'forceNew': true
   })
@@ -102,7 +102,7 @@ function addBubble(character) {
   bubble.isShown = false
 
   bubble.on('mouseup touchend', function(e){
-    hideBubble(this)
+    hideBubble(bubble)
     openIframe(e)
   })
   $('body').append(bubble)
@@ -271,7 +271,7 @@ function updateBgCharacterData() {
 
 function emitJoinMsg() {
 
-  putCharacter(function() {
+  putCharacter(function(user) {
 
     getCharacterInfo(function(info) {
 
@@ -565,7 +565,7 @@ function getFriendInfo(idOrName, cB) {
 
   $.ajax({
     method: 'GET',
-    url: 'http://localhost:8080/api/users/' + idOrName,
+    url: 'https://passti.me/api/users/' + idOrName,
     success: function(data) {
       console.log(data)
 
@@ -592,7 +592,7 @@ function getLiveFriends(cB) {
 
     $.ajax({
       method: 'GET',
-      url: 'http://localhost:8080/api/users/' + myCharacter.data._id + '/friends/live',
+      url: 'https://passti.me/api/users/' + myCharacter.data._id + '/friends/live',
       success: function(data) {
         console.log(data)
 
@@ -673,7 +673,7 @@ function addLiveCharacters() {
 
   $.ajax({
     method: 'GET',
-    url: 'http://localhost:8080/api/users/' + name + '/friends/live',
+    url: 'https://passti.me/api/users/' + name + '/friends/live',
     success: function(data) {
       console.log(data)
 
@@ -722,7 +722,7 @@ function openIframe(e) {
   var target = e.currentTarget
   var role = $(target).find('div').data('role') || $(target).find('a').data('role') //menu || notification
   var id = $(target).closest('ul').data('id') || $(target).find('a').data('id') //menu || notification
-  var src = 'http://localhost:8080/' + role
+  var src = 'https://passti.me/' + role
   var iframe = characters[id].iframe
   var previousSrc = $(iframe).attr('src')
 

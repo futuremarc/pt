@@ -125,11 +125,9 @@ function initPt() {
   if (isExtension) var method = 'getLocal'
   else var method = 'getRemote'
 
-  console.log('initPt', method)
-
   updateCharacter(method, null, function(user) {
 
-    console.log('initPt', user)
+    console.log('initPt', method, user)
 
     var name = $('#pt-name-tag').html()
     var signedIntoSite = (name !== '') //if nametag empty, server responded no user
@@ -140,7 +138,7 @@ function initPt() {
     if (hasUserData && !signedIntoSite) signInFromExtension(user)
 
     if (!doRun) return
-    else if (method === 'getLocal') updateCharacter('getRemote', null, function(user) {
+    else if (method === 'getLocal' && !user) updateCharacter('getRemote', null, function(user) {
       initScene(user)
     })
     else initScene(user)
@@ -349,16 +347,14 @@ function onWindowMsg(data) {
 
     })
   } else {
-    getCharacterInfo(function(info) {
+    var info = getCharacterInfo()
 
-      var user = {
-        '_id': info._id,
-        'position': info.position,
-        'rotation': info.rotation,
-        'name': info.name
-      }
-
-    })
+    var user = {
+      '_id': info._id,
+      'position': info.position,
+      'rotation': info.rotation,
+      'name': info.name
+    }
 
   }
 
