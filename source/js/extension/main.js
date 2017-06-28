@@ -319,6 +319,7 @@ function onWindowMsg(data) {
 
   var source = data.source
   var origin = data.origin
+  var role = data.data.role
   var event = data.data.event
   var action = data.data.action
   var message = data.data.message
@@ -337,6 +338,8 @@ function onWindowMsg(data) {
 
       var data = {
         'user': user,
+        'role': role,
+        'room': window.roomToOpen,
         'event': event,
         'type': 'window',
         'fromExtension': true

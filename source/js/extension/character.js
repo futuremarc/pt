@@ -226,7 +226,8 @@ function createCharacter(data, cB) {
 
 function updateCharacter(request, data, cB, isRecursiveCall) {
 
-  var pos, rot, data = data || {}
+  var pos, rot
+  var data = data || {}
 
   console.log('updateCharacter', request, data)
 
@@ -326,8 +327,8 @@ function updateCharacter(request, data, cB, isRecursiveCall) {
         })
 
       } else {
-        var myData = JSON.stringify(myCharacter.data)
-        localStorage.setItem('pt-user', myData);
+        var _data = JSON.stringify(myCharacter.data)
+        localStorage.setItem('pt-user', _data);
       }
 
       break

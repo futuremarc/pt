@@ -1,7 +1,7 @@
-<ul data-id='{{data._id}}'  data-name='{{data.name}}' data-is-me='{{isMe}}'>
+<ul data-id='{{data._id}}',  data-name='{{data.name}}', data-is-me='{{isMe}}'>
 
   <li class='pt-room pt-menu-item' >
-    <div data-role='room', data-id='{{data._id}}'>Chat</div>
+    <div data-role='room', data-id='{{data._id}}', data-room='{{data.room._id}}'>Chat</div>
   </li>
 
 	{{#if isMe}}

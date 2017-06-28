@@ -45,7 +45,7 @@ function initAuth() {
     var email = $('.auth-email').val();
     var pass = $('.auth-password').val();
     var name = $('.auth-name').val();
-    var role = $(this).data('role')
+    var role = $(this).parents('.pt-auth-container').data('role')
     var subs = []
     var timeout = null
 

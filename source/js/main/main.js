@@ -12,6 +12,11 @@ $('document').ready(function() {
       console.log('iframe initAuth', data)
       myCharacter.data = data.user
 
+      var role = data.role
+      var roomId = data.room
+
+      if (role === 'room') initRoom(roomId)
+
     },
 
     'feedback': function(data) {
@@ -334,7 +339,7 @@ $('document').ready(function() {
   $("body").on('submit', '#pt-auth-form', function(e) {
     e.preventDefault();
 
-    var role = $(this).data('role')
+    var role = $(this).parents('.pt-auth-container').data('role')
       //if (role !== 'settings') return
 
     window.name = $('.auth-name').val();
@@ -368,7 +373,7 @@ $('document').ready(function() {
   $("body").on('submit', '#pt-feedback-form', function(e) {
     e.preventDefault();
 
-    var role = $(this).data('role')
+    var role = $(this).parents('.pt-auth-container').data('role')
 
     var data = {
       'event': role,
@@ -542,7 +547,7 @@ $('document').ready(function() {
 
     e.preventDefault();
 
-    var role = $(this).data('role')
+    var role = $(this).parents('.pt-auth-container').data('role')
     var friendId = $(this).data('id')
     var userId = myCharacter.data._id
 
@@ -557,8 +562,10 @@ $('document').ready(function() {
   })
 
 
+  var role = $('.pt-page').data('role')
   var data = {
     'event': 'initAuth',
+    'role': role,
     'type': 'window'
   }
 

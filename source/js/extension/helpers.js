@@ -722,10 +722,12 @@ function openIframe(e) {
   var target = e.currentTarget
   var role = $(target).find('div').data('role') || $(target).find('a').data('role') //menu || notification
   var id = $(target).closest('ul').data('id') || $(target).find('a').data('id') //menu || notification
+  window.roomToOpen = $(target).find('div').data('room') || $(target).find('a').data('room') 
   var src = 'http://localhost:8080/' + role
   var iframe = characters[id].iframe
   var previousSrc = $(iframe).attr('src')
 
+  console.log('roomToOpen', roomToOpen)
   iframe.data('role', role)
 
   if (previousSrc !== src) iframe.attr('src', src)

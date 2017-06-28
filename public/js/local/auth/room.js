@@ -20,15 +20,14 @@ $(document).ready(function() {
 
   }
 
-  function initChat() {
+  window.initRoom = function(id) {
 
-    getRoomData.then(function(room) {
+    getRoomData(id).then(function(room) {
 
       createInterface(room)
       addCachedMessages(room.messages)
       initSockets()
       window.addEventListener('beforeunload', leaveRoom)
-
 
     })
 
@@ -100,34 +99,39 @@ $(document).ready(function() {
   }
 
 
-  var getRoomData = new Promise(function(resolve, reject) {
+  var getRoomData = function(_roomId) {
 
-    if (isIframe) var id = window.frameElement.getAttribute('data-id');
-    else if (roomId) var id = roomId
-    else var id = _id
+    return new Promise(function(resolve, reject) {
 
-    $.ajax({
-      method: 'GET',
-      url: '/api/rooms/' + id,
-      success: function(data) {
-        console.log(data)
+      if (isIframe) var id = _roomId;
+      else if (roomId) var id = roomId
+      else var id = _id
 
-        if (data.status === 'success') {
+      $.ajax({
+        method: 'GET',
+        url: '/api/rooms/' + id,
+        success: function(data) {
+          console.log(data)
 
-          var room = data.data
-          window.roomId = room._id
+          if (data.status === 'success') {
 
-          resolve(room);
+            var room = data.data
+            window.roomId = room._id
 
+            resolve(room);
+
+          }
+        },
+        error: function(err) {
+          console.log(err)
+          reject(err);
         }
-      },
-      error: function(err) {
-        console.log(err)
-        reject(err);
-      }
-    })
+      })
 
-  });
+    });
+
+  }
+
 
 
   function onFormSubmit(e) {
@@ -171,9 +175,9 @@ $(document).ready(function() {
 
     //if not logged in make user anon
     if (!message.user) message.user = {
-        name: 'anonymous',
-        _id: 0
-      }
+      name: 'anonymous',
+      _id: 0
+    }
     var content = message.content
     var id = message.user._id
     var name = message.user.name
@@ -244,7 +248,7 @@ $(document).ready(function() {
 
 
 
-  initChat()
+  //initRoom()
 
 
 })
