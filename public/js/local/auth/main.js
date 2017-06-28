@@ -434,7 +434,7 @@ $('document').ready(function() {
   window.addEventListener("message", onWindowMsg, false);
 
 
-  if (!isIframe)$("body").on('submit', '#pt-auth-form', function(e) {
+  if (!hasExtension) $("body").on('submit', '#pt-auth-form', function(e) {
     e.preventDefault();
 
     var role = $(this).parents('.pt-auth-container').data('role')

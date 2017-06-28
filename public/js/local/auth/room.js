@@ -11,12 +11,38 @@ $(document).ready(function() {
       //$('body').addClass('hover-show-header')
 
     //event listeners
-    $('.pt-close-room').click(parent.closeIframe)
-    $('.pt-minimize-room').click(parent.minimizeIframe)
+    $('.pt-close-room').click(closeIframe)
+    $('.pt-minimize-room').click(minimizeIframe)
     $('#pt-room-form').on('submit', onFormSubmit)
     $('#pt-room-input').focus()
 
     window.messageList = $('ul')
+
+  }
+
+  function closeIframe(domEvent){
+
+     var data = {
+      'event': 'closeIframe',
+      'domEvent': domEvent,
+      'type': 'window'
+    }
+
+    console.log('iframe sent', data)
+    if (isIframe) window.parent.postMessage(data, '*')
+
+  }
+
+function minimizeIframe(domEvent){
+
+     var data = {
+      'event': 'minimizeIframe',
+      'domEvent': domEvent,
+      'type': 'window'
+    }
+
+    console.log('iframe sent', data)
+    if (isIframe) window.parent.postMessage(data, '*')
 
   }
 
