@@ -132,7 +132,7 @@ function endLivePost(cB) {
           type: 'socket'
         }
 
-        emitMsgToServer('endPost', data)
+        emitMsgToServer(data)
         hasContentEnded = true
         hasContentPosted = false
         livePost = undefined
@@ -177,7 +177,8 @@ function startLivePost() {
       type: 'socket'
     }
 
-    emitMsgToServer('post', data)
+    emitMsgToServer(data)
+    emitMsgToClient(data)
     hasContentEnded = false
     hasContentPosted = true
 
@@ -361,7 +362,7 @@ function onBrowserAction(activeTab) {
 
 
 function onJoin(data) {
-  emitMsgToServer('join', data)
+  emitMsgToServer(data)
 }
 
 
@@ -382,7 +383,7 @@ function onContentMessage(data, sender, sendResponse) {
         break;
 
       default:
-        emitMsgToServer(event, data)
+        emitMsgToServer(data)
     }
   } else if (data.type === 'update') {
     myCharacter.data = data.user
@@ -411,7 +412,9 @@ function emitMsgToClient(data, sendResponse) {
 //
 
 
-function emitMsgToServer(event, data) {
+function emitMsgToServer(data) {
+  
+  var event = data.event
   socket.emit(event, data)
 }
 
@@ -422,7 +425,7 @@ function emitMsgToServer(event, data) {
 chrome.windows.onRemoved.addListener(function(windowid) {
 
   var data = myCharacter.data
-  emitMsgToServer('leave', data)
+  emitMsgToServer(data)
 })
 
 

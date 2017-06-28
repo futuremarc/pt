@@ -24,7 +24,7 @@ $(document).ready(function() {
 
      var data = {
       'event': 'closeIframe',
-      'domEvent': domEvent,
+      'domEvent': new MouseEvent(domEvent.type, domEvent),
       'type': 'window'
     }
 
@@ -37,7 +37,7 @@ function minimizeIframe(domEvent){
 
      var data = {
       'event': 'minimizeIframe',
-      'domEvent': domEvent,
+      'domEvent': new MouseEvent(domEvent.type, domEvent),
       'type': 'window'
     }
 
