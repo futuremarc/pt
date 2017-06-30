@@ -51,6 +51,8 @@ function initAuth() {
 
     var pos = getCharacterPos()
     var rot = getCharacterRot()
+
+
     var data = {
       email: email,
       password: pass,

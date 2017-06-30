@@ -167,8 +167,8 @@ function minimizeIframe(domEvent){
     var content = $('#pt-room-input').val();
     if (!content) return
 
-    var name = myCharacter.data.name
-    var id = myCharacter.data._id
+    var name = window.name || myCharacter.data.name //pug (not iframe )|| initAuth (iframe)
+    var id = window._id || myCharacter.data._id
 
     var user = {
       _id: id,
@@ -274,7 +274,7 @@ function minimizeIframe(domEvent){
 
 
 
-  //initRoom()
+  if (!isIframe) initRoom()
 
 
 })

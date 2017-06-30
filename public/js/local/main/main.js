@@ -142,10 +142,7 @@ function initPt() {
       initScene(user)
     })
     else initScene(user)
-
-
   })
-
 }
 
 
@@ -314,7 +311,7 @@ function removeDomListeners() {
 
 function onWindowMsg(data) {
 
-  if (data.origin !== 'https://passti.me') return;
+  if (data.origin !== 'http://localhost:8080') return;
   console.log('extension received windowMsg', data)
 
   var source = data.source
@@ -517,7 +514,7 @@ function onWindowMsg(data) {
     case 'logout':
 
       logout(function() {
-        window.location.href = 'https://passti.me/logout'
+        window.location.href = 'http://localhost:8080/logout'
       })
       break;
 

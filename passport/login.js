@@ -9,10 +9,10 @@ module.exports = function(passport) {
 		}, function(req, name, password, done) {
 
 			User.findOne({
-				$or: [{
-					email: req.body.email
-				}, {
+				$or: [ {
 					name: req.body.name
+				},{
+					email: req.body.email
 				}]
 			}).exec(function(err, user) {
 					if (err) {
@@ -27,6 +27,7 @@ module.exports = function(passport) {
 					}
 
 					user.comparePassword(password, function(err, isMatch) {
+
 						if (isMatch) {
 							return done(null, user, {
 								message: 'Welcome back'

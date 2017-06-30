@@ -1,4 +1,4 @@
-function detectExtensionInstalled(id, cB) {
+function detectExtensionInstalled(id, callBack) {
 
   var url = 'chrome-extension://' + id + '/manifest.json'
 
@@ -6,10 +6,10 @@ function detectExtensionInstalled(id, cB) {
     method: 'GET',
     url: url,
     success: function(data) {
-      if (cB) cB(true)
+      if (callBack) callBack(true)
     },
     error: function(err) {
-      if (cB) cB(false)
+      if (callBack) callBack(false)
     },
   })
 
@@ -58,7 +58,7 @@ isMobile = detectMobileOrTablet()
 
 if (!isExtension && !isIframe) {
 
-  var socket = io('https://passti.me', {
+  var socket = io('http://localhost:5050', {
     'path': '/socket',
     'forceNew': true
   })
@@ -240,18 +240,18 @@ function onSocket(data) {
 //
 
 
-function logout(cB) {
+function logout(callBack) {
 
   if (isRegistered()) emitLeaveMsg()
 
   if (!isExtension) {
     localStorage.removeItem('pt-user')
-    if (cB) cB()
+    if (callBack) callBack()
     return
   }
 
   chrome.storage.sync.remove('pt-user', function() {
-    if (cB) cB()
+    if (callBack) callBack()
   })
 
 }
@@ -451,7 +451,7 @@ function hideNameTags() {
 
 
 function addCanvasToPage() {
-  $('<div id="pt-container" class="pt-override-page pt"></div>').appendTo('body');
+  $('<div id="pt-container" class="pt-override-page pt"></div>').appendTo(document.body); //for sites that use domain forwarding
 }
 
 
@@ -561,18 +561,18 @@ function removeMainMenu() {
 //
 
 
-function getFriendInfo(idOrName, cB) {
+function getFriendInfo(idOrName, callBack) {
 
   $.ajax({
     method: 'GET',
-    url: 'https://passti.me/api/users/' + idOrName,
+    url: 'http://localhost:8080/api/users/' + idOrName,
     success: function(data) {
       console.log(data)
 
       if (data.status === 'success') {
         var user = data.data
 
-        if (cB) cB(user)
+        if (callBack) callBack(user)
         return user
       }
     },
@@ -586,13 +586,13 @@ function getFriendInfo(idOrName, cB) {
 //
 
 //pull info from server only if there is a callback, dont want to hit server everytime controls are let go
-function getLiveFriends(cB) {
+function getLiveFriends(callBack) {
 
-  if (cB) {
+  if (callBack) {
 
     $.ajax({
       method: 'GET',
-      url: 'https://passti.me/api/users/' + myCharacter.data._id + '/friends/live',
+      url: 'http://localhost:8080/api/users/' + myCharacter.data._id + '/friends/live',
       success: function(data) {
         console.log(data)
 
@@ -607,7 +607,7 @@ function getLiveFriends(cB) {
 
         console.log('getLiveFriends', liveFriends)
 
-        if (cB) return cB(liveFriends)
+        if (callBack) return callBack(liveFriends)
 
         return liveFriends
       },
@@ -633,7 +633,7 @@ function getLiveFriends(cB) {
 //
 
 
-function getRemoteLiveFriends(cB) {
+function getRemoteLiveFriends(callBack) {
 
   var liveFriends = {}
 
@@ -648,7 +648,7 @@ function getRemoteLiveFriends(cB) {
 
     console.log('liveFriends', liveFriends, 'character', character)
 
-    if (cB) cB(liveFriends)
+    if (callBack) callBack(liveFriends)
   })
 }
 
@@ -673,7 +673,7 @@ function addLiveCharacters() {
 
   $.ajax({
     method: 'GET',
-    url: 'https://passti.me/api/users/' + name + '/friends/live',
+    url: 'http://localhost:8080/api/users/' + name + '/friends/live',
     success: function(data) {
       console.log(data)
 
@@ -723,7 +723,7 @@ function openIframe(e) {
   var role = $(target).find('div').data('role') || $(target).find('a').data('role') //menu || notification
   var id = $(target).closest('ul').data('id') || $(target).find('a').data('id') //menu || notification
   window.roomToOpen = $(target).find('div').data('room') || $(target).find('a').data('room') 
-  var src = 'https://passti.me/' + role
+  var src = 'http://localhost:8080/' + role
   var iframe = characters[id].iframe
   var previousSrc = $(iframe).attr('src')
 

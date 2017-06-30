@@ -1,4 +1,4 @@
-function detectExtensionInstalled(id, cB) {
+function detectExtensionInstalled(id, callBack) {
 
   var url = 'chrome-extension://' + id + '/manifest.json'
 
@@ -6,10 +6,10 @@ function detectExtensionInstalled(id, cB) {
     method: 'GET',
     url: url,
     success: function(data) {
-      if (cB) cB(true)
+      if (callBack) callBack(true)
     },
     error: function(err) {
-      if (cB) cB(false)
+      if (callBack) callBack(false)
     },
   })
 
@@ -240,18 +240,18 @@ function onSocket(data) {
 //
 
 
-function logout(cB) {
+function logout(callBack) {
 
   if (isRegistered()) emitLeaveMsg()
 
   if (!isExtension) {
     localStorage.removeItem('pt-user')
-    if (cB) cB()
+    if (callBack) callBack()
     return
   }
 
   chrome.storage.sync.remove('pt-user', function() {
-    if (cB) cB()
+    if (callBack) callBack()
   })
 
 }
@@ -451,7 +451,7 @@ function hideNameTags() {
 
 
 function addCanvasToPage() {
-  $('<div id="pt-container" class="pt-override-page pt"></div>').appendTo('body');
+  $('<div id="pt-container" class="pt-override-page pt"></div>').appendTo(document.body); //for sites that use domain forwarding
 }
 
 
@@ -561,7 +561,7 @@ function removeMainMenu() {
 //
 
 
-function getFriendInfo(idOrName, cB) {
+function getFriendInfo(idOrName, callBack) {
 
   $.ajax({
     method: 'GET',
@@ -572,7 +572,7 @@ function getFriendInfo(idOrName, cB) {
       if (data.status === 'success') {
         var user = data.data
 
-        if (cB) cB(user)
+        if (callBack) callBack(user)
         return user
       }
     },
@@ -586,9 +586,9 @@ function getFriendInfo(idOrName, cB) {
 //
 
 //pull info from server only if there is a callback, dont want to hit server everytime controls are let go
-function getLiveFriends(cB) {
+function getLiveFriends(callBack) {
 
-  if (cB) {
+  if (callBack) {
 
     $.ajax({
       method: 'GET',
@@ -607,7 +607,7 @@ function getLiveFriends(cB) {
 
         console.log('getLiveFriends', liveFriends)
 
-        if (cB) return cB(liveFriends)
+        if (callBack) return callBack(liveFriends)
 
         return liveFriends
       },
@@ -633,7 +633,7 @@ function getLiveFriends(cB) {
 //
 
 
-function getRemoteLiveFriends(cB) {
+function getRemoteLiveFriends(callBack) {
 
   var liveFriends = {}
 
@@ -648,7 +648,7 @@ function getRemoteLiveFriends(cB) {
 
     console.log('liveFriends', liveFriends, 'character', character)
 
-    if (cB) cB(liveFriends)
+    if (callBack) callBack(liveFriends)
   })
 }
 

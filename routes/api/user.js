@@ -150,7 +150,10 @@ module.exports = function(passport) {
                   async.forEach(user.friends, function(friend, callback) {
                     User.populate(
                       friend, {
-                        path: 'user'
+                        path: 'user',
+                        populate: {
+                          path: 'room'
+                        }
                       },
                       function(err, friend) {
 
@@ -208,10 +211,10 @@ module.exports = function(passport) {
         }
 
         if (!user) return res.json({
-              status: "error",
-              data: null,
-              message: "Couldn't find user"
-            })
+          status: "error",
+          data: null,
+          message: "Couldn't find user"
+        })
 
         var friends = []
 
@@ -317,6 +320,7 @@ module.exports = function(passport) {
         .findOne({
           $or: $or
         })
+        .select('-password')
         .populate('room')
         .exec(function(err, user) {
           if (err) { //incase remote character wants to login to local
@@ -328,10 +332,10 @@ module.exports = function(passport) {
           }
 
           if (!user) return res.json({
-              status: "error",
-              data: null,
-              message: "Couldn't find user"
-            })
+            status: "error",
+            data: null,
+            message: "Couldn't find user"
+          })
 
           if (!req.body.subscriptions) req.body.subscriptions = [] //when empty array is passed over its lost for some reason
 
@@ -363,7 +367,10 @@ module.exports = function(passport) {
             async.forEach(user.friends, function(friend, callback) {
               User.populate(
                 friend, {
-                  path: "user"
+                  path: 'user',
+                  populate: {
+                    path: 'room'
+                  }
                 },
                 function(err, friend) {
 

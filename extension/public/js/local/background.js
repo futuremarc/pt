@@ -1,4 +1,4 @@
-var socket = io('https://passti.me', {
+var socket = io('http://localhost:5050', {
   'path': '/socket',
   'forceNew': true
 })
@@ -108,7 +108,7 @@ var hasContentPosted = false
 var hasContentEnded = false
 
 
-function endLivePost(cB) {
+function endLivePost(callBack) {
 
   var id = isRegistered()
   if (!id) return
@@ -119,7 +119,7 @@ function endLivePost(cB) {
 
     $.ajax({
       method: 'PUT',
-      url: 'https://passti.me/api/posts/room/' + room + '/end',
+      url: 'http://localhost:8080/api/posts/room/' + room + '/end',
       success: function(data) {
         console.log(data)
 
@@ -139,7 +139,7 @@ function endLivePost(cB) {
 
         console.log('endLivePost', data)
 
-        return cB()
+        return callBack()
       },
       error: function(err) {
         console.log(err)
@@ -188,15 +188,15 @@ function startLivePost() {
 
 }
 
-function getLiveFriends(cB) {
+function getLiveFriends(callBack) {
 
   var id = myCharacter.data._id
 
-  if (cB) {
+  if (callBack) {
 
     $.ajax({
       method: 'GET',
-      url: 'https://passti.me/api/users/' + id + '/friends/live',
+      url: 'http://localhost:8080/api/users/' + id + '/friends/live',
       success: function(data) {
         console.log(data)
 
@@ -214,7 +214,7 @@ function getLiveFriends(cB) {
 
         console.log('getLiveFriends', liveFriends)
 
-        if (cB) return cB(liveFriends)
+        if (callBack) return callBack(liveFriends)
 
         return liveFriends
       },
@@ -238,12 +238,12 @@ function getLiveFriends(cB) {
 }
 
 
-function getLivePostInfo(title, service, cB) {
-  if (service === 'soundcloud') getSoundcloudInfo(title, cB)
+function getLivePostInfo(title, service, callBack) {
+  if (service === 'soundcloud') getSoundcloudInfo(title, callBack)
   else console.log('getyoutubeinfo')
 }
 
-function getSoundcloudInfo(title, cB) {
+function getSoundcloudInfo(title, callBack) {
 
   SC.get('/tracks', {
     q: title
@@ -255,9 +255,9 @@ function getSoundcloudInfo(title, cB) {
         title: tracks[0].title,
         url: tracks[0].uri
       }
-      return cB(data)
+      return callBack(data)
     } else {
-      return cB(false)
+      return callBack(false)
     }
   })
 }
@@ -413,7 +413,7 @@ function emitMsgToClient(data, sendResponse) {
 
 
 function emitMsgToServer(data) {
-  
+
   var event = data.event
   socket.emit(event, data)
 }

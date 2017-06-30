@@ -1,4 +1,4 @@
-var sceneCharacters = {},
+var sceneCharacters = {}, //
   characters = {}; //meshes, data
 var myCharacter = undefined
 var _id = _id //from pug
@@ -42,7 +42,7 @@ function createMyCharacter(data) {
 //
 
 
-function createCharacter(data, cB) {
+function createCharacter(data, callBack) {
 
   if (isExtension) var path = chrome.extension.getURL('public/models/character/eva-animated.json')
   else var path = '/models/character/eva-animated.json'
@@ -76,7 +76,7 @@ function createCharacter(data, cB) {
 
     character.data = data
     character.nameTagWidth = $('.pt-name-tag').width()
-    character.menu = addCharacterMenu(character, data)
+    character.menu = addMenu(character)
     character.iframe = addIframe(character)
     character.bubble = addBubble(character) //notification bubble
     character.role = 'character' //associate purpose for all meshes
@@ -103,8 +103,8 @@ function createCharacter(data, cB) {
     character.width = Math.abs(geometry.boundingBox.max.x - geometry.boundingBox.min.x)
     character.depth = Math.abs(geometry.boundingBox.max.z - geometry.boundingBox.min.z)
 
-    actions = character.actions
-    mixer = character.mixer
+    var actions = character.actions
+    var mixer = character.mixer
 
     actions.hello = mixer.clipAction(geometry.animations[0]);
     actions.idle = mixer.clipAction(geometry.animations[1]);
@@ -206,15 +206,15 @@ function createCharacter(data, cB) {
     character.position.set(pos.x, pos.y, pos.z);
     character.rotation.set(rot.x, rot.y, rot.z);
 
-    sceneCharacters.add(character)
-    characters[data._id] = character
-
     character.hasPointer = true
     character.hasMenu = true
     character.hasIframe = true
     character.hasBubble = true
 
-    if (cB) cB(character)
+    sceneCharacters.add(character)
+    characters[data._id] = character
+
+    if (callBack) callBack(character)
 
   });
 
@@ -224,7 +224,7 @@ function createCharacter(data, cB) {
 //
 
 
-function updateCharacter(request, data, cB, isRecursiveCall) {
+function updateCharacter(request, data, callBack, isRecursiveCall) {
 
   var pos, rot
   var data = data || {}
@@ -239,37 +239,50 @@ function updateCharacter(request, data, cB, isRecursiveCall) {
 
         chrome.storage.sync.get('pt-user', function(_data) {
 
-          var user = _data['pt-user']
-          if (!user) {
+          chrome.storage.sync.get('pt-friends', function(_friends) {
 
-            if (!isRecursiveCall) updateCharacter('getRemote', null, cB, true) //if not recursive try different method
-            else if (cB) cB(user) //else if recursive call continue without user data
-            return
-          }
+            var friends = _friends['pt-friends']
+            var user = _data['pt-user']
 
-          pos = user.position
-          rot = user.rotation
+            user.friends = friends
 
-          if (!pos && !rot) return
+            if (!user) {
 
-          if (myCharacter) {
+              if (!isRecursiveCall) updateCharacter('getRemote', null, callBack, true) //if not recursive try different method
+              else if (callBack) callBack(user) //else if recursive call continue without user data
+              return
+            }
 
-            myCharacter.position.set(pos.x, pos.y, pos.z)
-            myCharacter.rotation.set(rot.x, rot.y, rot.z)
-            myCharacter.data = user
+            pos = user.position
+            rot = user.rotation
 
-          }
+            if (!pos && !rot) return
 
-          if (cB) cB(user)
+            if (myCharacter) {
+
+              myCharacter.position.set(pos.x, pos.y, pos.z)
+              myCharacter.rotation.set(rot.x, rot.y, rot.z)
+              myCharacter.data = user
+
+            }
+
+            if (callBack) callBack(user)
+          })
+
         })
       } else {
 
         data = localStorage.getItem('pt-user')
         var user = JSON.parse(data)
 
+        data = localStorage.getItem('pt-friends')
+        var friends = JSON.parse(data)
+
+        user.friends = friends
+
         if (!user) {
-          if (!isRecursiveCall) updateCharacter('getRemote', null, cB, true)
-          else if (cB) cB(user)
+          if (!isRecursiveCall) updateCharacter('getRemote', null, callBack, true)
+          else if (callBack) callBack(user)
           return
         }
 
@@ -286,7 +299,7 @@ function updateCharacter(request, data, cB, isRecursiveCall) {
 
         }
 
-        if (cB) cB(user)
+        if (callBack) callBack(user)
 
       }
 
@@ -298,11 +311,11 @@ function updateCharacter(request, data, cB, isRecursiveCall) {
 
       $.ajax({
         method: 'PUT',
-        url: 'https://passti.me/api/users/' + name,
+        url: 'http://localhost:8080/api/users/' + name,
         data: data,
         success: function(data) {
           console.log(data)
-          if (cB) cB(data.data)
+          if (callBack) callBack(data.data)
         },
         error: function(err) {
           console.log(err)
@@ -319,16 +332,41 @@ function updateCharacter(request, data, cB, isRecursiveCall) {
       myCharacter.data.position = pos
       myCharacter.data.rotation = rot
 
+      var friends = myCharacter.data.friends
+
+      delete myCharacter.data.friends
+
+
+
       if (isExtension) {
+
         chrome.storage.sync.set({
-          'pt-user': myCharacter.data
+          'pt-friends': friends
         }, function() {
-          if (cB) cB(data)
+
+          chrome.storage.sync.set({
+            'pt-user': myCharacter.data
+          }, function() {
+
+            myCharacter.data.friends = friends
+            if (callBack) callBack(data)
+          })
+
         })
 
+
       } else {
+
         var _data = JSON.stringify(myCharacter.data)
         localStorage.setItem('pt-user', _data);
+
+        var _data = JSON.stringify(myCharacter.data.friends)
+        localStorage.setItem('pt-friends', _data);
+
+        myCharacter.data.friends = friends
+
+         if (callBack) callBack(data)
+
       }
 
       break
@@ -341,12 +379,12 @@ function updateCharacter(request, data, cB, isRecursiveCall) {
         var user = JSON.parse(data)
 
         if (user) {
-          if (!isRecursiveCall) updateCharacter('getLocal', null, cB, true)
-          else if (cB) cB(user)
+          if (!isRecursiveCall) updateCharacter('getLocal', null, callBack, true)
+          else if (callBack) callBack(user)
           return
         }
 
-        if (cB) cB(null)
+        if (callBack) callBack(null)
         return
       }
 
@@ -355,7 +393,7 @@ function updateCharacter(request, data, cB, isRecursiveCall) {
 
       $.ajax({
         method: 'GET',
-        url: 'https://passti.me/api/users/' + name,
+        url: 'http://localhost:8080/api/users/' + name,
         success: function(data) {
           console.log(data)
 
@@ -364,7 +402,7 @@ function updateCharacter(request, data, cB, isRecursiveCall) {
             if (!isExtension) {
 
               if (isRegistered()) myCharacter.data = data.data
-              if (cB) cB(data.data)
+              if (callBack) callBack(data.data)
               return
 
             }
@@ -374,7 +412,7 @@ function updateCharacter(request, data, cB, isRecursiveCall) {
 
             }, function() {
               if (isRegistered()) myCharacter.data = data.data
-              if (cB) cB(data.data)
+              if (callBack) callBack(data.data)
             })
 
           } else errorMessage.html(data.message)
@@ -404,21 +442,21 @@ function updateCharacter(request, data, cB, isRecursiveCall) {
 //
 
 
-function putCharacter(cB) {
+function putCharacter(callBack) {
 
   updateCharacter('putLocal', myCharacter.data)
-  if (isRegistered()) updateCharacter('putRemote', myCharacter.data, cB)
+  if (isRegistered()) updateCharacter('putRemote', myCharacter.data, callBack)
 }
 
 
 //
 
 
-function getCharacterInfo(cB) {
+function getCharacterInfo(callBack) {
 
   if (!isRegistered()) return false
 
-  if (!cB) {
+  if (!callBack) {
 
     var pos = getCharacterPos()
     var rot = getCharacterRot()
@@ -457,7 +495,7 @@ function getCharacterInfo(cB) {
         '_id': id
       }
 
-      return cB(info)
+      return callBack(info)
 
     })
 
@@ -468,8 +506,12 @@ function getCharacterInfo(cB) {
 
 //
 
+function addMenu(){
 
-function addCharacterMenu(character, data) {
+}
+function addCharacterMenu(character) {
+
+  var data = character.data
 
   var menu = $('<div class="pt-menu pt"></div>')
   var isMe = character.isMe

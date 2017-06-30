@@ -113,7 +113,7 @@ function setCameraZoom() {
 
 var home
 
-function addHome(cB) {
+function addHome(callBack) {
 
   if (isExtension) var path = chrome.extension.getURL('public/models/house/house.json')
   else var path = '/models/house/house.json'
@@ -145,7 +145,7 @@ function addHome(cB) {
     home = object
     home.visible = false
 
-    if (cB) cB()
+    if (callBack) callBack()
 
   })
 }
@@ -200,7 +200,7 @@ function addBike() {
 
     bike = object
 
-    if (cB) cB()
+    if (callBack) callBack()
 
   })
 }

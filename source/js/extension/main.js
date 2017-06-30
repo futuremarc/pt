@@ -142,10 +142,7 @@ function initPt() {
       initScene(user)
     })
     else initScene(user)
-
-
   })
-
 }
 
 
