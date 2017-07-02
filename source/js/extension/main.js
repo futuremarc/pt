@@ -151,21 +151,25 @@ function initPt() {
 
 /*************global listeners*************/
 
+var latestHoveredMesh = undefined
 
 function detectMeshHover(e) {
 
   if (!isMouseHovering && isMousePointer) {
     hidePointer()
     return
-  } else if (!isMouseHovering) return
+  }
 
-  var x = (mouseX / window.innerWidth) * 2 - 1;
-  var y = -(mouseY / window.innerHeight) * 2 + 1;
+  else if (!isMouseHovering) return
+
+   var x = ( mouseX ) / window.innerWidth * 2 - 1
+   var y =  -( mouseY - (window.innerHeight - container.offsetHeight)) / container.offsetHeight * 2 + 1
+
   var raycaster = new THREE.Raycaster();
 
   raycaster.setFromCamera(new THREE.Vector2(x, y), camera);
 
-  var intersects = raycaster.intersectObjects(scene.children, true);
+  var intersects = raycaster.intersectObjects(sceneCharacters.children, true);
 
   if (intersects.length > 0 && isMouseHovering) {
 
@@ -179,7 +183,7 @@ function detectMeshHover(e) {
       if (hoveredMesh.hasMenu3D && !isMouseDown) {
 
         hideNameTags()
-        showMenu3D(hoveredMesh)
+        //showMenu3D(hoveredMesh)
       }else if (hoveredMesh.hasMenu && !isMouseDown) {
 
         hideNameTags()
@@ -218,14 +222,13 @@ function onCanvasHover(e) {
 
 //
 
-var canvas_offset = 50
 
 function onMouseMove(e) {
 
   mouseX = e.clientX
   mouseY = e.clientY
 
-  isMouseHovering = (mouseY > window.innerHeight - canvasHeight + canvas_offset)
+  isMouseHovering = (mouseY > window.innerHeight - canvasHeight )
 
   detectMeshHover()
   onCanvasHover()

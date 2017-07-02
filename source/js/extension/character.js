@@ -555,6 +555,8 @@ function addMenu(character, callBack) {
       'transparent': true
     }))
 
+    bubbleIcon.role = 'bubbleIcon'
+
     bubbleIcon.scale.set(0.01, 0.01, 0.01)
     character.bounceIcon(bubbleIcon)
     bubbleIcon.hasPointer = true
@@ -575,6 +577,8 @@ function addMenu(character, callBack) {
         'map': texture,
         'transparent': true
       }))
+
+      usersIcon.role = 'usersIcon'
 
       usersIcon.scale.set(0.01, 0.01, 0.01)
       character.bounceIcon(usersIcon)

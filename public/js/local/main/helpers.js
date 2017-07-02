@@ -1021,11 +1021,16 @@ function onMouseDown() {
 
 
 function onMouseUp() {
-  hideMenu()
+  //hideMenu()
   $('.pt-iframe').hide() //remove this later
-  if (hoveredMesh && hoveredMesh.hasMenu3D) shoeMenu3D(hoveredMesh)
-  else if (hoveredMesh && !isMenuDisplayed) showMenu(hoveredMesh)
-  isMouseDown = false
+   isMouseDown = false
+
+  hideMenu3D()
+
+  if (!hoveredMesh) return
+  if (hoveredMesh && hoveredMesh.hasMenu3D) showMenu3D(hoveredMesh)
+  //else if (hoveredMesh && !isMenuDisplayed) showMenu(hoveredMesh)
+ 
 }
 
 
@@ -1060,9 +1065,23 @@ var main_menu_y_off = 5
 
 
 function showMenu3D(_mesh){
+  hideMenu3D()
   _mesh.zoomInMenu()
+}
+
+function hideMenu3D(){
+
+   for (var character in characters) {
+
+    if (!characters[character].hasMenu3D) return
+
+    characters[character].zoomOutMenu()
+
+  }
 
 }
+
+
 function showMenu(_mesh) {
 
   hideMenu()
