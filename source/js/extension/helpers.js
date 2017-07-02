@@ -1028,6 +1028,8 @@ function onMouseUp(e) {
     openIframe(e, hoveredMesh)
   }
 
+  alert(isMouseDown,hoveredMesh.isIcon,hoveredMesh)
+
     //else if (hoveredMesh && !isMenuDisplayed) showMenu(hoveredMesh)
 
 }
