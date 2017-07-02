@@ -1,13 +1,13 @@
 $(document).ready(function() {
 
-  if (loggedIn) { //from pug view
+  if (isLoggedIn) { //from pug view
 
     var errorMessage = $(".error-message h3")
 
 
     $.ajax({
       method: 'GET',
-      url: 'http://localhost:8080/api/users/' + _id,
+      url: 'http://localhost:8080/api/users/' + window.userId,
       success: function(data) {
         console.log(data)
 
@@ -35,8 +35,8 @@ $(document).ready(function() {
                    
                   })
 
-                  var isMe = (_id === user._id)
-                  var isRequestAlreadySent = (user.friendRequests.indexOf(_id) > -1)
+                  var isMe = (window.userId === user._id)
+                  var isRequestAlreadySent = (user.friendRequests.indexOf(window.userId) > -1)
 
                   if (!isUserFriend && !isMe && !isRequestAlreadySent) usersToShow.push(user)
 

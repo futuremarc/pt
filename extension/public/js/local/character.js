@@ -13,27 +13,27 @@ function createMyCharacter(data) {
     window.myCharacter = character
 
     setScenePosition(character)
-    addHome(function() {
+      // addHome(function() {
 
-      //addMainMenu(character, character.data)
-      // showNameTags()
-      // hideNameTags()
+    //addMainMenu(character, character.data)
+    // showNameTags()
+    // hideNameTags()
 
 
-      myCharacter.awake()
+    myCharacter.awake()
 
-      if (isRegistered()) {
-        addLiveCharacters()
-        updateBgCharacterData()
-        emitJoinMsg()
+    if (isRegistered()) {
+      addLiveCharacters()
+      updateBgCharacterData()
+      emitJoinMsg()
 
-      }
+    }
 
-      animate()
+    animate()
 
-      if (isHomePage && scene.visible) $('.pt-menu-suggestions').click() //show default card... isHome defined in auth/home.js
+    if (isHomePage && scene.visible) $('.pt-menu-suggestions').click() //show default card... isHome defined in auth/home.js
 
-    })
+    // })
 
   })
 }
@@ -56,13 +56,36 @@ function createCharacter(data, callBack) {
     });
 
     var character = new THREE.SkinnedMesh(geometry, new THREE.MeshFaceMaterial(materials));
-    var name = data.name || ''
 
+    var bounceTimer = 0
+
+    character.bounceIcon = function(icon) {
+
+      setTimeout(function() {
+
+        var originalY = icon.position.y
+
+        var start = new TWEEN.Tween(icon.position).to({
+          y: originalY
+        }, 200).easing(TWEEN.Easing.Quadratic.Out);
+
+        icon.bounceTween = new TWEEN.Tween(icon.position).to({
+          y: originalY + .055
+        }, 1500).repeat(Infinity).yoyo(true).easing(TWEEN.Easing.Sinusoidal.InOut);
+
+        start.chain(icon.bounceTween).start();
+
+      }, bounceTimer)
+
+      bounceTimer += 950
+    }
+
+
+    var name = data.name || ''
     var isMe = (renderOrder === 0)
     if (isMe) character.isMe = true
 
     character.name = name
-
 
     if (isMe) name = '&#x25BC;'
 
@@ -76,7 +99,8 @@ function createCharacter(data, callBack) {
 
     character.data = data
     character.nameTagWidth = $('.pt-name-tag').width()
-    character.menu = addMenu(character)
+    character.menu = addCharacterMenu(character)
+    character.menu_3d = addMenu(character)
     character.iframe = addIframe(character)
     character.bubble = addBubble(character) //notification bubble
     character.role = 'character' //associate purpose for all meshes
@@ -103,8 +127,8 @@ function createCharacter(data, callBack) {
     character.width = Math.abs(geometry.boundingBox.max.x - geometry.boundingBox.min.x)
     character.depth = Math.abs(geometry.boundingBox.max.z - geometry.boundingBox.min.z)
 
-    var actions = character.actions
-    var mixer = character.mixer
+    actions = character.actions
+    mixer = character.mixer
 
     actions.hello = mixer.clipAction(geometry.animations[0]);
     actions.idle = mixer.clipAction(geometry.animations[1]);
@@ -121,6 +145,36 @@ function createCharacter(data, callBack) {
     actions.hello.clampWhenFinished = true;
 
     actions.idle.play();
+
+    character.zoomInIcon = function(icon) {
+
+      new TWEEN.Tween(icon.scale).to({
+        x: 1,
+        y: 1,
+        z: 1
+      }, 400).easing(TWEEN.Easing.Elastic.Out).start();
+
+    }
+
+    character.zoomOutIcon = function(icon) {
+
+      new TWEEN.Tween(icon.scale).to({
+        x: .01,
+        y: .01,
+        z: .01
+      }, 400).easing(TWEEN.Easing.Elastic.Out).start();
+
+    }
+
+    character.zoomInMenu = function() {
+      this.zoomInIcon(this.menu3d.bubbleIcon)
+      this.zoomInIcon(this.menu3d.usersIcon)
+    }
+
+    character.zoomOutMenu = function() {
+      this.zoomOutIcon(this.menu3d.bubbleIcon)
+      this.zoomOutIcon(this.menu3d.usersIcon)
+    }
 
     character.walk = function(data) {
       var direction = data.direction
@@ -239,46 +293,34 @@ function updateCharacter(request, data, callBack, isRecursiveCall) {
 
         chrome.storage.sync.get('pt-user', function(_data) {
 
-          chrome.storage.sync.get('pt-friends', function(_friends) {
+          var user = _data['pt-user']
 
-            var friends = _friends['pt-friends']
-            var user = _data['pt-user']
+          if (!user) {
 
-            user.friends = friends
+            if (!isRecursiveCall) updateCharacter('getRemote', null, callBack, true) //if not recursive try different method
+            else if (callBack) callBack(user) //else if recursive call continue without user data
+            return
+          }
 
-            if (!user) {
+          pos = user.position
+          rot = user.rotation
 
-              if (!isRecursiveCall) updateCharacter('getRemote', null, callBack, true) //if not recursive try different method
-              else if (callBack) callBack(user) //else if recursive call continue without user data
-              return
-            }
+          if (!pos && !rot) return
 
-            pos = user.position
-            rot = user.rotation
+          if (myCharacter) {
 
-            if (!pos && !rot) return
+            myCharacter.position.set(pos.x, pos.y, pos.z)
+            myCharacter.rotation.set(rot.x, rot.y, rot.z)
+            myCharacter.data = user
 
-            if (myCharacter) {
+          }
 
-              myCharacter.position.set(pos.x, pos.y, pos.z)
-              myCharacter.rotation.set(rot.x, rot.y, rot.z)
-              myCharacter.data = user
-
-            }
-
-            if (callBack) callBack(user)
-          })
-
+          if (callBack) callBack(user)
         })
       } else {
 
         data = localStorage.getItem('pt-user')
         var user = JSON.parse(data)
-
-        data = localStorage.getItem('pt-friends')
-        var friends = JSON.parse(data)
-
-        user.friends = friends
 
         if (!user) {
           if (!isRecursiveCall) updateCharacter('getRemote', null, callBack, true)
@@ -332,40 +374,21 @@ function updateCharacter(request, data, callBack, isRecursiveCall) {
       myCharacter.data.position = pos
       myCharacter.data.rotation = rot
 
-      var friends = myCharacter.data.friends
-
-      delete myCharacter.data.friends
-
-
-
       if (isExtension) {
 
         chrome.storage.sync.set({
-          'pt-friends': friends
+          'pt-user': myCharacter.data
         }, function() {
 
-          chrome.storage.sync.set({
-            'pt-user': myCharacter.data
-          }, function() {
-
-            myCharacter.data.friends = friends
-            if (callBack) callBack(data)
-          })
-
+          if (callBack) callBack(data)
         })
-
 
       } else {
 
         var _data = JSON.stringify(myCharacter.data)
         localStorage.setItem('pt-user', _data);
 
-        var _data = JSON.stringify(myCharacter.data.friends)
-        localStorage.setItem('pt-friends', _data);
-
-        myCharacter.data.friends = friends
-
-         if (callBack) callBack(data)
+        if (callBack) callBack(data)
 
       }
 
@@ -506,9 +529,65 @@ function getCharacterInfo(callBack) {
 
 //
 
-function addMenu(){
+function addMenu(character) {
+
+  var menu3d = new THREE.Object3D()
+  character.menu3d = menu3d
+  sceneCharacters.add(menu3d)
+
+  var loader = new THREE.TextureLoader()
+
+  if (isExtension) var path = chrome.extension.getURL('public/img/bubble.png')
+  else var path = '/img/extension/bubble.png'
+
+  loader.load(path, function(texture) {
+
+    var geo = new THREE.BoxGeometry(.6, .6, 1)
+
+    var bubbleIcon = new THREE.Mesh(geo, new THREE.MeshBasicMaterial({
+      'map': texture,
+      'transparent': true
+    }))
+
+    bubbleIcon.scale.set(0.01, 0.01, 0.01)
+    character.bounceIcon(bubbleIcon)
+    bubbleIcon.hasPointer = true
+
+    menu3d.bubbleIcon = bubbleIcon
+    menu3d.add(bubbleIcon)
+
+  });
+
+
+  loader = new THREE.TextureLoader()
+
+  if (isExtension) path = chrome.extension.getURL('public/img/users.png')
+  else path = '/img/extension/users.png'
+
+  loader.load(path, function(texture) {
+
+    var geo = new THREE.BoxGeometry(.6, .6, 1)
+
+    var usersIcon = new THREE.Mesh(geo, new THREE.MeshBasicMaterial({
+      'map': texture,
+      'transparent': true
+    }))
+
+    usersIcon.scale.set(0.01, 0.01, 0.01)
+    character.bounceIcon(usersIcon)
+    usersIcon.hasPointer = true
+
+    menu3d.usersIcon = usersIcon
+    menu3d.add(usersIcon)
+
+
+    character.hasMenu3D = true
+
+  });
+
 
 }
+
 function addCharacterMenu(character) {
 
   var data = character.data

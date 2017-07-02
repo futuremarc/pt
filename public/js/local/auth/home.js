@@ -3,13 +3,13 @@ $(document).ready(function(){
   var isIframe = window.parent !== window.self
   window.isHomePage = true
 
- if (loggedIn && isIframe) {
+ if (isLoggedIn && isIframe) {
 
     var errorMessage = $(".error-message h3")
 
     $.ajax({
       method: 'GET',
-      url: 'http://localhost:8080/api/users/' + name,
+      url: 'https://passti.me/api/users/' + window.userName,
       success: function(data) {
         console.log(data)
 

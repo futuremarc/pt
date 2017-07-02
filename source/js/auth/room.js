@@ -100,7 +100,7 @@ function minimizeIframe(domEvent){
 
     var data = {
       'event': 'joinRoom',
-      'room': roomId,
+      'room': window.roomId,
       'type': 'socket'
     }
 
@@ -114,7 +114,7 @@ function minimizeIframe(domEvent){
 
     var data = {
       'event': 'leaveRoom',
-      'room': roomId,
+      'room': window.roomId,
       'type': 'socket'
     }
 
@@ -130,8 +130,8 @@ function minimizeIframe(domEvent){
     return new Promise(function(resolve, reject) {
 
       if (isIframe) var id = _roomId;
-      else if (roomId) var id = roomId
-      else var id = _id
+      else if (window.roomId) var id = window.roomId
+      else var id = window.userId
 
       $.ajax({
         method: 'GET',
@@ -167,8 +167,8 @@ function minimizeIframe(domEvent){
     var content = $('#pt-room-input').val();
     if (!content) return
 
-    var name = window.name || myCharacter.data.name //pug (not iframe )|| initAuth (iframe)
-    var id = window._id || myCharacter.data._id
+    var name = window.userName || myCharacter.data.name //from pug (not iframe)|| from initAuth (iframe)
+    var id = window.userId || myCharacter.data._id
 
     var user = {
       _id: id,
@@ -177,7 +177,7 @@ function minimizeIframe(domEvent){
 
     var message = {
       content: content,
-      room: roomId, //global
+      room: window.roomId, //global
       user: user
     }
 

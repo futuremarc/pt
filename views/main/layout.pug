@@ -12,6 +12,7 @@ html
     block css
   body
     block content
+    script(src='/js/lib/Tween.js')
     script(src='/js/lib/three.min.js')
     script(src='/js/lib/three.projector.js')
     script(src='/js/lib/hammer.min.js')
@@ -31,9 +32,9 @@ html
       ga('send', 'pageview');
     
     script.
-      loggedIn = "#{loggedIn}";
-      name = "#{userName}";
-      _id = "#{userId}";
+      isLoggedIn = "#{isLoggedIn}";
+      userName = "#{userName}";
+      userId = "#{userId}";
       roomId = "#{roomId}";
 
     script(src='/js/local/auth/main.js')

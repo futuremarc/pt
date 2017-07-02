@@ -18,6 +18,8 @@ function animate() {
     //animateBike()
   if (isRegistered()) animateOtherChars()
   requestAnimationFrame(animate);
+  TWEEN.update();
+
   render();
 }
 
@@ -72,6 +74,7 @@ function animateMyChar() {
 
   updateIframePositions()
   updateBubblePositions()
+  updateMenu3DPositions()
 
   if (isMenuDisplayed && scene.visible) showMenu(latestHoveredMesh)
   else if (isMenuDisplayed && !scene.visible) hideMenu()
@@ -172,11 +175,18 @@ function detectMeshHover(e) {
       latestHoveredMesh = hoveredMesh
 
       if (hoveredMesh.hasPointer) showPointer()
-      if (hoveredMesh.hasMenu && !isMouseDown) {
+  
+      if (hoveredMesh.hasMenu3D && !isMouseDown) {
+
+        hideNameTags()
+        showMenu3D(hoveredMesh)
+      }else if (hoveredMesh.hasMenu && !isMouseDown) {
 
         hideNameTags()
         showMenu(hoveredMesh)
       }
+
+
     }
 
   } else {
@@ -618,8 +628,8 @@ var isIframe = (window.parent !== window.self)
 
 if (isExtension && !ptExists) chrome.runtime.onMessage.addListener(onBgMessage);
 
-//var id = 'bgnidgoonglndlgocabmhdogbdniaiih'
-var id = 'malhbgmooogkoheilhpjnlimhmnmlpii'
+//var id = 'bgnidgoonglndlgocabmhdogbdniaiih' //prod
+var id = 'malhbgmooogkoheilhpjnlimhmnmlpii' //dev
 var doRun = false
 
 detectExtensionInstalled(id, function(hasPt) {

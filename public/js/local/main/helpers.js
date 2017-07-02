@@ -101,13 +101,46 @@ function addBubble(character) {
   bubble.attr('data-is-me', character.isMe)
   bubble.isShown = false
 
-  bubble.on('mouseup touchend', function(e){
+  bubble.on('mouseup touchend', function(e) {
     hideBubble(bubble)
     openIframe(e)
   })
+
   $('body').append(bubble)
 
   return bubble
+}
+
+
+function updateMenu3DPositions() {
+
+
+  for (var character in characters) {
+
+    if (!characters[character].menu3d) return
+
+    var bubbleIcon = characters[character].menu3d.bubbleIcon
+    var usersIcon = characters[character].menu3d.usersIcon
+
+    if (bubbleIcon) {
+      bubbleIcon.position.copy(characters[character].position);
+      bubbleIcon.position.x = bubbleIcon.position.x - .5
+      bubbleIcon.position.y = bubbleIcon.position.y + 1.8
+    }
+    if (usersIcon) {
+      usersIcon.position.copy(characters[character].position);
+      usersIcon.position.x = usersIcon.position.x + .5
+      usersIcon.position.y = usersIcon.position.y + 1.8
+    }
+
+
+    // var isShown = characters[character].bubble.isShown
+    // if (isShown) positionIframe(characters[character].bubble)
+
+  }
+
+
+
 }
 
 function updateBubblePositions() {
@@ -570,9 +603,10 @@ function getFriendInfo(idOrName, callBack) {
       console.log(data)
 
       if (data.status === 'success') {
-        var user = data.data
 
+        var user = data.data
         if (callBack) callBack(user)
+
         return user
       }
     },
@@ -671,6 +705,8 @@ function refreshMainMenu() {
 
 function addLiveCharacters() {
 
+  var name = myCharacter.data.name
+
   $.ajax({
     method: 'GET',
     url: 'http://localhost:8080/api/users/' + name + '/friends/live',
@@ -679,7 +715,6 @@ function addLiveCharacters() {
 
       var friends = data.data
 
-      //map live friends to an object based on _id
       friends.forEach(function(friend) {
         var user = friend.user
         createCharacter(user)
@@ -722,7 +757,7 @@ function openIframe(e) {
   var target = e.currentTarget
   var role = $(target).find('div').data('role') || $(target).find('a').data('role') //menu || notification
   var id = $(target).closest('ul').data('id') || $(target).find('a').data('id') //menu || notification
-  window.roomToOpen = $(target).find('div').data('room') || $(target).find('a').data('room') 
+  window.roomToOpen = $(target).find('div').data('room') || $(target).find('a').data('room')
   var src = 'http://localhost:8080/' + role
   var iframe = characters[id].iframe
   var previousSrc = $(iframe).attr('src')
@@ -988,7 +1023,8 @@ function onMouseDown() {
 function onMouseUp() {
   hideMenu()
   $('.pt-iframe').hide() //remove this later
-  if (hoveredMesh && !isMenuDisplayed) showMenu(hoveredMesh)
+  if (hoveredMesh && hoveredMesh.hasMenu3D) shoeMenu3D(hoveredMesh)
+  else if (hoveredMesh && !isMenuDisplayed) showMenu(hoveredMesh)
   isMouseDown = false
 }
 
@@ -1022,6 +1058,11 @@ var isMenuDisplayed = false
 var main_menu_x_off = 8
 var main_menu_y_off = 5
 
+
+function showMenu3D(_mesh){
+  _mesh.zoomInMenu()
+
+}
 function showMenu(_mesh) {
 
   hideMenu()

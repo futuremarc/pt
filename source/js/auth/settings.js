@@ -1,12 +1,12 @@
 $(document).ready(function() {
 
-  if (loggedIn) { //from pug view
+  if (isLoggedIn) { //from pug view
 
     var errorMessage = $(".error-message h3")
 
     $.ajax({
       method: 'GET',
-      url: 'http://localhost:8080/api/users/' + name,
+      url: 'http://localhost:8080/api/users/' + window.userName,
       success: function(data) {
         console.log(data)
         if (data.status === 'success') {

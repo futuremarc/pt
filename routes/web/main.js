@@ -10,7 +10,7 @@ module.exports = function() {
 
     if (req.user) {
       return res.render('auth/home.pug', {
-        loggedIn: true,
+        isLoggedIn: true,
         userName: req.user.name,
         userId: req.user._id
       })
@@ -25,7 +25,7 @@ module.exports = function() {
     //  }
 
     //   return res.render('auth/home.pug', {
-    //     loggedIn: true,
+    //     isLoggedIn: true,
     //     userName: user.name,
     //     userId: user._id
     //   })
@@ -71,7 +71,7 @@ module.exports = function() {
       var subs = JSON.stringify(result)
 
       res.render('auth/settings.pug', {
-        loggedIn: true,
+        isLoggedIn: true,
         userName: req.user.name,
         userId: req.user._id,
         subscriptions: subs
@@ -91,7 +91,7 @@ module.exports = function() {
 
     if (!req.user) return res.render('auth/login.pug')
     res.render('auth/friend.pug', {
-      loggedIn: true,
+      isLoggedIn: true,
       userName: req.user.name,
       userId: req.user._id
     })
@@ -103,7 +103,7 @@ module.exports = function() {
     if (!req.user) return res.render('auth/login.pug')
 
     res.render('auth/suggestions.pug', {
-      loggedIn: true,
+      isLoggedIn: true,
       userName: req.user.name,
       userId: req.user._id
     })
@@ -115,7 +115,7 @@ module.exports = function() {
     if (!req.user) return res.render('auth/feedback.pug')
 
     res.render('auth/feedback.pug', {
-      loggedIn: true,
+      isLoggedIn: true,
       userName: req.user.name,
       userId: req.user._id
     })
@@ -132,16 +132,16 @@ module.exports = function() {
 
       var roomId = room.id
       var userName, userId
-      var loggedIn = false
+      var isLoggedIn = false
 
       if (req.user){
         userName = req.user.name
         userId = req.user._id
-        loggedIn = true
+        isLoggedIn = true
       }
 
       res.render('auth/room.pug', {
-        loggedIn: loggedIn,
+        isLoggedIn: isLoggedIn,
         userName: userName,
         userId: userId,
         roomId: roomId
@@ -156,7 +156,7 @@ module.exports = function() {
     if (!req.user) return res.render('auth/login.pug')
 
     res.render('auth/room.pug', {
-      loggedIn: true,
+      isLoggedIn: true,
       userName: req.user.name,
       userId: req.user._id
     })
