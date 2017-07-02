@@ -1023,12 +1023,14 @@ function onMouseUp(e) {
   isMouseDown = false
   hideMenu3D()
 
+  isMouseHovering = (mouseY > window.innerHeight - canvasHeight )
+
   if (hoveredMesh && hoveredMesh.hasMenu3D) showMenu3D(hoveredMesh)
   else if (hoveredMesh && hoveredMesh.isIcon) {
     openIframe(e, hoveredMesh)
   }
 
-  alert(isMouseDown,hoveredMesh.isIcon,hoveredMesh)
+  alert(isMouseHovering,hoveredMesh.isIcon,hoveredMesh)
 
     //else if (hoveredMesh && !isMenuDisplayed) showMenu(hoveredMesh)
 
