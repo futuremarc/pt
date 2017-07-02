@@ -117,7 +117,7 @@ function updateMenu3DPositions() {
 
   for (var character in characters) {
 
-    if (!characters[character].menu3d) return
+    if (!characters[character].hasMenu3D) return
 
     var bubbleIcon = characters[character].menu3d.bubbleIcon
     var usersIcon = characters[character].menu3d.usersIcon

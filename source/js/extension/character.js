@@ -63,7 +63,7 @@ function createCharacter(data, callBack) {
 
       setTimeout(function() {
 
-        var originalY = icon.position.y
+        var originalY = .65
 
         var start = new TWEEN.Tween(icon.position).to({
           y: originalY
@@ -100,7 +100,7 @@ function createCharacter(data, callBack) {
     character.data = data
     character.nameTagWidth = $('.pt-name-tag').width()
     character.menu = addCharacterMenu(character)
-    character.menu_3d = addMenu(character)
+
     character.iframe = addIframe(character)
     character.bubble = addBubble(character) //notification bubble
     character.role = 'character' //associate purpose for all meshes
@@ -210,12 +210,16 @@ function createCharacter(data, callBack) {
       this.data.isLive = false
       this.material.materials[0].transparent = true
       this.material.materials[0].opacity = .35
+      this.menu3d.bubbleIcon.material.opacity = .35
+      this.menu3d.usersIcon.material.opacity = .35
     }
 
     character.awake = function() {
       this.data.isLive = true
       this.material.materials[0].transparent = false
-      this.material.materials[0].opacity = 1
+      this.material.materials[0].opacity = 1   
+      this.menu3d.bubbleIcon.material.opacity = 1
+      this.menu3d.usersIcon.material.opacity = 1
     }
 
     character.faceForward = function() {
@@ -268,7 +272,9 @@ function createCharacter(data, callBack) {
     sceneCharacters.add(character)
     characters[data._id] = character
 
-    if (callBack) callBack(character)
+    character.menu_3d = addMenu(character, function() {
+      if (callBack) callBack(character)
+    })
 
   });
 
@@ -529,7 +535,7 @@ function getCharacterInfo(callBack) {
 
 //
 
-function addMenu(character) {
+function addMenu(character, callBack) {
 
   var menu3d = new THREE.Object3D()
   character.menu3d = menu3d
@@ -556,32 +562,33 @@ function addMenu(character) {
     menu3d.bubbleIcon = bubbleIcon
     menu3d.add(bubbleIcon)
 
-  });
+    var loader = new THREE.TextureLoader()
 
+    if (isExtension) var path = chrome.extension.getURL('public/img/users.png')
+    else var path = '/img/extension/users.png'
 
-  loader = new THREE.TextureLoader()
+    loader.load(path, function(texture) {
 
-  if (isExtension) path = chrome.extension.getURL('public/img/users.png')
-  else path = '/img/extension/users.png'
+      var geo = new THREE.BoxGeometry(.6, .6, 1)
 
-  loader.load(path, function(texture) {
+      var usersIcon = new THREE.Mesh(geo, new THREE.MeshBasicMaterial({
+        'map': texture,
+        'transparent': true
+      }))
 
-    var geo = new THREE.BoxGeometry(.6, .6, 1)
+      usersIcon.scale.set(0.01, 0.01, 0.01)
+      character.bounceIcon(usersIcon)
+      usersIcon.hasPointer = true
 
-    var usersIcon = new THREE.Mesh(geo, new THREE.MeshBasicMaterial({
-      'map': texture,
-      'transparent': true
-    }))
+      menu3d.usersIcon = usersIcon
+      menu3d.add(usersIcon)
 
-    usersIcon.scale.set(0.01, 0.01, 0.01)
-    character.bounceIcon(usersIcon)
-    usersIcon.hasPointer = true
+      character.hasMenu3D = true
 
-    menu3d.usersIcon = usersIcon
-    menu3d.add(usersIcon)
+      if (callBack) callBack()
 
+    });
 
-    character.hasMenu3D = true
 
   });
 
