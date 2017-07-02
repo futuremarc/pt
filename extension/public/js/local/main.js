@@ -157,10 +157,10 @@ function detectMeshHover(e) {
 
   if (!isMouseHovering && isMousePointer) {
     hidePointer()
-    return
+    //return
   }
 
-  else if (!isMouseHovering) return
+  //else if (!isMouseHovering) return
 
    var x = ( mouseX ) / window.innerWidth * 2 - 1
    var y =  -( mouseY - (window.innerHeight - container.offsetHeight)) / container.offsetHeight * 2 + 1
@@ -171,7 +171,7 @@ function detectMeshHover(e) {
 
   var intersects = raycaster.intersectObjects(sceneCharacters.children, true);
 
-  if (intersects.length > 0 && isMouseHovering) {
+  if (intersects.length > 0) {
 
     if (!hoveredMesh) {
 
