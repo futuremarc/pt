@@ -180,8 +180,9 @@ function detectMeshHover(e) {
 
       if (hoveredMesh.hasPointer) showPointer()
       
-      console.log('hoveredMesh',hoveredMesh)
-      if (hoveredMesh.hasMenu3D && !isMouseDown) {
+      if (hoveredMesh && hoveredMesh.isIcon) {
+    openIframe(e, hoveredMesh)
+  } else if (hoveredMesh.hasMenu3D && !isMouseDown) {
 
         hideNameTags()
         showMenu3D(hoveredMesh)
