@@ -125,12 +125,10 @@ function updateMenu3DPositions() {
     if (roomIcon) {
       roomIcon.position.copy(characters[character].position);
       roomIcon.position.x = roomIcon.position.x - .4
-      roomIcon.position.y = roomIcon.position.y + 1.8
     }
     if (usersIcon) {
       usersIcon.position.copy(characters[character].position);
       usersIcon.position.x = usersIcon.position.x + .4
-      usersIcon.position.y = usersIcon.position.y + 1.8
     }
 
 
@@ -1024,8 +1022,6 @@ function onMouseUp(e) {
   $('.pt-iframe').hide() //remove this later
   isMouseDown = false
   hideMenu3D()
-
-  if (!hoveredMesh) return
 
   if (hoveredMesh && hoveredMesh.hasMenu3D) showMenu3D(hoveredMesh)
   else if (hoveredMesh && hoveredMesh.isIcon) {

@@ -58,7 +58,7 @@ isMobile = detectMobileOrTablet()
 
 if (!isExtension && !isIframe) {
 
-  var socket = io('http://localhost:5050', {
+  var socket = io('https://passti.me', {
     'path': '/socket',
     'forceNew': true
   })
@@ -125,12 +125,10 @@ function updateMenu3DPositions() {
     if (roomIcon) {
       roomIcon.position.copy(characters[character].position);
       roomIcon.position.x = roomIcon.position.x - .4
-      roomIcon.position.y = roomIcon.position.y + 1.8
     }
     if (usersIcon) {
       usersIcon.position.copy(characters[character].position);
       usersIcon.position.x = usersIcon.position.x + .4
-      usersIcon.position.y = usersIcon.position.y + 1.8
     }
 
 
@@ -598,7 +596,7 @@ function getFriendInfo(idOrName, callBack) {
 
   $.ajax({
     method: 'GET',
-    url: 'http://localhost:8080/api/users/' + idOrName,
+    url: 'https://passti.me/api/users/' + idOrName,
     success: function(data) {
       console.log(data)
 
@@ -626,7 +624,7 @@ function getLiveFriends(callBack) {
 
     $.ajax({
       method: 'GET',
-      url: 'http://localhost:8080/api/users/' + myCharacter.data._id + '/friends/live',
+      url: 'https://passti.me/api/users/' + myCharacter.data._id + '/friends/live',
       success: function(data) {
         console.log(data)
 
@@ -709,7 +707,7 @@ function addLiveCharacters() {
 
   $.ajax({
     method: 'GET',
-    url: 'http://localhost:8080/api/users/' + name + '/friends/live',
+    url: 'https://passti.me/api/users/' + name + '/friends/live',
     success: function(data) {
       console.log(data)
 
@@ -757,7 +755,7 @@ function openIframe(e, _mesh) {
   var id = _mesh.character.data._id || $(target).closest('ul').data('id') || $(target).find('a').data('id') //menu || notification
   window.roomToOpen = _mesh.character.data.room._id || $(target).find('div').data('room') || $(target).find('a').data('room')
 
-  var src = 'http://localhost:8080/' + role
+  var src = 'https://passti.me/' + role
   var iframe = characters[id].iframe
   var previousSrc = $(iframe).attr('src')
 
@@ -1024,8 +1022,6 @@ function onMouseUp(e) {
   $('.pt-iframe').hide() //remove this later
   isMouseDown = false
   hideMenu3D()
-
-  if (!hoveredMesh) return
 
   if (hoveredMesh && hoveredMesh.hasMenu3D) showMenu3D(hoveredMesh)
   else if (hoveredMesh && hoveredMesh.isIcon) {

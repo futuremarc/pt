@@ -63,7 +63,7 @@ function createCharacter(data, callBack) {
 
       setTimeout(function() {
 
-        var originalY = .65
+        var originalY = .775
 
         var start = new TWEEN.Tween(icon.position).to({
           y: originalY
@@ -168,12 +168,12 @@ function createCharacter(data, callBack) {
 
     character.zoomInMenu = function() {
       this.zoomInIcon(this.menu3d.roomIcon)
-      this.zoomInIcon(this.menu3d.usersIcon)
+      if (this.menu3d.usersIcon) this.zoomInIcon(this.menu3d.usersIcon)
     }
 
     character.zoomOutMenu = function() {
       this.zoomOutIcon(this.menu3d.roomIcon)
-      this.zoomOutIcon(this.menu3d.usersIcon)
+      if (this.menu3d.usersIcon) this.zoomOutIcon(this.menu3d.usersIcon)
     }
 
     character.walk = function(data) {
@@ -265,7 +265,7 @@ function createCharacter(data, callBack) {
     character.rotation.set(rot.x, rot.y, rot.z);
 
     character.hasPointer = true
-    character.hasMenu = true
+    character.hasMenu = false
     character.hasIframe = true
     character.hasBubble = true
 
@@ -359,7 +359,7 @@ function updateCharacter(request, data, callBack, isRecursiveCall) {
 
       $.ajax({
         method: 'PUT',
-        url: 'http://localhost:8080/api/users/' + name,
+        url: 'https://passti.me/api/users/' + name,
         data: data,
         success: function(data) {
           console.log(data)
@@ -422,7 +422,7 @@ function updateCharacter(request, data, callBack, isRecursiveCall) {
 
       $.ajax({
         method: 'GET',
-        url: 'http://localhost:8080/api/users/' + name,
+        url: 'https://passti.me/api/users/' + name,
         success: function(data) {
           console.log(data)
 
@@ -567,6 +567,12 @@ function addMenu(character, callBack) {
     menu3d.add(roomIcon)
     character.bounceIcon(roomIcon)
 
+    character.hasMenu3D = true
+
+    if (!character.isMe){
+      if (callBack) callBack()
+      return
+    }
 
     //then load users icon
     var loader = new THREE.TextureLoader()
@@ -593,7 +599,6 @@ function addMenu(character, callBack) {
       menu3d.add(usersIcon)
 
       character.bounceIcon(usersIcon)
-      character.hasMenu3D = true
 
       if (callBack) callBack()
 

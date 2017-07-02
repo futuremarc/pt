@@ -76,8 +76,8 @@ function animateMyChar() {
   updateBubblePositions()
   updateMenu3DPositions()
 
-  if (isMenuDisplayed && scene.visible) showMenu(latestHoveredMesh)
-  else if (isMenuDisplayed && !scene.visible) hideMenu()
+  // if (isMenuDisplayed && scene.visible) showMenu(latestHoveredMesh)
+  // else if (isMenuDisplayed && !scene.visible) hideMenu()
 
   if (isAwayFromHome && isMobile && camera.position.x !== myCharacter.position.x - windowCenter.x) { //follow character, align if not aligned
 
@@ -179,7 +179,8 @@ function detectMeshHover(e) {
       latestHoveredMesh = hoveredMesh
 
       if (hoveredMesh.hasPointer) showPointer()
-  
+      
+      console.log('hoveredMesh',hoveredMesh)
       if (hoveredMesh.hasMenu3D && !isMouseDown) {
 
         hideNameTags()
