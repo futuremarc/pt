@@ -119,17 +119,17 @@ function updateMenu3DPositions() {
 
     if (!characters[character].hasMenu3D) return
 
-    var bubbleIcon = characters[character].menu3d.bubbleIcon
+    var roomIcon = characters[character].menu3d.roomIcon
     var usersIcon = characters[character].menu3d.usersIcon
 
-    if (bubbleIcon) {
-      bubbleIcon.position.copy(characters[character].position);
-      bubbleIcon.position.x = bubbleIcon.position.x - .5
-      bubbleIcon.position.y = bubbleIcon.position.y + 1.8
+    if (roomIcon) {
+      roomIcon.position.copy(characters[character].position);
+      roomIcon.position.x = roomIcon.position.x - .4
+      roomIcon.position.y = roomIcon.position.y + 1.8
     }
     if (usersIcon) {
       usersIcon.position.copy(characters[character].position);
-      usersIcon.position.x = usersIcon.position.x + .5
+      usersIcon.position.x = usersIcon.position.x + .4
       usersIcon.position.y = usersIcon.position.y + 1.8
     }
 
@@ -748,21 +748,19 @@ function removeLiveCharacters() {
 var menu_y_offset = 3.5
 
 
-function openIframe(e) {
-
-  console.log('openIframe')
+function openIframe(e, _mesh) {
 
   e.stopPropagation()
 
   var target = e.currentTarget
-  var role = $(target).find('div').data('role') || $(target).find('a').data('role') //menu || notification
-  var id = $(target).closest('ul').data('id') || $(target).find('a').data('id') //menu || notification
-  window.roomToOpen = $(target).find('div').data('room') || $(target).find('a').data('room')
+  var role = _mesh.role || $(target).find('div').data('role') || $(target).find('a').data('role') //menu || notification
+  var id = _mesh.character.data._id || $(target).closest('ul').data('id') || $(target).find('a').data('id') //menu || notification
+  window.roomToOpen = _mesh.character.data.room._id || $(target).find('div').data('room') || $(target).find('a').data('room')
+
   var src = 'http://localhost:8080/' + role
   var iframe = characters[id].iframe
   var previousSrc = $(iframe).attr('src')
 
-  console.log('roomToOpen', roomToOpen)
   iframe.data('role', role)
 
   if (previousSrc !== src) iframe.attr('src', src)
@@ -1020,17 +1018,22 @@ function onMouseDown() {
 //
 
 
-function onMouseUp() {
+function onMouseUp(e) {
   //hideMenu()
-  $('.pt-iframe').hide() //remove this later
-   isMouseDown = false
 
+  $('.pt-iframe').hide() //remove this later
+  isMouseDown = false
   hideMenu3D()
 
   if (!hoveredMesh) return
+
   if (hoveredMesh && hoveredMesh.hasMenu3D) showMenu3D(hoveredMesh)
-  //else if (hoveredMesh && !isMenuDisplayed) showMenu(hoveredMesh)
- 
+  else if (hoveredMesh && hoveredMesh.isIcon) {
+    openIframe(e, hoveredMesh)
+  }
+
+    //else if (hoveredMesh && !isMenuDisplayed) showMenu(hoveredMesh)
+
 }
 
 
@@ -1064,14 +1067,14 @@ var main_menu_x_off = 8
 var main_menu_y_off = 5
 
 
-function showMenu3D(_mesh){
+function showMenu3D(_mesh) {
   hideMenu3D()
   _mesh.zoomInMenu()
 }
 
-function hideMenu3D(){
+function hideMenu3D() {
 
-   for (var character in characters) {
+  for (var character in characters) {
 
     if (!characters[character].hasMenu3D) return
 

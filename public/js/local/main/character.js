@@ -70,7 +70,7 @@ function createCharacter(data, callBack) {
         }, 200).easing(TWEEN.Easing.Quadratic.Out);
 
         icon.bounceTween = new TWEEN.Tween(icon.position).to({
-          y: originalY + .055
+          y: originalY + .045
         }, 1500).repeat(Infinity).yoyo(true).easing(TWEEN.Easing.Sinusoidal.InOut);
 
         start.chain(icon.bounceTween).start();
@@ -167,12 +167,12 @@ function createCharacter(data, callBack) {
     }
 
     character.zoomInMenu = function() {
-      this.zoomInIcon(this.menu3d.bubbleIcon)
+      this.zoomInIcon(this.menu3d.roomIcon)
       this.zoomInIcon(this.menu3d.usersIcon)
     }
 
     character.zoomOutMenu = function() {
-      this.zoomOutIcon(this.menu3d.bubbleIcon)
+      this.zoomOutIcon(this.menu3d.roomIcon)
       this.zoomOutIcon(this.menu3d.usersIcon)
     }
 
@@ -210,7 +210,7 @@ function createCharacter(data, callBack) {
       this.data.isLive = false
       this.material.materials[0].transparent = true
       this.material.materials[0].opacity = .35
-      this.menu3d.bubbleIcon.material.opacity = .35
+      this.menu3d.roomIcon.material.opacity = .35
       this.menu3d.usersIcon.material.opacity = .35
     }
 
@@ -218,7 +218,7 @@ function createCharacter(data, callBack) {
       this.data.isLive = true
       this.material.materials[0].transparent = false
       this.material.materials[0].opacity = 1   
-      this.menu3d.bubbleIcon.material.opacity = 1
+      this.menu3d.roomIcon.material.opacity = 1
       this.menu3d.usersIcon.material.opacity = 1
     }
 
@@ -541,6 +541,8 @@ function addMenu(character, callBack) {
   character.menu3d = menu3d
   sceneCharacters.add(menu3d)
 
+
+  //load bubble icon
   var loader = new THREE.TextureLoader()
 
   if (isExtension) var path = chrome.extension.getURL('public/img/bubble.png')
@@ -550,20 +552,23 @@ function addMenu(character, callBack) {
 
     var geo = new THREE.BoxGeometry(.6, .6, 1)
 
-    var bubbleIcon = new THREE.Mesh(geo, new THREE.MeshBasicMaterial({
+    var roomIcon = new THREE.Mesh(geo, new THREE.MeshBasicMaterial({
       'map': texture,
       'transparent': true
     }))
 
-    bubbleIcon.role = 'bubbleIcon'
+    roomIcon.role = 'room'
+    roomIcon.character = character
+    roomIcon.scale.set(0.01, 0.01, 0.01)
+    roomIcon.hasPointer = true
+    roomIcon.isIcon = true
 
-    bubbleIcon.scale.set(0.01, 0.01, 0.01)
-    character.bounceIcon(bubbleIcon)
-    bubbleIcon.hasPointer = true
+    menu3d.roomIcon = roomIcon
+    menu3d.add(roomIcon)
+    character.bounceIcon(roomIcon)
 
-    menu3d.bubbleIcon = bubbleIcon
-    menu3d.add(bubbleIcon)
 
+    //then load users icon
     var loader = new THREE.TextureLoader()
 
     if (isExtension) var path = chrome.extension.getURL('public/img/users.png')
@@ -578,15 +583,16 @@ function addMenu(character, callBack) {
         'transparent': true
       }))
 
-      usersIcon.role = 'usersIcon'
-
+      usersIcon.role = 'users'
+      usersIcon.character = character
       usersIcon.scale.set(0.01, 0.01, 0.01)
-      character.bounceIcon(usersIcon)
       usersIcon.hasPointer = true
+      usersIcon.isIcon = true
 
       menu3d.usersIcon = usersIcon
       menu3d.add(usersIcon)
 
+      character.bounceIcon(usersIcon)
       character.hasMenu3D = true
 
       if (callBack) callBack()

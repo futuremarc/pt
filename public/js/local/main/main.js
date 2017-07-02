@@ -183,7 +183,7 @@ function detectMeshHover(e) {
       if (hoveredMesh.hasMenu3D && !isMouseDown) {
 
         hideNameTags()
-        //showMenu3D(hoveredMesh)
+        showMenu3D(hoveredMesh)
       }else if (hoveredMesh.hasMenu && !isMouseDown) {
 
         hideNameTags()
