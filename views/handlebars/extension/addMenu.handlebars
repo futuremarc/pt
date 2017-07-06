@@ -7,7 +7,7 @@
 	{{#if isMe}}
 		  <li class='pt-menu-home pt-menu-item'>
 
-		    <div data-role='home', data-id='{{data._id}}'>Friend requests</div>
+		    <div data-role='home', data-room='{{data.room._id}}', data-id='{{data._id}}'>Friend requests</div>
         {{#ifCond data.friendRequests.length '>' 0}}
           <span class='pt-notification-counter' style='display:block'>{{data.friendRequests.length}}</span>
         {{else}}
@@ -18,7 +18,7 @@
 
  	{{#if isMe}}
   		<li class='pt-menu-friend pt-menu-item' >
-    		<div data-role='friend', data-id='{{data._id}}'>Find your friends</div>
+    		<div data-role='friend', data-room='{{data.room._id}}', data-id='{{data._id}}'>Find your friends</div>
   		</li>
   {{/if}}
 
@@ -26,35 +26,35 @@
 <!--
   {{#if isMe}}
       <li>
-        <div class='pt-menu-share' data-role='share', data-id='{{data._id}}'>Share this page</div>
+        <div class='pt-menu-share', data-room='{{data.room._id}}', data-role='share', data-id='{{data._id}}'>Share this page</div>
       </li>
   {{/if}}
   -->
 
   {{#if isMe}}
       <li class='pt-menu-suggestions pt-menu-item'>
-        <div data-role='suggestions', data-id='{{data._id}}'>People you might know</div>
+        <div data-role='suggestions', data-room='{{data.room._id}}', data-id='{{data._id}}'>People you might know</div>
       </li>
   {{/if}}
 
   {{#if isMe}}
     <li class='pt-menu-feedback pt-menu-item'>
-      <div data-role='feedback', data-id='{{data._id}}'>Bug report and feature request</div>
+      <div data-role='feedback', data-room='{{data.room._id}}', data-id='{{data._id}}'>Bug report and feature request</div>
     </li>
   {{/if}}
 
   {{#if isMe}}
     <li class='pt-menu-item'>
-      <div data-role='settings', data-id='{{data._id}}'>Settings</div>
+      <div data-role='settings', data-room='{{data.room._id}}', data-id='{{data._id}}'>Settings</div>
     </li>
   {{/if}}
 
 <!--
   {{#if isMe}}
     <li>
-      <div data-role='zoom-out', data-id='{{data._id}}' class='pt-menu-zoom' style='display:inline' >🔍 -</div>
+      <div data-role='zoom-out', data-room='{{data.room._id}}', data-id='{{data._id}}' class='pt-menu-zoom' style='display:inline' >🔍 -</div>
       <span> / </span>
-      <div data-role='zoom-in', data-id='{{data._id}}' class='pt-menu-zoom' style='display:inline' >🔍 +</div>
+      <div data-role='zoom-in', data-room='{{data.room._id}}', data-id='{{data._id}}' class='pt-menu-zoom' style='display:inline' >🔍 +</div>
     </li>
   {{/if}}
 -->
@@ -62,25 +62,25 @@
 <!--
   {{#ifCond isMe '&&' isExtension}}
     <li class='pt-menu-hide-pt'>
-      <div data-role='hide-pt'>Hide scene</div>
+      <div data-role='hide-pt', data-room='{{data.room._id}}'>Hide scene</div>
     </li>
   {{/ifCond}}
 -->
 
   {{#unless isMe}}
     <li class='pt-menu-hide'>
-      <div data-role='hide-pt'>Hide {{data.name}}</div>
+      <div data-role='hide-pt', data-room='{{data.room._id}}'>Hide {{data.name}}</div>
     </li>
   {{/unless}}
 
 <!--
 
   <li>
-    <div class='pt-menu-hide', data-role='hide-pt', style='display:inline'>Hide {{data.name}}</div>
+    <div class='pt-menu-hide', data-role='hide-pt', data-room='{{data.room._id}}', style='display:inline'>Hide {{data.name}}</div>
 
     {{#if isMe}}
       <span> / </span>
-      <div class='pt-menu-hide-pt', data-role='hide-pt', style='display:inline'>Hide scene</div>
+      <div class='pt-menu-hide-pt', data-role='hide-pt', data-room='{{data.room._id}}', style='display:inline'>Hide scene</div>
     {{/if}}
 
   </li>
@@ -90,7 +90,7 @@
 
   {{#if isMe}}
     <li cl>
-      <div class='pt-return-home', style='display:none', data-role='return-home'>Return home</div>
+      <div class='pt-return-home', style='display:none', data-room='{{data.room._id}}', data-role='return-home'>Return home</div>
     </li>
   {{/if}}
 -->

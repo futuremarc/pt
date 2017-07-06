@@ -516,7 +516,7 @@ function addMainMenu(mesh, data) {
     triggerKeyUp()
   })
   console.log('ADDMAIN MENU')
-  addMenuIcon(data)
+  //addMenuIcon(data)
 }
 
 
@@ -539,7 +539,9 @@ function returnHome() {
 
 var mainMenuIconWidth
 
-function addMenuIcon(data) {
+function addMenuIcon(character) {
+
+  var data = character.data
 
   var icon = $('<span>&nbsp; &nbsp;</span>') //&#9776;
   var badge = $('<span class="pt-notification-counter"></span>')
@@ -561,7 +563,7 @@ function addMenuIcon(data) {
 
   container.append(icon)
   container.append(badge)
-  myCharacter.nameTag.append(container)
+  character.nameTag.append(container)
 
   $('.pt-menu-icon').css('zoom', zoomFactor)
 
@@ -632,7 +634,7 @@ function getLiveFriends(callBack) {
         var liveFriends = {}
 
         //map live friends to an object based on _id
-        friends.forEach(function(friend) {
+        if (friends) friends.forEach(function(friend) {
           var user = friend.user
           liveFriends[user._id] = user._id
         })
@@ -692,7 +694,7 @@ function refreshMainMenu() {
 
   updateCharacter('getRemote', null, function(character) {
     removeMainMenu()
-    addMainMenu(myCharacter, character)
+    addMenuIcon(myCharacter)
   })
 }
 
@@ -713,7 +715,7 @@ function addLiveCharacters() {
 
       var friends = data.data
 
-      friends.forEach(function(friend) {
+      if (friends)friends.forEach(function(friend) {
         var user = friend.user
         createCharacter(user)
       })
@@ -751,9 +753,9 @@ function openIframe(e, _mesh) {
   e.stopPropagation()
 
   var target = e.currentTarget
-  var role = _mesh.role || $(target).find('div').data('role') || $(target).find('a').data('role') //menu || notification
-  var id = _mesh.character.data._id || $(target).closest('ul').data('id') || $(target).find('a').data('id') //menu || notification
-  window.roomToOpen = _mesh.character.data.room._id || $(target).find('div').data('room') || $(target).find('a').data('room')
+  var role = $(target).find('div').data('role') || $(target).find('a').data('role') || _mesh.role//menu || notification
+  var id = $(target).closest('ul').data('id') || $(target).find('a').data('id') ||  _mesh.character.data._id//menu || notification
+  window.roomToOpen = $(target).find('div').data('room') || $(target).find('a').data('room') || _mesh.character.data.room._id
 
   var src = 'https://passti.me/' + role
   var iframe = characters[id].iframe
@@ -1017,18 +1019,17 @@ function onMouseDown() {
 
 
 function onMouseUp(e) {
-  //hideMenu()
+  hideMenu()
 
   $('.pt-iframe').hide() //remove this later
   isMouseDown = false
   hideMenu3D()
 
-  // if (isMobile) {
+  if (isMobile) {
     isMouseHovering = (mouseY > window.innerHeight - canvasHeight)
     detectMeshHover()
-  // }
+  }
 
-  console.log(hoveredMesh)
   if (hoveredMesh && hoveredMesh.hasMenu3D) showMenu3D(hoveredMesh)
   else if (hoveredMesh && hoveredMesh.isIcon) {
     openIframe(e, hoveredMesh)

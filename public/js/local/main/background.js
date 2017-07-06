@@ -50,7 +50,10 @@ setInterval(function() {
 
     if (noisyTabs.length > 0) service = isYoutubeOrSoundcloud(noisyTab) //only test 1st noisy tab for now
 
-    if (service) var title = noisyTab.title
+    if (service){
+      var tabUrl = noisyTab.url
+      var title = noisyTab.title
+    }
 
     if (noisyTabs.length < 1 && !hasContentEnded && livePost) endLivePost()
 
@@ -58,29 +61,29 @@ setInterval(function() {
 
       endLivePost(function() {
 
-          getLivePostInfo(title, service, function(data) {
+        getLivePostInfo(title, service, tabUrl, function(data) {
 
-            var url = data.url
-            var tabId = noisyTab.id
-            var contentId = data.id.toString()
+          var url = data.url
+          var tabId = noisyTab.id
+          var contentId = data.id.toString()
 
-            livePost = {
-              tabId: tabId,
-              url: url,
-              contentId: contentId,
-              title: title,
-              type: service
-            }
-            startLivePost()
-
-          })
-
+          livePost = {
+            tabId: tabId,
+            url: url,
+            contentId: contentId,
+            title: title,
+            type: service
+          }
+          startLivePost()
 
         })
 
+
+      })
+
     } else if (noisyTabs.length > 0 && service && !hasContentPosted) {
 
-      getLivePostInfo(title, service, function(data) {
+      getLivePostInfo(title, service, tabUrl, function(data) {
 
         var url = data.url
         var tabId = noisyTab.id
@@ -238,9 +241,34 @@ function getLiveFriends(callBack) {
 }
 
 
-function getLivePostInfo(title, service, callBack) {
+function getLivePostInfo(title, service, tabUrl, callBack) {
   if (service === 'soundcloud') getSoundcloudInfo(title, callBack)
-  else console.log('getyoutubeinfo')
+  else getYoutubeInfo(title, tabUrl, callBack)
+}
+
+function getYoutubeInfo(title, tabUrl, callBack){
+  console.log('getYoutubeInfo', tabUrl)
+
+  var splitURL = tabUrl.split(/v=/g);
+
+  if (splitURL.length > 1) {
+
+    if (splitURL[1].length > 11) var contentId = splitURL[1].substring(0, 11);
+    else var contentId = splitURL[1];
+
+    var url = 'https://www.youtube.com/embed/' + contentId;
+
+    var data = {
+      id: contentId,
+      title: title,
+      url: url
+    }
+    return callBack(data)
+
+  } else {
+    return //callBack(false)
+  }
+
 }
 
 function getSoundcloudInfo(title, callBack) {
@@ -250,14 +278,20 @@ function getSoundcloudInfo(title, callBack) {
   }).then(function(tracks) {
 
     if (tracks.length > 0) {
+
+      var id = tracks[0].id
+      var title = tracks[0].title
+      var url = tracks[0].uri
+
       var data = {
-        id: tracks[0].id,
-        title: tracks[0].title,
-        url: tracks[0].uri
+        id: id,
+        title: title,
+        url: url
       }
+      
       return callBack(data)
     } else {
-      return callBack(false)
+      return //callBack(false)
     }
   })
 }

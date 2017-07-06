@@ -8,8 +8,8 @@ var isNameDisplayed = false,
 //
 
 function animateBike() {
-  home.rearWheel.rotateX(.1)
-  home.frontWheel.rotateX(.1)
+  bike.rearWheel.rotateX(.1)
+  bike.frontWheel.rotateX(.1)
 }
 
 function animate() {
@@ -76,8 +76,8 @@ function animateMyChar() {
   updateBubblePositions()
   updateMenu3DPositions()
 
-  // if (isMenuDisplayed && scene.visible) showMenu(latestHoveredMesh)
-  // else if (isMenuDisplayed && !scene.visible) hideMenu()
+  if (isMenuDisplayed && scene.visible) showMenu(latestHoveredMesh)
+  else if (isMenuDisplayed && !scene.visible) hideMenu()
 
   if (isAwayFromHome && isMobile && camera.position.x !== myCharacter.position.x - windowCenter.x) { //follow character, align if not aligned
 
@@ -157,10 +157,10 @@ function detectMeshHover(e) {
 
   if (!isMouseHovering && isMousePointer) {
     hidePointer()
-    //return
+    return
   }
 
-  //else if (!isMouseHovering) return
+  else if (!isMouseHovering) return
 
    var x = ( mouseX ) / window.innerWidth * 2 - 1
    var y =  -( mouseY - (window.innerHeight - container.offsetHeight)) / container.offsetHeight * 2 + 1
@@ -182,9 +182,10 @@ function detectMeshHover(e) {
       
       if (hoveredMesh.hasMenu3D && !isMouseDown) {
 
-        hideNameTags()
+        //hideNameTags()
         showMenu3D(hoveredMesh)
-      }else if (hoveredMesh.hasMenu && !isMouseDown) {
+      }
+      if (hoveredMesh.hasMenu && !isMouseDown) {
 
         hideNameTags()
         showMenu(hoveredMesh)

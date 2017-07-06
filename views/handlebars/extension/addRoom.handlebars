@@ -24,6 +24,13 @@
       <div id="pt-iframe-container"><iframe id="pt-content" frameborder="0" data-id='{{livePost._id}}'  data-title='{{livePost.title}}' src="https://w.soundcloud.com/player/?url={{livePost.url}}&amp;auto_play=false&amp;hide_related=true&amp;show_comments=false&amp;show_user=false&amp;show_reposts=false&amp;visual=true"></iframe></div>
 
     {{/ifCond}}
+
+    {{#ifCond livePost.type '===' 'youtube'}}
+
+      <div id="pt-iframe-container"><iframe id="pt-content" frameborder="0" data-id='{{livePost._id}}'  data-title='{{livePost.title}}' src='{{livePost.url}}'></iframe></div>
+
+    {{/ifCond}}
+    
   {{/if}}
 
   <div id="pt-messages-container">

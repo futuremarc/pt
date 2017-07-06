@@ -217,7 +217,9 @@ function createCharacter(data, callBack) {
     character.awake = function() {
       this.data.isLive = true
       this.material.materials[0].transparent = false
-      this.material.materials[0].opacity = 1   
+      this.material.materials[0].opacity = 1 
+
+      if (!this.isMe) return
       this.menu3d.roomIcon.material.opacity = 1
       this.menu3d.usersIcon.material.opacity = 1
     }
@@ -265,13 +267,14 @@ function createCharacter(data, callBack) {
     character.rotation.set(rot.x, rot.y, rot.z);
 
     character.hasPointer = true
-    character.hasMenu = false
+    character.hasMenu = true
     character.hasIframe = true
     character.hasBubble = true
 
     sceneCharacters.add(character)
     characters[data._id] = character
 
+    addMenuIcon(character)
     character.menu_3d = addMenu(character, function() {
       if (callBack) callBack(character)
     })
