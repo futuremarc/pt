@@ -133,7 +133,7 @@ $('document').ready(function() {
 
       $.ajax({
         method: 'POST',
-        url: 'https://passti.me/api/feedback/', // + event
+        url: 'http://localhost:8080/api/feedback/', // + event
         data: data,
         success: function(data) {
           console.log(data)
@@ -169,7 +169,7 @@ $('document').ready(function() {
 
       $.ajax({
         method: 'POST',
-        url: 'https://passti.me/api/users/friends/' + friendId, // + event
+        url: 'http://localhost:8080/api/users/friends/' + friendId, // + event
         data: data,
         success: function(data) {
           console.log(data)
@@ -215,7 +215,7 @@ $('document').ready(function() {
 
       $.ajax({
         method: 'POST',
-        url: 'https://passti.me/api/users/friends/' + friendId, // + event
+        url: 'http://localhost:8080/api/users/friends/' + friendId, // + event
         data: data,
         success: function(data) {
           console.log(data)
@@ -269,7 +269,7 @@ $('document').ready(function() {
 
       $.ajax({
         method: method,
-        url: 'https://passti.me/api/users/friends/' + friendId, //+ event,
+        url: 'http://localhost:8080/api/users/friends/' + friendId, //+ event,
         data: data,
         success: function(data) {
           console.log(data)
@@ -317,7 +317,7 @@ $('document').ready(function() {
 
       $.ajax({
         method: 'PUT',
-        url: 'https://passti.me/api/users/' + name,
+        url: 'http://localhost:8080/api/users/' + name,
         data: data,
         success: function(data) {
           console.log(data)
@@ -377,7 +377,7 @@ $('document').ready(function() {
 
       $.ajax({
         method: 'POST',
-        url: 'https://passti.me/api/' + event,
+        url: 'http://localhost:8080/api/' + event,
         data: data,
         success: function(data) {
           console.log(data)
@@ -608,7 +608,7 @@ $('document').ready(function() {
 
     $.ajax({
       method: 'GET',
-      url: 'https://passti.me/api/users/' + name,
+      url: 'http://localhost:8080/api/users/' + name,
       success: function(data) {
         console.log(data)
 

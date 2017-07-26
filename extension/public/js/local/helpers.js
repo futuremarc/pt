@@ -58,7 +58,7 @@ isMobile = detectMobileOrTablet()
 
 if (!isExtension && !isIframe) {
 
-  var socket = io('https://passti.me', {
+  var socket = io('http://localhost:5050', {
     'path': '/socket',
     'forceNew': true
   })
@@ -516,7 +516,7 @@ function addMainMenu(mesh, data) {
     triggerKeyUp()
   })
   console.log('ADDMAIN MENU')
-  //addMenuIcon(data)
+    //addMenuIcon(data)
 }
 
 
@@ -598,7 +598,7 @@ function getFriendInfo(idOrName, callBack) {
 
   $.ajax({
     method: 'GET',
-    url: 'https://passti.me/api/users/' + idOrName,
+    url: 'http://localhost:8080/api/users/' + idOrName,
     success: function(data) {
       console.log(data)
 
@@ -626,7 +626,7 @@ function getLiveFriends(callBack) {
 
     $.ajax({
       method: 'GET',
-      url: 'https://passti.me/api/users/' + myCharacter.data._id + '/friends/live',
+      url: 'http://localhost:8080/api/users/' + myCharacter.data._id + '/friends/live',
       success: function(data) {
         console.log(data)
 
@@ -709,13 +709,13 @@ function addLiveCharacters() {
 
   $.ajax({
     method: 'GET',
-    url: 'https://passti.me/api/users/' + name + '/friends/live',
+    url: 'http://localhost:8080/api/users/' + name + '/friends/live',
     success: function(data) {
       console.log(data)
 
       var friends = data.data
 
-      if (friends)friends.forEach(function(friend) {
+      if (friends) friends.forEach(function(friend) {
         var user = friend.user
         createCharacter(user)
       })
@@ -752,12 +752,24 @@ function openIframe(e, _mesh) {
 
   e.stopPropagation()
 
-  var target = e.currentTarget
-  var role = $(target).find('div').data('role') || $(target).find('a').data('role') || _mesh.role//menu || notification
-  var id = $(target).closest('ul').data('id') || $(target).find('a').data('id') ||  _mesh.character.data._id//menu || notification
-  window.roomToOpen = $(target).find('div').data('room') || $(target).find('a').data('room') || _mesh.character.data.room._id
+  var clickedNotification = _mesh
 
-  var src = 'https://passti.me/' + role
+  if (clickedNotification) {
+
+    var role = _mesh.role //menu || notification
+    var id = _mesh.character.data._id //menu || notification
+    if (role === 'room') window.roomToOpen = _mesh.character.data.room._id
+
+  } else {
+
+    var target = e.currentTarget
+    var role = $(target).find('div').data('role') || $(target).find('a').data('role')
+    var id = $(target).closest('ul').data('id') || $(target).find('a').data('id')
+    if (role === 'room') window.roomToOpen = $(target).find('div').data('room') || $(target).find('a').data('room')
+
+  }
+
+  var src = 'http://localhost:8080/' + role
   var iframe = characters[id].iframe
   var previousSrc = $(iframe).attr('src')
 

@@ -55,6 +55,7 @@ roomSchema.pre('save', function(next) {
   }, function(err, docs) {
 
     if (!docs.length) {
+      console.log(next,'NEXTT')
       next();
     } else {
 

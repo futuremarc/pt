@@ -362,7 +362,7 @@ function updateCharacter(request, data, callBack, isRecursiveCall) {
 
       $.ajax({
         method: 'PUT',
-        url: 'https://passti.me/api/users/' + name,
+        url: 'http://localhost:8080/api/users/' + name,
         data: data,
         success: function(data) {
           console.log(data)
@@ -425,7 +425,7 @@ function updateCharacter(request, data, callBack, isRecursiveCall) {
 
       $.ajax({
         method: 'GET',
-        url: 'https://passti.me/api/users/' + name,
+        url: 'http://localhost:8080/api/users/' + name,
         success: function(data) {
           console.log(data)
 

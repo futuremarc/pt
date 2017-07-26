@@ -147,8 +147,6 @@ module.exports = function() {
         roomId: roomId
       })
     })
-
-
   })
 
   router.get('/room', function(req, res, next) {
@@ -156,6 +154,18 @@ module.exports = function() {
     if (!req.user) return res.render('auth/login.pug')
 
     res.render('auth/room.pug', {
+      isLoggedIn: true,
+      userName: req.user.name,
+      userId: req.user._id
+    })
+
+  })
+
+  router.get('/list', function(req, res, next) {
+
+    if (!req.user) return res.render('auth/login.pug')
+
+    res.render('auth/list.pug', {
       isLoggedIn: true,
       userName: req.user.name,
       userId: req.user._id

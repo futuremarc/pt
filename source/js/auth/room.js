@@ -48,8 +48,9 @@ function minimizeIframe(domEvent){
 
   window.initRoom = function(id) {
 
+    console.log('initRoom', id)
     getRoomData(id).then(function(room) {
-
+      console.log('got ROOM', room)
       createInterface(room)
       addCachedMessages(room.messages)
       initSockets()

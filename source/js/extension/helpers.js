@@ -516,7 +516,7 @@ function addMainMenu(mesh, data) {
     triggerKeyUp()
   })
   console.log('ADDMAIN MENU')
-  //addMenuIcon(data)
+    //addMenuIcon(data)
 }
 
 
@@ -715,7 +715,7 @@ function addLiveCharacters() {
 
       var friends = data.data
 
-      if (friends)friends.forEach(function(friend) {
+      if (friends) friends.forEach(function(friend) {
         var user = friend.user
         createCharacter(user)
       })
@@ -752,10 +752,22 @@ function openIframe(e, _mesh) {
 
   e.stopPropagation()
 
-  var target = e.currentTarget
-  var role = $(target).find('div').data('role') || $(target).find('a').data('role') || _mesh.role//menu || notification
-  var id = $(target).closest('ul').data('id') || $(target).find('a').data('id') ||  _mesh.character.data._id//menu || notification
-  window.roomToOpen = $(target).find('div').data('room') || $(target).find('a').data('room') || _mesh.character.data.room._id
+  var clickedNotification = _mesh
+
+  if (clickedNotification) {
+
+    var role = _mesh.role //menu || notification
+    var id = _mesh.character.data._id //menu || notification
+    if (role === 'room') window.roomToOpen = _mesh.character.data.room._id
+
+  } else {
+
+    var target = e.currentTarget
+    var role = $(target).find('div').data('role') || $(target).find('a').data('role')
+    var id = $(target).closest('ul').data('id') || $(target).find('a').data('id')
+    if (role === 'room') window.roomToOpen = $(target).find('div').data('room') || $(target).find('a').data('room')
+
+  }
 
   var src = 'http://localhost:8080/' + role
   var iframe = characters[id].iframe

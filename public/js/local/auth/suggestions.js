@@ -7,7 +7,7 @@ $(document).ready(function() {
 
     $.ajax({
       method: 'GET',
-      url: 'https://passti.me/api/users/' + window.userId,
+      url: 'http://localhost:8080/api/users/' + window.userId,
       success: function(data) {
         console.log(data)
 
@@ -17,7 +17,7 @@ $(document).ready(function() {
 
           $.ajax({
             method: 'GET',
-            url: 'https://passti.me/api/users/',
+            url: 'http://localhost:8080/api/users/',
             success: function(data) {
               console.log(data)
               if (data.status === 'success') {

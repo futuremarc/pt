@@ -48,8 +48,9 @@ function minimizeIframe(domEvent){
 
   window.initRoom = function(id) {
 
+    console.log('initRoom', id)
     getRoomData(id).then(function(room) {
-
+      console.log('got ROOM', room)
       createInterface(room)
       addCachedMessages(room.messages)
       initSockets()
@@ -62,7 +63,7 @@ function minimizeIframe(domEvent){
 
   function initSockets() {
 
-    if (!socket) window.socket = io('https://passti.me', {
+    if (!socket) window.socket = io('http://localhost:5050', {
       'path': '/socket',
       'forceNew': true
     })

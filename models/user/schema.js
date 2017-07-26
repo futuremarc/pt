@@ -96,13 +96,16 @@ userSchema.pre('save', function(next) { // called before every document saved
 
   if (!this.createdAt) {
     this.createdAt = currentDate;
+  }else{
+    return
   }
 
-  if (!this.isModified('password')) return next();
+ if (!this.isModified('password')) return next();
 
   bcrypt.genSalt(SALT_FACTOR, function(err, salt) {
     if (err) return next(err)
 
+      console.log('password in MODEL', self.password)
     bcrypt.hash(self.password, salt, null, function(err, hash) {
       if (err) return next(err);
 
@@ -118,12 +121,14 @@ userSchema.methods.comparePassword = function(candidatePassword, cb) {
 
   var self = this
 
-  if (this.password === candidatePassword) {
-    var isMatch = true
-    cb(null, isMatch);
-    return
-  }
+  // if (this.password === candidatePassword) {
+  //   var isMatch = true
+  //   cb(null, isMatch);
+  //   return
+  // }
   bcrypt.compare(candidatePassword, this.password, function(err, isMatch) {
+
+    console.log (self.password, candidatePassword, isMatch)
     if (err) return cb(err);
     cb(null, isMatch);
   });
