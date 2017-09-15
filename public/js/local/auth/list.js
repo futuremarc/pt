@@ -14,6 +14,12 @@ $(document).ready(function() {
 
   function createInterface(friends){
     console.log('createInterface', friends);
+
+     var html = Templates.extension.addList(friends)
+
+    var container = $('#pt-list-container')
+    container.append(html)
+
   }
 
    var getListData = function(userId) {

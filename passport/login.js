@@ -26,7 +26,6 @@ module.exports = function(passport) {
 						})
 					}
 
-					console.log('password!!', password)
 					user.comparePassword(password, function(err, isMatch) {
 
 						if (isMatch) {

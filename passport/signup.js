@@ -10,8 +10,6 @@ module.exports = function(passport) {
 
 	}, function(req, email, password, done) {
 
-		console.log('SIGN UP!!!')
-
 		findOrCreateUser = function() {
 
 			if (!req.body.name) {
@@ -60,7 +58,7 @@ module.exports = function(passport) {
 							console.log("User saved successfully")
 
 							newUser.createDefaultRoom(function() {
-
+	
 								return done(null, newUser, {
 									message: 'Welcome'
 								})

@@ -662,6 +662,7 @@ function addIframe(character) {
 
   iframe.attr('frameborder', 0)
   iframe.attr('data-is-me', character.isMe)
+  
 
   iframe.addClass('pt-iframe pt')
   iframe.isMinimized = false

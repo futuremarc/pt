@@ -1,0 +1,10 @@
+<ul>
+  {{#each this}}
+
+    <li data-room="{{this.user.room._id}}" onclick="location.href = '/room/{{this.user.room.title}}';">
+      {{this.user.room.title}}
+    </li>
+
+  {{/each}}
+
+</ul>

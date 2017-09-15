@@ -63,7 +63,7 @@ var userSchema = new Schema({
   friendRequests: [{
     type: Schema.Types.ObjectId,
     ref: 'User',
-    unique:true
+    unique: true
   }],
 
   posts: [{
@@ -96,16 +96,15 @@ userSchema.pre('save', function(next) { // called before every document saved
 
   if (!this.createdAt) {
     this.createdAt = currentDate;
-  }else{
+  } else {
     return
   }
 
- if (!this.isModified('password')) return next();
+  if (!this.isModified('password')) return next();
 
   bcrypt.genSalt(SALT_FACTOR, function(err, salt) {
     if (err) return next(err)
 
-      console.log('password in MODEL', self.password)
     bcrypt.hash(self.password, salt, null, function(err, hash) {
       if (err) return next(err);
 
@@ -121,14 +120,12 @@ userSchema.methods.comparePassword = function(candidatePassword, cb) {
 
   var self = this
 
-  // if (this.password === candidatePassword) {
-  //   var isMatch = true
-  //   cb(null, isMatch);
-  //   return
-  // }
+  if (this.password === candidatePassword) {
+    var isMatch = true
+    cb(null, isMatch);
+    return
+  }
   bcrypt.compare(candidatePassword, this.password, function(err, isMatch) {
-
-    console.log (self.password, candidatePassword, isMatch)
     if (err) return cb(err);
     cb(null, isMatch);
   });
@@ -136,10 +133,10 @@ userSchema.methods.comparePassword = function(candidatePassword, cb) {
 
 
 
-
 userSchema.methods.createDefaultRoom = function(next) {
 
   var Room = require('models/room/model')
+  var User = require('models/User/model')
 
   var userId = this._id
   var title = this.name
@@ -151,16 +148,26 @@ userSchema.methods.createDefaultRoom = function(next) {
     title: title
   })
 
-  room.save(function(err, result) {
+  room.save(function(err, roomDoc) {
 
     if (err) {
       console.log('cant save room on new user', err)
       next(err)
     } else {
-      console.log('saved room on new user', result)
-      self.room = result._id
 
-      next()
+      User.findByIdAndUpdate(self._id, {
+        $set: {
+          'room': roomDoc._id
+        }
+      }, {
+        new: true
+      }).exec(function(err, doc) {
+
+        console.log('saved room on new user', doc)
+        return next()
+
+      })
+
     }
 
   })
@@ -168,24 +175,6 @@ userSchema.methods.createDefaultRoom = function(next) {
 }
 
 module.exports = userSchema;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -238,7 +227,7 @@ module.exports = userSchema;
 //     type: Schema.Types.ObjectId,
 //     ref: 'Friend'
 //   }],
-  
+
 //   friendRequests: [{
 //     type: Schema.Types.ObjectId,
 //     ref: 'User',
@@ -307,7 +296,6 @@ module.exports = userSchema;
 //     cb(null, isMatch);
 //   });
 // }
-
 
 
 

@@ -14,7 +14,7 @@
 
 
 .hover-show-header{
-q
+
 	.pt-room-header{
 		display:none;
 	}
@@ -61,7 +61,7 @@ q
 
 			span{
 
-				padding-left:5px;
+				padding-left:3px;
 				&:hover{
 					cursor:pointer;
 				}
@@ -74,6 +74,50 @@ q
 			}
 			
 		}
+	}
+
+	#pt-close-search-results{
+		position:fixed;
+		right:2px;
+		top:2px;
+		text-align:right;
+		z-index:6;
+
+			span{
+
+				padding-left:3px;
+				&:hover{
+					cursor:pointer;
+				}
+
+			img{
+				height:18px;
+				width:18px;
+			}
+
+		}
+
+	}
+
+
+	#pt-search-results-container{
+
+		width: 100%;
+		max-height: 100%;
+		position:absolute;
+
+		z-index:5;
+		background:#fff;
+		overflow: scroll;
+
+
+		ul{
+			li{	
+				border-top: 1px solid #eee;
+				padding: 10px 5px 10px 5px;
+			}
+		}
+
 	}
 
 	
@@ -158,6 +202,7 @@ q
 		width:100%;
 		position:absolute;
 		bottom:0;
+		z-index:6;
 		margin-bottom:0px;
 
 

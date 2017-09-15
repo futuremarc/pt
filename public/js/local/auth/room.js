@@ -11,8 +11,9 @@ $(document).ready(function() {
       //$('body').addClass('hover-show-header')
 
     //event listeners
-    $('.pt-close-room').click(closeIframe)
-    $('.pt-minimize-room').click(minimizeIframe)
+    $('#pt-close-room').click(closeRoom)
+    $('#pt-search-room').click(toggleSearchRoom)
+    $('#pt-minimize-room').click(minimizeRoom)
     $('#pt-room-form').on('submit', onFormSubmit)
     $('#pt-room-input').focus()
 
@@ -20,11 +21,29 @@ $(document).ready(function() {
 
   }
 
-  function closeIframe(domEvent){
+  function toggleSearchRoom() {
 
-     var data = {
+    if ($('#pt-room-input').data('role') === 'chat') {
+      $('#pt-room-input').attr('placeholder', 'Search...');
+      $('#pt-room-input').data('role', 'search');
+      window.searchMode = true;
+    } else {
+      $('#pt-room-input').attr('placeholder', 'Send a message...');
+      $('#pt-room-input').data('role', 'chat');
+      window.searchMode = false;
+    }
+
+    $('input').val('')
+    $('input').focus()
+
+  }
+
+  function closeRoom(domEvent) {
+
+    var data = {
       'event': 'closeIframe',
-      'domEvent': new MouseEvent(domEvent.type, domEvent),
+      //'domEvent': new MouseEvent(domEvent.type, domEvent),
+      '_id': window.roomId,
       'type': 'window'
     }
 
@@ -33,11 +52,12 @@ $(document).ready(function() {
 
   }
 
-function minimizeIframe(domEvent){
+  function minimizeRoom(domEvent) {
 
-     var data = {
+    var data = {
       'event': 'minimizeIframe',
-      'domEvent': new MouseEvent(domEvent.type, domEvent),
+      '_id': window.roomId,
+      //'domEvent': new MouseEvent(domEvent.type, domEvent),
       'type': 'window'
     }
 
@@ -246,11 +266,9 @@ function minimizeIframe(domEvent){
 
     div.text(content);
     nick.text(name);
-
     messageList.append(li)
     scrollChatToBottom()
     $('#pt-room-input').focus()
-
 
   }
 
@@ -271,6 +289,94 @@ function minimizeIframe(domEvent){
 
   function getUTCDate() {
     return moment.utc().format()
+  }
+
+
+
+  // function ytInit(data) {
+
+  //   window.tag = document.createElement('script');
+
+  //   window.tag.src = "https://www.youtube.com/iframe_api";
+  //   window.firstScriptTag = document.getElementsByTagName('script')[0];
+  //   window.firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+
+  //   window.onYouTubeIframeAPIReady = function() {
+
+  //     console.log('onYouTubeIframeAPIReady');
+
+  //     window.ytPlayer = new YT.Player('ytPlayer', {
+  //       height: '390',
+  //       width: '640',
+  //       videoId: 'jMGYZ3McHTM',
+  //       startSeconds: 1,
+  //       origin: 'http://localhost:8080',
+  //       events: {
+  //         'onReady': onPlayerReady,
+  //         'onStateChange': onPlayerStateChange
+  //       }
+  //     });
+  //     //ytPlayer.setSize(windowWidth, windowHeight);
+
+  //     ytCall()
+
+  //   }
+
+  //   window.onPlayerReady = function(event) {
+  //     console.log('onPlayerReady');
+
+  //   }
+
+
+  //   window.onPlayerStateChange = function(event) {
+  //     console.log('onPlayerStateChange')
+  //   }
+
+  // }
+
+  // ytInit()
+
+
+  $('body').on('keyup','#pt-room-input',function() {
+    
+    if (!window.searchMode) return
+
+    var searchTerm = $(this).val();
+    if (searchTerm) searchYT(searchTerm);
+
+  })
+
+
+  function searchYT(searchTerm) {
+
+    $.ajax({
+      method: 'GET',
+      url: 'https://www.googleapis.com/youtube/v3/search?part=snippet&maxResults=20&q=' + searchTerm + '&key=AIzaSyDF0ANsCSLUYkeA6BFQABfYeBRPKc1bB54',
+      success: function(data) {
+        console.log(data);
+
+        var results = data.items;
+        var html = Templates.extension.addSearchResults(results);
+        var container = $('#pt-search-results-container');
+
+        container.show()
+        container.html(html);
+
+        $('li').click(function(){
+          console.log('new post', $(this).data('videoid'))
+        })
+
+        $('#pt-close-search-results').click(function(){
+          $('#pt-search-results-container').hide()
+          toggleSearchRoom()
+        })
+
+      },
+      error: function(err) {
+        console.log(err);
+      }
+    })
+
   }
 
 

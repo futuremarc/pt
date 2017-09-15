@@ -386,8 +386,14 @@ function onWindowMsg(data) {
 
     case 'closeIframe':
 
-      closeIframe()
+      closeIframe(data.data)
       break;
+
+    case 'minimizeIframe':
+
+      minimizeIframe(null, data.data)
+      break;
+
 
     case 'friend':
 

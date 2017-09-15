@@ -130,6 +130,8 @@ module.exports = function() {
       title: title
     }).exec(function(err, room) {
 
+      if (!room) return
+
       var roomId = room.id
       var userName, userId
       var isLoggedIn = false
@@ -170,6 +172,33 @@ module.exports = function() {
       userName: req.user.name,
       userId: req.user._id
     })
+
+  })
+
+  router.get('/list/:roomId', function(req, res, next) {
+
+    var roomId = req.params.roomId
+
+    Room.findOneById(roomId).exec(function(err, room) {
+
+      var roomId = room.id
+      var userName, userId
+      var isLoggedIn = false
+
+      if (req.user){
+        userName = req.user.name
+        userId = req.user._id
+        isLoggedIn = true
+      }
+
+      res.render('auth/room.pug', {
+        isLoggedIn: isLoggedIn,
+        userName: userName,
+        userId: userId,
+        roomId: roomId
+      })
+    })
+
 
   })
 

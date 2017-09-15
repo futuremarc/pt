@@ -34,6 +34,8 @@ module.exports = function(passport) {
             return next(err)
           }
 
+          console.log('USER!!!', user)
+
           return res.json({
             status: "success",
             message: info.message,

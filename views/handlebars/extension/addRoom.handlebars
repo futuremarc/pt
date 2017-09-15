@@ -7,11 +7,14 @@
 
     <div class="pt-minimize-close col-xs-4">
 
-      <span class="pt-minimize-room"  data-id='{{_id}}' data-is-minimized=false data-user='{{user}}' >
+      <span id="pt-search-room"  data-id='{{_id}}' data-user='{{user}}' >
+        <img src="/icons/core/search-white.svg"/>
+      </span>
+      <span id="pt-minimize-room"  data-id='{{_id}}' data-is-minimized=false data-user='{{user}}' >
         <img src="/icons/core/minus-white.svg"/>
       </span>
-      <span class="pt-close-room"  data-id='{{_id}}' data-user='{{user}}' >
-      <img src="/icons/core/x-white.svg"/>
+      <span id="pt-close-room"  data-id='{{_id}}' data-user='{{user}}' >
+        <img src="/icons/core/x-white.svg"/>
       </span>
     </div>
   </div>
@@ -36,10 +39,14 @@
   <div id="pt-messages-container">
     <ul class="list-unstyled"></ul>
   </div>
+
+  <div id="pt-search-results-container">
+  </div>
+
   <div id="pt-form-container">
     <form class="form-inline" id="pt-room-form">
       <div class="form-group">
-        <div class="input-group"><input class="form-control" type="text" id="pt-room-input" autocomplete="off" placeholder="Send a message..." />
+        <div class="input-group"><input class="form-control" type="text" data-role="chat" id="pt-room-input" autocomplete="off" placeholder="Send a message..." />
           <div class="input-group-addon"><button class="btn btn-custom-room" type="submit"><span>Send</span></button></div>
         </div>
       </div>
