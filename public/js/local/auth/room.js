@@ -337,8 +337,8 @@ $(document).ready(function() {
   // ytInit()
 
 
-  $('body').on('keyup','#pt-room-input',function() {
-    
+  $('body').on('keyup', '#pt-room-input', function() {
+
     if (!window.searchMode) return
 
     var searchTerm = $(this).val();
@@ -351,24 +351,35 @@ $(document).ready(function() {
 
     $.ajax({
       method: 'GET',
-      url: 'https://www.googleapis.com/youtube/v3/search?part=snippet&maxResults=20&q=' + searchTerm + '&key=AIzaSyDF0ANsCSLUYkeA6BFQABfYeBRPKc1bB54',
+      url: 'https://www.googleapis.com/youtube/v3/search?part=snippet&maxResults=7&q=' + searchTerm + '&key=AIzaSyDF0ANsCSLUYkeA6BFQABfYeBRPKc1bB54',
       success: function(data) {
         console.log(data);
 
-        var results = data.items;
-        var html = Templates.extension.addSearchResults(results);
-        var container = $('#pt-search-results-container');
+        var ytResults = data.items;
 
-        container.show()
-        container.html(html);
+        searchSC(searchTerm, function(scResults) {
 
-        $('li').click(function(){
-          console.log('new post', $(this).data('videoid'))
-        })
+          var data = {
+            ytResults: ytResults,
+            scResults: scResults
+          }
 
-        $('#pt-close-search-results').click(function(){
-          $('#pt-search-results-container').hide()
-          toggleSearchRoom()
+          console.log('POPULATE', data)
+
+          var html = Templates.extension.addSearchResults(data);
+          var container = $('#pt-search-results-container');
+
+          container.show()
+          container.html(html);
+
+          $('li').click(function() {
+            console.log('new post', $(this).data('contentid'))
+          })
+
+          $('#pt-close-search-results').click(function() {
+            $('#pt-search-results-container').hide()
+            toggleSearchRoom()
+          })
         })
 
       },
@@ -377,6 +388,25 @@ $(document).ready(function() {
       }
     })
 
+  }
+
+
+  SC.initialize({
+    client_id: 'bf0076a8fe054ea15003fb6fe36244cc'
+  });
+
+
+
+  function searchSC(searchTerm, callBack) {
+
+    SC.get('/tracks', {
+      q: searchTerm,
+      limit: 7
+    }).then(function(tracks) {
+
+      return callBack(tracks)
+
+    })
   }
 
 

@@ -6,9 +6,32 @@
 
 <ul class="list-unstyled">
 
-	{{#each this}}
-		<li data-videoid={{id.videoId}}>
-			{{snippet.title}}
+	{{#each ytResults}}
+		<li data-contentid={{id.videoId}} data-type="youtube">
+			<div  class="row no-margin">
+				<div class="col-xs-5 no-padding">
+					<img class="pt-result-icon" src="/icons/logos/yt-icon.png"></img>
+					<img class="pt-result-thumbnail" src="{{snippet.thumbnails.default.url}}"></img>
+				</div>
+				<div class="col-xs-7 no-padding pt-result-title">{{truncateTitle snippet.title}}</div>
+			</div>
+		</li>
+	{{/each}}
+
+	{{#each scResults}}
+		<li data-contentid={{id}} data-type="soundcloud">
+			<div  class="row no-margin">
+				<div class="col-xs-5 no-padding">
+					<img class="pt-result-icon" src="/icons/logos/sc-icon.png"></img>
+					{{#if artwork_url}}
+						<img class="pt-result-thumbnail" src="{{artwork_url}}"></img>
+					{{/if}}
+					{{#unless artwork_url}}
+						<img class="pt-result-thumbnail" src="{{user.avatar_url}}"></img>
+					{{/unless}}
+				</div>
+				<div class="col-xs-7 no-padding pt-result-title">{{truncateTitle title}}</div>
+			</div>
 		</li>
 	{{/each}}
 

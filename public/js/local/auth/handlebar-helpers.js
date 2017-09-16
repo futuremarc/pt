@@ -81,6 +81,23 @@ Handlebars.registerHelper('ifHasPast', function(date, opts){
 	}
 })
 
+Handlebars.registerHelper('ifHasPast', function(date, opts){
+	if(moment(date).isAfter(moment())){
+		return opts.inverse(this)
+	} else {
+		return opts.fn(this)
+	}
+})
+
+
+Handlebars.registerHelper('truncateTitle', function(str){
+	if (str.length < 50) return str
+
+	var str =  str.substring(0,50) + '...'
+	return str
+})
+
+
 Handlebars.registerHelper('eachSlice', function(array, opts){
 
 	var slice = 10
