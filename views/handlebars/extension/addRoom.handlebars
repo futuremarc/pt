@@ -36,6 +36,11 @@
     
   {{/if}}
 
+  {{#unless livePost}}
+      <div id="pt-iframe-container"><iframe id="pt-content" frameborder="0" data-id=""  data-title="" src=""></iframe></div>
+
+  {{/unless}}
+
   <div id="pt-messages-container">
     <ul class="list-unstyled"></ul>
   </div>

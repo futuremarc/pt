@@ -58,7 +58,7 @@ isMobile = detectMobileOrTablet()
 
 if (!isExtension && !isIframe) {
 
-  var socket = io('http://localhost:5050', {
+  var socket = io('https://passti.me', {
     'path': '/socket',
     'forceNew': true
   })
@@ -598,7 +598,7 @@ function getFriendInfo(idOrName, callBack) {
 
   $.ajax({
     method: 'GET',
-    url: 'http://localhost:8080/api/users/' + idOrName,
+    url: 'https://passti.me/api/users/' + idOrName,
     success: function(data) {
       console.log(data)
 
@@ -626,7 +626,7 @@ function getLiveFriends(callBack) {
 
     $.ajax({
       method: 'GET',
-      url: 'http://localhost:8080/api/users/' + myCharacter.data._id + '/friends/live',
+      url: 'https://passti.me/api/users/' + myCharacter.data._id + '/friends/live',
       success: function(data) {
         console.log(data)
 
@@ -709,7 +709,7 @@ function addLiveCharacters() {
 
   $.ajax({
     method: 'GET',
-    url: 'http://localhost:8080/api/users/' + name + '/friends/live',
+    url: 'https://passti.me/api/users/' + name + '/friends/live',
     success: function(data) {
       console.log(data)
 
@@ -769,7 +769,7 @@ function openIframe(e, _mesh) {
 
   }
 
-  var src = 'http://localhost:8080/' + role
+  var src = 'https://passti.me/' + role
   var iframe = characters[id].iframe
   var previousSrc = $(iframe).attr('src')
 

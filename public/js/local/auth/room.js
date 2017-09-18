@@ -83,7 +83,7 @@ $(document).ready(function() {
 
   function initSockets() {
 
-    if (!socket) window.socket = io('http://localhost:5050', {
+    if (!socket) window.socket = io('https://passti.me', {
       'path': '/socket',
       'forceNew': true
     })
@@ -105,15 +105,20 @@ $(document).ready(function() {
 
   function post(data) {
 
+    console.log('post', data)
+
     var id = data.post.id
     var title = data.post.title
     var url = data.post.url
     var iframe = $('#pt-content')
-    var src = "https://w.soundcloud.com/player/?url=" + url + "&amp;auto_play=false&amp;hide_related=true&amp;show_comments=false&amp;show_user=false&amp;show_reposts=false&amp;visual=true"
+    if (data.post.type === 'soundcloud') var src = "https://w.soundcloud.com/player/?url=" + url + "&amp;auto_play=false&amp;hide_related=true&amp;show_comments=false&amp;show_user=false&amp;show_reposts=false&amp;visual=true"
+    else if (data.post.type === 'youtube') var src = url
 
     iframe.data('id', id)
     iframe.data('title', title)
     iframe.attr('src', src)
+
+
   }
 
 
@@ -310,7 +315,7 @@ $(document).ready(function() {
   //       width: '640',
   //       videoId: 'jMGYZ3McHTM',
   //       startSeconds: 1,
-  //       origin: 'http://localhost:8080',
+  //       origin: 'https://passti.me',
   //       events: {
   //         'onReady': onPlayerReady,
   //         'onStateChange': onPlayerStateChange
@@ -351,7 +356,7 @@ $(document).ready(function() {
 
     $.ajax({
       method: 'GET',
-      url: 'https://www.googleapis.com/youtube/v3/search?part=snippet&maxResults=7&q=' + searchTerm + '&key=AIzaSyDF0ANsCSLUYkeA6BFQABfYeBRPKc1bB54',
+      url: 'https://www.googleapis.com/youtube/v3/search?part=snippet&type=video&maxResults=7&q=' + searchTerm + '&key=AIzaSyDF0ANsCSLUYkeA6BFQABfYeBRPKc1bB54',
       success: function(data) {
         console.log(data);
 
@@ -371,13 +376,41 @@ $(document).ready(function() {
 
           container.show()
           container.html(html);
+          container.scrollTop(0);
 
           $('li').click(function() {
-            console.log('new post', $(this).data('contentid'))
+            console.log('new post', $(this).data('contentid'), $(this).data('type'))
+
+            var url = $(this).data('url')
+            var id = $(this).data('contentid')
+            var title = $(this).data('title')
+            var type = $(this).data('type')
+
+            var data = {
+              url: url,
+              title: title,
+              id: id,
+              type: type
+            }
+
+            post({
+              room: window.roomId,
+              _id: window.userId,
+              post: data
+            })
+
+            socket.emit('post', {
+              room: window.roomId,
+              _id: window.userId,
+              post: data
+            })
+
+            $('#pt-close-search-results').click() //reset to chat
+
           })
 
           $('#pt-close-search-results').click(function() {
-            $('#pt-search-results-container').hide()
+            $('#pt-search-results-container').hide();
             toggleSearchRoom()
           })
         })

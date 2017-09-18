@@ -7,7 +7,7 @@
 <ul class="list-unstyled">
 
 	{{#each ytResults}}
-		<li data-contentid={{id.videoId}} data-type="youtube">
+		<li data-contentid="{{id.videoId}}" data-type="youtube" data-title="{{snippet.title}}" data-url=https://www.youtube.com/embed/{{id.videoId}}>
 			<div  class="row no-margin">
 				<div class="col-xs-5 no-padding">
 					<img class="pt-result-icon" src="/icons/logos/yt-icon.png"></img>
@@ -19,7 +19,7 @@
 	{{/each}}
 
 	{{#each scResults}}
-		<li data-contentid={{id}} data-type="soundcloud">
+		<li data-contentid="{{id}}" data-type="soundcloud" data-title="{{title}}" data-url="{{uri}}">
 			<div  class="row no-margin">
 				<div class="col-xs-5 no-padding">
 					<img class="pt-result-icon" src="/icons/logos/sc-icon.png"></img>

@@ -134,6 +134,9 @@ module.exports = function(io) {
 
     socket.on('post', function(data) {
 
+
+      console.log('POST', data)
+
       var room = data.room
       var user = data._id
       var url = data.post.url

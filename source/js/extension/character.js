@@ -476,6 +476,8 @@ function updateCharacter(request, data, callBack, isRecursiveCall) {
 
 function putCharacter(callBack) {
 
+  console.log('putCharacter', myCharacter.data)
+
   updateCharacter('putLocal', myCharacter.data)
   if (isRegistered()) updateCharacter('putRemote', myCharacter.data, callBack)
 }
